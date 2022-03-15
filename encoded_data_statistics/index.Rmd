@@ -10,27 +10,44 @@ output:
 library(flexdashboard)
 ```
 
-Column {data-width=650}
------------------------------------------------------------------------
-
-### Chart A
 
 ```{r}
+#install.packages("RPostgreSQL")
+#install.packages("RPostgres")
+```
+
+```{r}
+#Connecting to the Postgres database
+
+library(DBI)
+
+db <- " "  #database name
+db_host <- " "
+db_port <- "5432"
+db_user <- " "
+db_pass <- " "
+
+conn <- dbConnect(
+  RPostgres::Postgres(),
+  dbname = db,
+  host = db_host,
+  port = db_port,
+  user = db_user,
+  password = db_pass
+)
 
 ```
 
-Column {data-width=350}
------------------------------------------------------------------------
-
-### Chart B
+```{r}
+# list the available tables
+dbListTables(conn)
+```
 
 ```{r}
 
-```
-
-### Chart C
-
-```{r}
+dbGetQuery(conn, "SELECT * FROM earthquakes LIMIT 5")
 
 ```
+
+
 
