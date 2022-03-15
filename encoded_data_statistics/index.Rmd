@@ -12,6 +12,8 @@ output:
 library(flexdashboard)
 library(rio)
 library(dplyr)
+library(tidyverse)
+library(plotly)
 ```
 
 
@@ -102,22 +104,30 @@ df_error_rate$error_rate_edwar <- (df_error_rate$error_edwar/df_error_rate$obs)*
 
 #Error rate per date batch and encoder
 df_andrea_rate = df_error_rate[c('date_batch','error_rate_andrea')]
-colnames(df_andrea_rate)[2]<- c("error_rate")
-
-df_andrea_rate$encoder <- 'Andrea'
-
 
 df_edwar_rate = df_error_rate[c('date_batch','error_rate_edwar')]
-colnames(df_edwar_rate)[2]<- c("error_rate")
-
-df_edwar_rate$encoder <- 'Edwar'
 
 
-data_plot <- rbind(df_andrea_rate, df_edwar_rate)
-        
+data_plot <- merge(df_andrea_rate, df_edwar_rate, by = "date_batch")
 ```
 
 
+```{r}
+#barplot: a plot with error rate per encoder (Andrea/Edwar)
+fig <- plot_ly(data_plot, x = ~date_batch, y = ~error_rate_andrea, type = 'bar',  name = 'error_rate_andrea',
+                marker = list(color = 'rgb(158,202,225)') )
+fig <- fig %>% add_trace(y = ~error_rate_edwar, name = 'error_rate_edwar',
+                marker = list(color = 'springgreen4') )         
+
+fig <- fig %>% 
+        layout(title = "Error rate per encoder and date batch",
+         xaxis = list(title = "Date batch",
+                      zeroline = FALSE),
+         yaxis = list(title = "Error rate (%)",
+                      zeroline = FALSE))
+
+fig
+```
 
 
 
