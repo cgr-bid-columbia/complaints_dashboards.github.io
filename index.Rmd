@@ -115,10 +115,17 @@ df_edwar_rate = df_error_rate[c('date_batch','error_rate_edwar')]
 data_plot <- merge(df_andrea_rate, df_edwar_rate, by = "date_batch")
 ```
 
-Row {.tabset}
------------------------------------------------------------------------
 
-### Plot with error rate per encoder (Andrea/Edwar) 
+
+Page 1
+=====================================  
+
+   
+Column {data-width=400}
+-------------------------------------
+
+### <b><font face="Arial" size="4px" color="#000000">Plot with error rate per encoder (Andrea/Edwar)</font></b>  
+
 
 ```{r}
 #barplot: a plot with error rate per encoder (Andrea/Edwar)
@@ -139,4 +146,14 @@ fig
 
 
 ### Another tab
+
+
+
+Column {data-width=600}
+-------------------------------------
+
+
+
+Page 2
+=====================================  
 
