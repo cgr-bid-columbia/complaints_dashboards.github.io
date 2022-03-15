@@ -3,8 +3,6 @@ title: "Complaints dashboard"
 output: 
   flexdashboard::flex_dashboard:
     orientation: rows
-    social: menu
-    source_code: embed
     vertical_layout: fill
 ---
 
@@ -17,12 +15,12 @@ library(plotly)
 ```
 
 
-```{r setup, include=FALSE}
+```{r, include=FALSE}
 #install.packages("RPostgreSQL")
 #install.packages("RPostgres")
 ```
 
-```{r setup, include=FALSE}
+```{r, include=FALSE}
 
 #library(DBI)
 
@@ -49,14 +47,14 @@ library(plotly)
 ```
 
 
-```{r setup, include=FALSE}
+```{r, include=FALSE}
 # import clean claims 21 table 
 #raw_historical_claims=dbReadTable(conn, "clean_claims_21")
 
 ```
 
 
-```{r setup, include=FALSE}
+```{r, include=FALSE}
 
 ### Create a plot with error rate per encoder (Andrea/Edwar) (x axis is for number of batch, y for the error rate)
 
@@ -111,16 +109,20 @@ df_edwar_rate = df_error_rate[c('date_batch','error_rate_edwar')]
 data_plot <- merge(df_andrea_rate, df_edwar_rate, by = "date_batch")
 ```
 
+Row {.tabset}
+-----------------------------------------------------------------------
+
+### Plot with error rate per encoder (Andrea/Edwar) 
 
 ```{r}
 #barplot: a plot with error rate per encoder (Andrea/Edwar)
-fig <- plot_ly(data_plot, x = ~date_batch, y = ~error_rate_andrea, type = 'bar',  name = 'error_rate_andrea',
+fig <- plot_ly(data_plot, x = ~date_batch, y = ~error_rate_andrea, type = 'bar',  name = 'Andrea',
                 marker = list(color = 'rgb(158,202,225)') )
-fig <- fig %>% add_trace(y = ~error_rate_edwar, name = 'error_rate_edwar',
+fig <- fig %>% add_trace(y = ~error_rate_edwar, name = 'Edwar',
                 marker = list(color = 'springgreen4') )         
 
 fig <- fig %>% 
-        layout(title = "Error rate per encoder and date batch",
+        layout(title = "",
          xaxis = list(title = "Date batch",
                       zeroline = FALSE),
          yaxis = list(title = "Error rate (%)",
@@ -130,5 +132,5 @@ fig
 ```
 
 
-
+### Another tab
 
