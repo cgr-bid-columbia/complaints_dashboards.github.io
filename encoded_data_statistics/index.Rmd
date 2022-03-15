@@ -17,15 +17,19 @@ library(flexdashboard)
 ```
 
 ```{r}
-#Connecting to the Postgres database
 
 library(DBI)
 
-db <- " "  #database name
-db_host <- " "
-db_port <- "5432"
-db_user <- " "
-db_pass <- " "
+# Obtaining the values of the environment variables
+
+db <- Sys.getenv("db_mcc")  #database name
+db_host <- Sys.getenv("db_host") #localhost
+db_port <- Sys.getenv("db_port") #port
+db_user <- Sys.getenv("db_user") #credentials: user name
+db_pass <- Sys.getenv("db_pass") #credentials: user password
+
+
+#Connecting to the Postgres database
 
 conn <- dbConnect(
   RPostgres::Postgres(),
