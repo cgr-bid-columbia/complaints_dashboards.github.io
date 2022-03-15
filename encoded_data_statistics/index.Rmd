@@ -18,38 +18,34 @@ library(flexdashboard)
 
 ```{r}
 
-library(DBI)
+#library(DBI)
 
 # Obtaining the values of the environment variables
 
-db <- Sys.getenv("db_mcc")  #database name
-db_host <- Sys.getenv("db_host") #localhost
-db_port <- Sys.getenv("db_port") #port
-db_user <- Sys.getenv("db_user") #credentials: user name
-db_pass <- Sys.getenv("db_pass") #credentials: user password
+#db <- Sys.getenv("db_algorithm")  #database name
+#db_host <- Sys.getenv("db_host") #localhost
+#db_port <- Sys.getenv("db_port") #port
+#db_user <- Sys.getenv("db_user") #credentials: user name
+#db_pass <- Sys.getenv("db_pass") #credentials: user password
 
 
 #Connecting to the Postgres database
 
-conn <- dbConnect(
-  RPostgres::Postgres(),
-  dbname = db,
-  host = db_host,
-  port = db_port,
-  user = db_user,
-  password = db_pass
-)
+#conn <- dbConnect(
+#  RPostgres::Postgres(),
+#  dbname = db,
+#  host = db_host,
+#  port = db_port,
+#  user = db_user,
+#  password = db_pass
+#)
 
 ```
 
-```{r}
-# list the available tables
-dbListTables(conn)
-```
 
 ```{r}
-
-dbGetQuery(conn, "SELECT * FROM earthquakes LIMIT 5")
+# import clean claims 21 table 
+#raw_historical_claims=dbReadTable(conn, "clean_claims_21")
 
 ```
 
