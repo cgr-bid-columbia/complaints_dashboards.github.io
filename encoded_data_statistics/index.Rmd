@@ -1,8 +1,10 @@
 ---
-title: "Untitled"
+title: "Complaints dashboard"
 output: 
   flexdashboard::flex_dashboard:
-    orientation: columns
+    orientation: rows
+    social: menu
+    source_code: embed
     vertical_layout: fill
 ---
 
