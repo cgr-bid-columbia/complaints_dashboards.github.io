@@ -51,8 +51,10 @@ conn <- dbConnect(
 # import clean claims 21 table 
 tie_breaking_append <- dbReadTable(conn, "clean_claims_21")
 
-#keep if version = 2
-tie_breaking_append <- tie_breaking_append[ tie_breaking_append$version == 2, ]
+#keep the last version
+last_version <- max(tie_breaking_append$version)
+
+tie_breaking_append <- tie_breaking_append[ tie_breaking_append$version == last_version, ]
 
 ```
 
