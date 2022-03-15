@@ -8,7 +8,7 @@ output:
 
 ```{r setup, include=FALSE}
 library(flexdashboard)
-#library(rio)
+library(rio)
 library(dplyr)
 library(tidyverse)
 library(plotly)
@@ -22,44 +22,51 @@ library(plotly)
 
 ```{r, include=FALSE}
 
-library(DBI)
+#library(DBI)
 
 # Obtaining the values of the environment variables
 
-db <- Sys.getenv("db_algorithm")  #database name
-db_host <- Sys.getenv("db_host") #localhost
-db_port <- Sys.getenv("db_port") #port
-db_user <- Sys.getenv("db_user") #credentials: user name
-db_pass <- Sys.getenv("db_pass") #credentials: user password
+#db <- Sys.getenv("db_algorithm")  #database name
+#db_host <- Sys.getenv("db_host") #localhost
+#db_port <- Sys.getenv("db_port") #port
+#db_user <- Sys.getenv("db_user") #credentials: user name
+#db_pass <- Sys.getenv("db_pass") #credentials: user password
 
 
 #Connecting to the Postgres database
 
-conn <- dbConnect(
-  RPostgres::Postgres(),
-  dbname = db,
-  host = db_host,
-  port = db_port,
-  user = db_user,
-  password = db_pass
-)
+#conn <- dbConnect(
+#  RPostgres::Postgres(),
+#  dbname = db,
+#  host = db_host,
+#  port = db_port,
+#  user = db_user,
+#  password = db_pass
+#)
 
 ```
 
 
 ```{r, include=FALSE}
 # import clean claims 21 table 
-tie_breaking_append <- dbReadTable(conn, "clean_claims_21")
+#tie_breaking_append <- dbReadTable(conn, "clean_claims_21")
 
 #keep the last version
-last_version <- max(tie_breaking_append$version)
+#last_version <- max(tie_breaking_append$version)
 
-tie_breaking_append <- tie_breaking_append[ tie_breaking_append$version == last_version, ]
+#tie_breaking_append <- tie_breaking_append[ tie_breaking_append$version == last_version, ]
 
 ```
 
 
 ```{r, include=FALSE}
+
+#TEMPORAL: (delete after last commit)
+setwd("C:/BID_Columbia/claims_assigment/outputs_temp")
+
+tie_breaking_append <-import("stacking_encoded.dta")
+
+##############
 
 ### Create a plot with error rate per encoder (Andrea/Edwar) (x axis is for number of batch, y for the error rate)
 
@@ -94,9 +101,9 @@ df_error_rate = merge(df2, df_andrea, by = "date_batch", all.x = TRUE)
 df_error_rate = merge(df_error_rate, df_edwar, by = "date_batch", all.x = TRUE)
 
 
-df_error_rate$error_rate_andrea <- (df_error_rate$error_andrea/df_error_rate$obs)*100
+df_error_rate$error_rate_andrea <- round( (df_error_rate$error_andrea/df_error_rate$obs)*100 , 1)
 
-df_error_rate$error_rate_edwar <- (df_error_rate$error_edwar/df_error_rate$obs)*100
+df_error_rate$error_rate_edwar <- round( (df_error_rate$error_edwar/df_error_rate$obs)*100 , 1)
 
 
 #Error rate per date batch and encoder
