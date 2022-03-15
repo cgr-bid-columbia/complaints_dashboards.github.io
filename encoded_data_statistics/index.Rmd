@@ -8,7 +8,7 @@ output:
 
 ```{r setup, include=FALSE}
 library(flexdashboard)
-library(rio)
+#library(rio)
 library(dplyr)
 library(tidyverse)
 library(plotly)
@@ -22,34 +22,37 @@ library(plotly)
 
 ```{r, include=FALSE}
 
-#library(DBI)
+library(DBI)
 
 # Obtaining the values of the environment variables
 
-#db <- Sys.getenv("db_algorithm")  #database name
-#db_host <- Sys.getenv("db_host") #localhost
-#db_port <- Sys.getenv("db_port") #port
-#db_user <- Sys.getenv("db_user") #credentials: user name
-#db_pass <- Sys.getenv("db_pass") #credentials: user password
+db <- Sys.getenv("db_algorithm")  #database name
+db_host <- Sys.getenv("db_host") #localhost
+db_port <- Sys.getenv("db_port") #port
+db_user <- Sys.getenv("db_user") #credentials: user name
+db_pass <- Sys.getenv("db_pass") #credentials: user password
 
 
 #Connecting to the Postgres database
 
-#conn <- dbConnect(
-#  RPostgres::Postgres(),
-#  dbname = db,
-#  host = db_host,
-#  port = db_port,
-#  user = db_user,
-#  password = db_pass
-#)
+conn <- dbConnect(
+  RPostgres::Postgres(),
+  dbname = db,
+  host = db_host,
+  port = db_port,
+  user = db_user,
+  password = db_pass
+)
 
 ```
 
 
 ```{r, include=FALSE}
 # import clean claims 21 table 
-#raw_historical_claims=dbReadTable(conn, "clean_claims_21")
+tie_breaking_append <- dbReadTable(conn, "clean_claims_21")
+
+#keep if version = 2
+tie_breaking_append <- tie_breaking_append[ tie_breaking_append$version == 2, ]
 
 ```
 
@@ -57,12 +60,6 @@ library(plotly)
 ```{r, include=FALSE}
 
 ### Create a plot with error rate per encoder (Andrea/Edwar) (x axis is for number of batch, y for the error rate)
-
-# set working directory
-setwd("C:/BID_Columbia/claims_assigment/outputs_temp")
-
-
-tie_breaking_append <- import('stacking_encoded.dta')
 
 #keeping just claims reviewed by Jaime
 tie_breaking_append <- tie_breaking_append[ tie_breaking_append$tiebraker_name == "Jaime", ]
