@@ -9,10 +9,10 @@ output:
 ```{r setup, include=FALSE}
 library(flexdashboard)
 library(rio)
+library ('plyr')
 library(dplyr)
 library(tidyverse)
 library(plotly)
-library ('plyr')
 library(reactable)
 ```
 
