@@ -12,6 +12,7 @@ library(rio)
 library(dplyr)
 library(tidyverse)
 library(plotly)
+library ('plyr')
 ```
 
 
@@ -66,7 +67,7 @@ library(plotly)
 #TEMPORAL: (delete after last commit)
 setwd("C:/BID_Columbia/claims_assigment/outputs_temp")
 
-tie_breaking_append <-import("stacking_encoded.dta")
+clean_claims_21 <-import("stacking_encoded.dta")
 
 ##############
 
@@ -152,6 +153,18 @@ fig
 
 ```{r, include=FALSE}
 
+#Solving issues with aoc_willay values
+clean_claims_21$aoc_willay[clean_claims_21$aoc_willay == ","] <- ""
+
+#table(clean_claims_21$aoc_willay)
+
+#dataframe with two columns: variable and number of missings
+
+df_missings <- ldply(clean_claims_21, function(var_value) sum(var_value ==""))
+colnames(df_missings) <- c("variable", "n_missings")
+
+#adding a new column: percentage of missings obs 
+df_missings$percentage_missing = round( (df_missings$n_missings/ nrow(clean_claims_21))*100 , 1)
 
 ```
 
