@@ -49,12 +49,14 @@ library(plotly)
 
 ```{r, include=FALSE}
 # import clean claims 21 table 
-#tie_breaking_append <- dbReadTable(conn, "clean_claims_21")
+#clean_claims_21<- dbReadTable(conn, "clean_claims_21")
 
 #keep the last version
-#last_version <- max(tie_breaking_append$version)
+#last_version <- max(clean_claims_21$version)
 
-#tie_breaking_append <- tie_breaking_append[ tie_breaking_append$version == last_version, ]
+#clean_claims_21 <- clean_claims_21[ clean_claims_21$version == last_version, ]
+
+
 
 ```
 
@@ -71,7 +73,7 @@ tie_breaking_append <-import("stacking_encoded.dta")
 ### Create a plot with error rate per encoder (Andrea/Edwar) (x axis is for number of batch, y for the error rate)
 
 #keeping just claims reviewed by Jaime
-tie_breaking_append <- tie_breaking_append[ tie_breaking_append$tiebraker_name == "Jaime", ]
+tie_breaking_append <- clean_claims_21[ clean_claims_21$tiebraker_name == "Jaime", ]
 
 #Andrea's number of errors
 tie_breaking_append$error_andrea <- rep(0, nrow(tie_breaking_append))
@@ -145,7 +147,15 @@ fig
 ```
 
 
-### Another tab
+### <b><font face="Arial" size="4px" color="#000000">Table per encoded variable with the number and percentage of missing observations</font></b>  
+
+
+```{r, include=FALSE}
+
+
+```
+
+
 
 
 
