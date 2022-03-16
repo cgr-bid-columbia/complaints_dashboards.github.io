@@ -121,7 +121,7 @@ data_plot <- merge(df_andrea_rate, df_edwar_rate, by = "date_batch")
 
 
 
-Page 1
+Newly encoded data
 =====================================  
 
    
@@ -213,6 +213,6 @@ tbl
 
 
 
-Page 2
+Claims 2021
 =====================================  
 
