@@ -13,6 +13,7 @@ library(dplyr)
 library(tidyverse)
 library(plotly)
 library ('plyr')
+library(reactable)
 ```
 
 
@@ -164,11 +165,47 @@ df_missings <- ldply(clean_claims_21, function(var_value) sum(var_value ==""))
 colnames(df_missings) <- c("variable", "n_missings")
 
 #adding a new column: percentage of missings obs 
-df_missings$percentage_missing = round( (df_missings$n_missings/ nrow(clean_claims_21))*100 , 1)
-
+df_missings$percentage_missing = df_missings$n_missings/ nrow(clean_claims_21)
 ```
 
 
+```{r}
+bar_chart <- function(label, width = "100%", height = "14px", fill = "#00bfc4", background = NULL) {
+  bar <- htmltools::div(style = list(background = fill, width = width, height = height))
+  chart <- htmltools::div(style = list(flexGrow = 1, marginLeft = "6px", background = background), bar)
+  htmltools::div(style = list(display = "flex", alignItems = "center"), label, chart)
+}
+
+tbl <- reactable::reactable(df_missings,
+                     pagination = FALSE,
+                     highlight = TRUE,
+                     height = 400,
+                     sortable = TRUE,
+                     borderless = TRUE,
+                     defaultPageSize = nrow(df_missings),
+                     columns = list(
+                       variable = reactable::colDef(name = "Variable", minWidth = 50, maxWidth = 100),
+                       n_missings = reactable::colDef(name = "Number of missings",  minWidth = 50, maxWidth = 100),
+                       percentage_missing = reactable::colDef(name = "% missings",  
+                                                      minWidth = 50, maxWidth = 200,
+                                                      cell = function(value) {
+                                                        # Format as percentages with 1 decimal place
+                                                        value <- paste0(format(round(value * 100, 2), nsmall = 1), "%")
+                                                        bar_chart(value, width = value, fill = "red", background = "#e1e1e1")
+                                                      },
+                       align = "left"))
+)
+
+library(htmltools)
+htmltools::div(class = "standings",
+  htmltools::div(class = "title",
+    htmltools::h2("Total Number of Covid19 Cases by Country"),
+    "Clich on the columns names to resort the table"
+  ),
+  tbl,
+  paste("Data last updated on")
+)
+```
 
 
 
