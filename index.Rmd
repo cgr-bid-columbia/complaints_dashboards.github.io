@@ -2,7 +2,7 @@
 title: "Complaints dashboard"
 output: 
   flexdashboard::flex_dashboard:
-    orientation: rows
+    orientation: columns
     vertical_layout: fill
 ---
 
@@ -125,7 +125,7 @@ Page 1
 =====================================  
 
    
-Column {data-width=400}
+Column {data-width=500}
 -------------------------------------
 
 ### <b><font face="Arial" size="4px" color="#000000">Plot with error rate per encoder (Andrea/Edwar)</font></b>  
@@ -148,6 +148,13 @@ fig <- fig %>%
 fig
 ```
 
+
+### new tab
+
+
+
+Column {data-width=500}
+-------------------------------------
 
 ### <b><font face="Arial" size="4px" color="#000000">Table per encoded variable with the number and percentage of missing observations</font></b>  
 
@@ -209,8 +216,6 @@ htmltools::div(class = "standings",
 
 
 
-Column {data-width=600}
--------------------------------------
 
 
 
