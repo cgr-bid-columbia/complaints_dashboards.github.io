@@ -190,6 +190,8 @@ tbl <- reactable::reactable(df_missings,
                      sortable = TRUE,
                      borderless = TRUE,
                      defaultPageSize = nrow(df_missings),
+                     defaultSortOrder = "desc",
+                     defaultSorted = "percentage_missing",
                      columns = list(
                        variable = reactable::colDef(name = "Variable", minWidth = 50, maxWidth = 100),
                        n_missings = reactable::colDef(name = "Number of missings",  minWidth = 50, maxWidth = 100),
@@ -203,15 +205,7 @@ tbl <- reactable::reactable(df_missings,
                        align = "left"))
 )
 
-library(htmltools)
-htmltools::div(class = "standings",
-  htmltools::div(class = "title",
-    htmltools::h2("Total Number of Covid19 Cases by Country"),
-    "Clich on the columns names to resort the table"
-  ),
-  tbl,
-  paste("Data last updated on")
-)
+tbl
 ```
 
 
