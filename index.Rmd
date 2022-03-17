@@ -210,6 +210,18 @@ AOC_entity %>%
 ```
 
 
+```{r}
+# number and percentage of denuncias per type of primary class
+
+primary_class_count <- subset(clean_claims_21, TIPO_DENUNCIA_PRIMARIO_14_CLASES!= "" ) %>% 
+                         count(TIPO_DENUNCIA_PRIMARIO_14_CLASES, sort = TRUE) 
+
+primary_class_count$percentage <- round( (primary_class_count$n/sum(primary_class_count$n) )*100, 1)
+
+primary_class_count
+
+```
+
 
 
 
@@ -269,7 +281,7 @@ tbl
 
 
 
-
+Page 2
 =====================================  
 
 ```{r, include=FALSE}
