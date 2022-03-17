@@ -211,8 +211,18 @@ AOC_entity %>%
 
 
 ```{r}
-# number and percentage of denuncias per type of primary class
 
+#delete special characters from TIPO_DENUNCIA_PRIMARIO_14_CLASES
+clean_claims_21$TIPO_DENUNCIA_PRIMARIO_14_CLASES <- iconv(clean_claims_21$TIPO_DENUNCIA_PRIMARIO_14_CLASES, from="UTF-8",to="ASCII//TRANSLIT")
+
+
+#Solving some issues with TIPO_DENUNCIA_PRIMARIO_14_CLASES
+clean_claims_21$TIPO_DENUNCIA_PRIMARIO_14_CLASES <- gsub('USO INAPROPIADO DE LOS RECURSOS NO FINANCIEROS', 'USO INAPROPIADO DE RECURSOS NO FINANCIEROS', clean_claims_21$TIPO_DENUNCIA_PRIMARIO_14_CLASES)
+
+clean_claims_21$TIPO_DENUNCIA_PRIMARIO_14_CLASES <- gsub('USO INAPROPIADO DE RECURSOS NO FINACIEROS', 'USO INAPROPIADO DE RECURSOS NO FINANCIEROS', clean_claims_21$TIPO_DENUNCIA_PRIMARIO_14_CLASES)
+
+
+# number and percentage of denuncias per type of primary class
 primary_class_count <- subset(clean_claims_21, TIPO_DENUNCIA_PRIMARIO_14_CLASES!= "" ) %>% 
                          count(TIPO_DENUNCIA_PRIMARIO_14_CLASES, sort = TRUE) 
 
@@ -223,7 +233,16 @@ primary_class_count
 ```
 
 
+```{r, include=FALSE}
 
+# creating a variable that identifies corruption claims
+clean_claims_21$corruption_denunc<- ifelse(clean_claims_21$TIPO_DENUNCIA_PRIMARIO_14_CLASES=='LUCRO ILEGAL'| clean_claims_21$TIPO_DENUNCIA_PRIMARIO_14_CLASES=='USO INAPROPIADO DE RECURSOS NO FINANCIEROS'| clean_claims_21$TIPO_DENUNCIA_PRIMARIO_14_CLASES== 'FAVORITISMO' | clean_claims_21$TIPO_DENUNCIA_PRIMARIO_14_CLASES== 'COLUSION'| clean_claims_21$TIPO_DENUNCIA_PRIMARIO_14_CLASES== 'ABUSO DE AUTORIDAD O EXTORSION', 1, 0)
+
+clean_claims_21$corruption_denunc<- ifelse(clean_claims_21$TIPO_DENUNCIA_PRIMARIO_14_CLASES=='', '', clean_claims_21$corruption_denunc)
+
+
+
+```
 
 
 
