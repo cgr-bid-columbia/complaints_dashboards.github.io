@@ -156,9 +156,9 @@ fig
 names(clean_claims_21)
 ```
 
+
 ```{r}
 # number and percentage of denuncias per type of entity
-
 type_entity_count <- subset(clean_claims_21, TIPO_DE_ENTIDAD!= "" ) %>% 
                          count(TIPO_DE_ENTIDAD, sort = TRUE) 
 
@@ -167,6 +167,24 @@ type_entity_count$percentage <- round( (type_entity_count$n/sum(type_entity_coun
 type_entity_count
 
 ```
+
+
+```{r}
+#Solving issues with aoc_willay values
+clean_claims_21$aoc_willay[clean_claims_21$aoc_willay == ","] <- ""
+
+#binary measure for whether the claim gets "evaluacion de fondo"
+clean_claims_21$assigned_AOC <- ifelse(clean_claims_21$aoc_willay != '', 1, 0)
+
+#claims getting "evaluacion de fondo" per entity
+AOC_entity <- subset(clean_claims_21[c("TIPO_DE_ENTIDAD", "assigned_AOC")] , TIPO_DE_ENTIDAD!= "" )
+
+AOC_entity %>% 
+   group_by(TIPO_DE_ENTIDAD) %>% summarise_each(funs(sum))
+
+```
+
+
 
 
 
@@ -179,9 +197,6 @@ Column {data-width=500}
 
 
 ```{r, include=FALSE}
-
-#Solving issues with aoc_willay values
-clean_claims_21$aoc_willay[clean_claims_21$aoc_willay == ","] <- ""
 
 #table(clean_claims_21$aoc_willay)
 
