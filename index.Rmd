@@ -64,14 +64,44 @@ conn <- dbConnect(
 
 
 ```{r, include=FALSE}
-
 #TEMPORAL: (delete after last commit)
 setwd("C:/BID_Columbia/claims_assigment/outputs_temp")
 
 clean_claims_21 <-import("stacking_encoded.dta")
 
 ##############
+```
 
+
+```{r}
+#Solving issues with aoc_willay values
+clean_claims_21$aoc_willay[clean_claims_21$aoc_willay == ","] <- ""
+
+#from lowercase to uppercase
+clean_claims_21 <- mutate_each(clean_claims_21, funs(toupper))
+
+#delete special characters from TIPO_DE_ENTIDAD
+clean_claims_21$TIPO_DE_ENTIDAD <- iconv(clean_claims_21$TIPO_DE_ENTIDAD, from="UTF-8",to="ASCII//TRANSLIT")
+
+#Solving some issues with TIPO_DE_ENTIDAD 
+clean_claims_21$TIPO_DE_ENTIDAD <- gsub('DIRECCION REGIONAL DE LA PRODUCCION', 'DIRECCION REGIONAL DE PRODUCCION', clean_claims_21$TIPO_DE_ENTIDAD)
+clean_claims_21$TIPO_DE_ENTIDAD <- gsub('DIRECCION REGIONAL DE SALUD DE AREQUIPA', 'DIRECCION REGIONAL DE SALUD AREQUIPA', clean_claims_21$TIPO_DE_ENTIDAD)
+clean_claims_21$TIPO_DE_ENTIDAD <- gsub('DIRECCION REGIONAL DE SALUD DE CALLAO', 'DIRECCION REGIONAL DE SALUD CALLAO', clean_claims_21$TIPO_DE_ENTIDAD)
+clean_claims_21$TIPO_DE_ENTIDAD <- gsub('DIRECCION REGIONAL DE SALUD DE UCAYALI', 'DIRECCION REGIONAL DE SALUD UCAYALI', clean_claims_21$TIPO_DE_ENTIDAD)
+clean_claims_21$TIPO_DE_ENTIDAD <- gsub('DIRECCION REGIONAL DE SALUD DE LA LIBERTAD', 'DIRECCION REGIONAL DE SALUD LA LIBERTAD', clean_claims_21$TIPO_DE_ENTIDAD)
+clean_claims_21$TIPO_DE_ENTIDAD <- gsub('DIRECCION REGIONAL DE SALUD DE SAN MARTIN', 'DIRECCION REGIONAL DE SALUD SAN MARTIN', clean_claims_21$TIPO_DE_ENTIDAD)
+clean_claims_21$TIPO_DE_ENTIDAD <- gsub('DIRECCION REGIONAL DE TRABAJO Y PROMOCION DE EMPLEO', 'DIRECCION REGIONAL DE TRABAJO Y PROMOCION DEL EMPLEO', clean_claims_21$TIPO_DE_ENTIDAD)
+clean_claims_21$TIPO_DE_ENTIDAD <- gsub('DIRECCION REGIONAL DE TRABAJO Y PROMOCION DE EMPLEO', 'DIRECCION REGIONAL DE TRABAJO Y PROMOCION DEL EMPLEO', clean_claims_21$TIPO_DE_ENTIDAD)
+clean_claims_21$TIPO_DE_ENTIDAD <- gsub('DIRECCION REGIONAL DE TRANSPORTES', 'DIRECCION REGIONAL DE TRANSPORTE Y COMUNICACIONES', clean_claims_21$TIPO_DE_ENTIDAD)
+clean_claims_21$TIPO_DE_ENTIDAD <- gsub('DIRECCION REGIONAL DE TRANSPORTES Y COMUNICACIONES', 'DIRECCION REGIONAL DE TRANSPORTE Y COMUNICACIONES', clean_claims_21$TIPO_DE_ENTIDAD)
+clean_claims_21$TIPO_DE_ENTIDAD <- gsub('DIRECCION REGIONAL DE TRANSPORTES Y COMUNICACIONES', 'DIRECCION REGIONAL DE TRANSPORTE Y COMUNICACIONES', clean_claims_21$TIPO_DE_ENTIDAD)
+clean_claims_21$TIPO_DE_ENTIDAD <- gsub('MINISTERIO DE PRODUCCION', 'MINISTERIO DE LA PRODUCCION', clean_claims_21$TIPO_DE_ENTIDAD)
+
+```
+
+
+
+```{r, include=FALSE}
 ### Create a plot with error rate per encoder (Andrea/Edwar) (x axis is for number of batch, y for the error rate)
 
 #keeping just claims reviewed by Jaime
@@ -170,9 +200,6 @@ type_entity_count
 
 
 ```{r}
-#Solving issues with aoc_willay values
-clean_claims_21$aoc_willay[clean_claims_21$aoc_willay == ","] <- ""
-
 #binary measure for whether the claim gets "evaluacion de fondo"
 clean_claims_21$assigned_AOC <- ifelse(clean_claims_21$aoc_willay != '', 1, 0)
 
