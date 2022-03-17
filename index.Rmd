@@ -24,27 +24,27 @@ library(reactable)
 
 ```{r, include=FALSE}
 
-#library(DBI)
+library(DBI)
 
 # Obtaining the values of the environment variables
 
-#db <- Sys.getenv("db_algorithm")  #database name
-#db_host <- Sys.getenv("db_host") #localhost
-#db_port <- Sys.getenv("db_port") #port
-#db_user <- Sys.getenv("db_user") #credentials: user name
-#db_pass <- Sys.getenv("db_pass") #credentials: user password
+db <- Sys.getenv("db_algorithm")  #database name
+db_host <- Sys.getenv("db_host") #localhost
+db_port <- Sys.getenv("db_port") #port
+db_user <- Sys.getenv("db_user") #credentials: user name
+db_pass <- Sys.getenv("db_pass") #credentials: user password
 
 
 #Connecting to the Postgres database
 
-#conn <- dbConnect(
-#  RPostgres::Postgres(),
-#  dbname = db,
-#  host = db_host,
-#  port = db_port,
-#  user = db_user,
-#  password = db_pass
-#)
+conn <- dbConnect(
+  RPostgres::Postgres(),
+  dbname = db,
+  host = db_host,
+  port = db_port,
+  user = db_user,
+  password = db_pass
+)
 
 ```
 
@@ -152,6 +152,25 @@ fig
 ### new tab
 
 
+```{r}
+names(clean_claims_21)
+```
+
+```{r}
+# number and percentage of denuncias per type of entity
+
+type_entity_count <- subset(clean_claims_21, TIPO_DE_ENTIDAD!= "" ) %>% 
+                         count(TIPO_DE_ENTIDAD, sort = TRUE) 
+
+type_entity_count$percentage <- round( (type_entity_count$n/sum(type_entity_count$n) )*100, 1)
+
+type_entity_count
+
+```
+
+
+
+
 
 Column {data-width=500}
 -------------------------------------
@@ -210,9 +229,22 @@ tbl
 
 
 
-
-
-
 Claims 2021
 =====================================  
+
+```{r}
+# import raw_claims_feb21 
+raw_claims_feb21 <- dbReadTable(conn, "raw_claims_feb21")
+```
+
+
+```{r}
+names(raw_claims_feb21 )
+View(raw_claims_feb21)
+```
+
+
+
+
+
 
