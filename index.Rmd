@@ -210,7 +210,7 @@ AOC_entity %>%
 ```
 
 
-```{r}
+```{r, include=FALSE}
 
 #delete special characters from TIPO_DENUNCIA_PRIMARIO_14_CLASES
 clean_claims_21$TIPO_DENUNCIA_PRIMARIO_14_CLASES <- iconv(clean_claims_21$TIPO_DENUNCIA_PRIMARIO_14_CLASES, from="UTF-8",to="ASCII//TRANSLIT")
@@ -233,7 +233,7 @@ primary_class_count
 ```
 
 
-```{r}
+```{r, include=FALSE}
 
 # creating a variable that identifies corruption claims
 clean_claims_21$corruption_denunc<- ifelse(clean_claims_21$TIPO_DENUNCIA_PRIMARIO_14_CLASES=='LUCRO ILEGAL'| clean_claims_21$TIPO_DENUNCIA_PRIMARIO_14_CLASES=='USO INAPROPIADO DE RECURSOS NO FINANCIEROS'| clean_claims_21$TIPO_DENUNCIA_PRIMARIO_14_CLASES== 'FAVORITISMO' | clean_claims_21$TIPO_DENUNCIA_PRIMARIO_14_CLASES== 'COLUSION'| clean_claims_21$TIPO_DENUNCIA_PRIMARIO_14_CLASES== 'ABUSO DE AUTORIDAD O EXTORSION', 1, 0)
@@ -248,6 +248,23 @@ corruption_claims_count <- subset(clean_claims_21, corruption_denunc!= "" ) %>%
 corruption_claims_count$percentage <- round( (corruption_claims_count$n/sum(corruption_claims_count$n) )*100, 1)
 
 corruption_claims_count
+
+```
+
+```{r, include=FALSE}
+
+#delete special characters from DEPARTAMENTO
+clean_claims_21$DEPARTAMENTO <- iconv(clean_claims_21$DEPARTAMENTO, from="UTF-8",to="ASCII//TRANSLIT")
+
+#todo: create an interactive map (ask Marco)
+
+#number of corruption claims by dep 
+corruption_claims_dep <- subset(clean_claims_21[c("DEPARTAMENTO", "corruption_denunc")] , DEPARTAMENTO!= ""  ) 
+
+corruption_claims_dep$corruption_denunc <- as.numeric(corruption_claims_dep$corruption_denunc)
+
+corruption_claims_dep %>% 
+   group_by(DEPARTAMENTO) %>% summarise_each(funs(sum)) 
 
 ```
 
