@@ -334,17 +334,59 @@ raw_claims_feb21 <- dbReadTable(conn, "raw_claims_feb21")
 
 
 ```{r, include=FALSE}
+
+#from lowercase to uppercase
+raw_claims_feb21 <- mutate_each(raw_claims_feb21, funs(toupper))
+
 names(raw_claims_feb21 )
 ```
 
+```{r}
+nrow(clean_claims_21)
 
+clean_claims_21$clean_claims_21 <- 1
+```
+
+
+```{r}
+
+#convert all vars to string
+clean_claims_21_ch <- clean_claims_21 %>%
+  mutate(across(everything(), as.character))
+
+#deleting white spaces
+clean_claims_21_ch$expediente <- gsub(" ", "", clean_claims_21_ch$expediente) 
+clean_claims_21_ch$fur <- gsub(" ", "", clean_claims_21_ch$fur) 
+clean_claims_21_ch$numero_hec <- gsub(" ", "", clean_claims_21_ch$numero_hec) 
+clean_claims_21_ch$numero_fud  <- gsub(" ", "", clean_claims_21_ch$numero_fud ) 
+
+
+raw_claims_feb21_ch <- raw_claims_feb21 %>%
+  mutate(across(everything(), as.character))
+
+raw_claims_feb21_ch $expediente <- gsub(" ", "", raw_claims_feb21_ch $expediente) 
+raw_claims_feb21_ch $fur <- gsub(" ", "", raw_claims_feb21_ch $fur) 
+raw_claims_feb21_ch $numero_hec <- gsub(" ", "", raw_claims_feb21_ch $numero_hec) 
+raw_claims_feb21_ch $numero_fud  <- gsub(" ", "", raw_claims_feb21_ch $numero_fud ) 
+
+```
 
 ```{r}
 #Merge claims 21 with codified claims
 
-claims_21 <- merge(x = raw_claims_feb21, y = clean_claims_21, by = c("expediente", "fur", "numero_hec", "numero_hecho", "numero_fud"), all.x = TRUE)
+claims_21 <- merge(x = raw_claims_feb21_ch, y = clean_claims_21_ch, by = c("expediente", "fur", "numero_hec", "numero_fud"), all.x = TRUE)
 
+
+nrow(claims_21)
 ```
+
+
+```{r}
+table(claims_21$clean_claims_21)
+```
+
+
+
 
 
 
