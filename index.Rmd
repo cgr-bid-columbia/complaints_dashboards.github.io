@@ -233,7 +233,7 @@ primary_class_count
 ```
 
 
-```{r, include=FALSE}
+```{r}
 
 # creating a variable that identifies corruption claims
 clean_claims_21$corruption_denunc<- ifelse(clean_claims_21$TIPO_DENUNCIA_PRIMARIO_14_CLASES=='LUCRO ILEGAL'| clean_claims_21$TIPO_DENUNCIA_PRIMARIO_14_CLASES=='USO INAPROPIADO DE RECURSOS NO FINANCIEROS'| clean_claims_21$TIPO_DENUNCIA_PRIMARIO_14_CLASES== 'FAVORITISMO' | clean_claims_21$TIPO_DENUNCIA_PRIMARIO_14_CLASES== 'COLUSION'| clean_claims_21$TIPO_DENUNCIA_PRIMARIO_14_CLASES== 'ABUSO DE AUTORIDAD O EXTORSION', 1, 0)
@@ -241,6 +241,13 @@ clean_claims_21$corruption_denunc<- ifelse(clean_claims_21$TIPO_DENUNCIA_PRIMARI
 clean_claims_21$corruption_denunc<- ifelse(clean_claims_21$TIPO_DENUNCIA_PRIMARIO_14_CLASES=='', '', clean_claims_21$corruption_denunc)
 
 
+# number and percentage of corruption claims 
+corruption_claims_count <- subset(clean_claims_21, corruption_denunc!= "" ) %>% 
+                         count(corruption_denunc, sort = TRUE)
+
+corruption_claims_count$percentage <- round( (corruption_claims_count$n/sum(corruption_claims_count$n) )*100, 1)
+
+corruption_claims_count
 
 ```
 
