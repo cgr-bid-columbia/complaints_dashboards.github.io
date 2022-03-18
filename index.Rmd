@@ -339,6 +339,14 @@ names(raw_claims_feb21 )
 
 
 
+```{r}
+#Merge claims 21 with codified claims
+
+claims_21 <- merge(x = raw_claims_feb21, y = clean_claims_21, by = c("expediente", "fur", "numero_hec", "numero_hecho", "numero_fud"), all.x = TRUE)
+
+```
+
+
 
 
 
