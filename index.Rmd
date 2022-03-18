@@ -51,12 +51,12 @@ conn <- dbConnect(
 
 ```{r, include=FALSE}
 # import clean claims 21 table 
-#clean_claims_21<- dbReadTable(conn, "clean_claims_21")
+clean_claims_21<- dbReadTable(conn, "clean_claims_21")
 
 #keep the last version
-#last_version <- max(clean_claims_21$version)
+last_version <- max(clean_claims_21$version)
 
-#clean_claims_21 <- clean_claims_21[ clean_claims_21$version == last_version, ]
+clean_claims_21 <- clean_claims_21[ clean_claims_21$version == last_version, ]
 
 
 
@@ -65,9 +65,9 @@ conn <- dbConnect(
 
 ```{r, include=FALSE}
 #TEMPORAL: (delete after last commit)
-setwd("C:/BID_Columbia/claims_assigment/outputs_temp")
+#setwd("C:/BID_Columbia/claims_assigment/outputs_temp")
 
-clean_claims_21 <-import("stacking_encoded.dta")
+#clean_claims_21 <-import("stacking_encoded.dta")
 
 ##############
 ```
