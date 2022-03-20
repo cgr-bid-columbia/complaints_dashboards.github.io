@@ -28,35 +28,35 @@ library(DBI)
 
 # Obtaining the values of the environment variables
 
-db <- Sys.getenv("db_algorithm")  #database name
-db_host <- Sys.getenv("db_host") #localhost
-db_port <- Sys.getenv("db_port") #port
-db_user <- Sys.getenv("db_user") #credentials: user name
-db_pass <- Sys.getenv("db_pass") #credentials: user password
+#db <- Sys.getenv("db_algorithm")  #database name
+#db_host <- Sys.getenv("db_host") #localhost
+#db_port <- Sys.getenv("db_port") #port
+#db_user <- Sys.getenv("db_user") #credentials: user name
+#db_pass <- Sys.getenv("db_pass") #credentials: user password
 
 
 #Connecting to the Postgres database
 
-conn <- dbConnect(
-  RPostgres::Postgres(),
-  dbname = db,
-  host = db_host,
-  port = db_port,
-  user = db_user,
-  password = db_pass
-)
+#conn <- dbConnect(
+#  RPostgres::Postgres(),
+#  dbname = db,
+#  host = db_host,
+#  port = db_port,
+#  user = db_user,
+#  password = db_pass
+#)
 
 ```
 
 
 ```{r, include=FALSE}
 # import clean claims 21 table 
-clean_claims_21<- dbReadTable(conn, "clean_claims_21")
+#clean_claims_21<- dbReadTable(conn, "clean_claims_21")
 
 #keep the last version
-last_version <- max(clean_claims_21$version)
+#last_version <- max(clean_claims_21$version)
 
-clean_claims_21 <- clean_claims_21[ clean_claims_21$version == last_version, ]
+#clean_claims_21 <- clean_claims_21[ clean_claims_21$version == last_version, ]
 
 
 
@@ -65,9 +65,9 @@ clean_claims_21 <- clean_claims_21[ clean_claims_21$version == last_version, ]
 
 ```{r, include=FALSE}
 #TEMPORAL: (delete after last commit)
-#setwd("C:/BID_Columbia/claims_assigment/outputs_temp")
+setwd("C:/BID_Columbia/claims_assigment/outputs_temp")
 
-#clean_claims_21 <-import("stacking_encoded.dta")
+clean_claims_21 <-import("stacking_encoded.dta")
 
 ##############
 ```
@@ -329,34 +329,27 @@ Page 2
 
 ```{r, include=FALSE}
 # import raw_claims_feb21 
-raw_claims_feb21 <- dbReadTable(conn, "raw_claims_feb21")
+#raw_claims_feb21 <- dbReadTable(conn, "raw_claims_feb21")
 ```
 
 
 ```{r, include=FALSE}
+#TEMPORAL: (delete after last commit)
+setwd("C:/BID_Columbia")
 
-#from lowercase to uppercase
-raw_claims_feb21 <- mutate_each(raw_claims_feb21, funs(toupper))
+raw_claims_feb21 <-import("raw_claims_feb21.dta")
 
-names(raw_claims_feb21 )
-```
-
-```{r}
-nrow(clean_claims_21)
-
-clean_claims_21$clean_claims_21 <- 1
+##############
 ```
 
 
 ```{r}
-
 #convert all vars to string
 clean_claims_21_ch <- clean_claims_21 %>%
   mutate(across(everything(), as.character))
 
 raw_claims_feb21_ch <- raw_claims_feb21 %>%
   mutate(across(everything(), as.character))
-
 
 #deleting white spaces
 clean_claims_21_ch$expediente <- gsub(" ", "", clean_claims_21_ch$expediente) 
@@ -371,6 +364,16 @@ raw_claims_feb21_ch$numero_hec <- gsub(" ", "", raw_claims_feb21_ch$numero_hec)
 raw_claims_feb21_ch$numero_hecho <- gsub(" ", "", raw_claims_feb21_ch$numero_hecho) 
 raw_claims_feb21_ch$numero_fud  <- gsub(" ", "", raw_claims_feb21_ch$numero_fud ) 
 
+#from lowercase to uppercase
+clean_claims_21_ch <- mutate_each(clean_claims_21_ch, funs(toupper))
+raw_claims_feb21_ch <- mutate_each(raw_claims_feb21_ch, funs(toupper))
+
+#solving issues with numero fud var
+clean_claims_21_ch$numero_fud <- gsub('NAN', '', clean_claims_21_ch$numero_fud)
+
+#creating variable that will help us with the merge
+clean_claims_21_ch$clean_claims_21 <- "1"
+
 ```
 
 ```{r}
@@ -383,11 +386,10 @@ raw_claims_feb21_ch$expediente <- sub("^0+", "", raw_claims_feb21_ch$expediente)
 ```
 
 
-
 ```{r}
 #Merge claims 21 with codified claims (todo: solve issues)
 
-claims_21 <- merge(x = raw_claims_feb21_ch, y = clean_claims_21_ch, by = c("expediente", "fur", "numero_hec", "numero_fud"), all.x = TRUE)
+claims_21 <- merge(x = raw_claims_feb21_ch, y = clean_claims_21_ch, by = c("expediente", "fur", "numero_hec", "numero_hecho", "numero_fud"), all.x = TRUE)
 
 
 nrow(claims_21)
@@ -397,13 +399,6 @@ nrow(claims_21)
 ```{r}
 table(claims_21$clean_claims_21)
 ```
-
-```{r}
-
-claims_21$alarm <-producto_propuesto 
-```
-
-
 
 
 
