@@ -3,7 +3,7 @@ title: "Complaints dashboard"
 output: 
   flexdashboard::flex_dashboard:
     orientation: columns
-    vertical_layout: fill
+    vertical_layout: scroll
 ---
 
 ```{r setup, include=FALSE}
@@ -14,6 +14,7 @@ library(dplyr)
 library(tidyverse)
 library(plotly)
 library(reactable)
+library(htmltools)
 ```
 
 
@@ -152,7 +153,8 @@ fig
 ```
 
 
-### new tab
+### <b><font face="Arial" size="4px" color="#000000">Claims by entity</font></b>  
+
 
 ```{r, include=FALSE}
 #Solving issues with aoc_willay values
@@ -180,21 +182,66 @@ clean_claims_21$TIPO_DE_ENTIDAD <- gsub('MINISTERIO DE PRODUCCION', 'MINISTERIO 
 
 ```
 
-```{r, include=FALSE}
-names(clean_claims_21)
-```
 
-
-```{r, include=FALSE}
+```{r}
 # number and percentage of denuncias per type of entity
 type_entity_count <- subset(clean_claims_21, TIPO_DE_ENTIDAD!= "" ) %>% 
                          count(TIPO_DE_ENTIDAD, sort = TRUE) 
 
 type_entity_count$percentage <- round( (type_entity_count$n/sum(type_entity_count$n) )*100, 1)
 
-type_entity_count
+
+# Render a bar chart with a label on the left
+bar_chart <- function(label, width = "100%", height = "14px", fill = "#00bfc4", background = NULL) {
+  bar <- div(style = list(background = fill, width = width, height = height))
+  chart <- div(style = list(flexGrow = 1, marginLeft = "6px", background = background), bar)
+  div(style = list(display = "flex", alignItems = "center"), label, chart)
+}
+
+
+tbl <- reactable(
+  type_entity_count,
+  pagination = TRUE,
+  defaultSorted = "n",
+  defaultColDef = colDef(headerClass = "header", align = "left"),
+  columns = list(
+    TIPO_DE_ENTIDAD = colDef(name = "Entity type"
+ 
+    ),
+    n = colDef(
+      name = "Number of obs",
+      defaultSortOrder = "desc",
+      # Render the bar charts using a custom cell render function
+      cell = function(value) {
+        width <- paste0(value * 100 / max(type_entity_count$n), "%")
+        # Add thousands separators
+        value <- format(value, big.mark = ",")
+        bar_chart(value, width = width, fill = "#3fc1c9")
+      },
+      # And left-align the columns
+      align = "left"
+    ),
+    percentage = colDef(
+      name = "Percentage",
+      defaultSortOrder = "desc",
+      # Render the bar charts using a custom cell render function
+      cell = function(value) {
+        # Format as percentages with 1 decimal place
+        value <- paste0(format(value , nsmall = 1), "%")
+        bar_chart(value, width = value, fill = "#fc5185", background = "#e1e1e1")
+      },
+      # And left-align the columns
+      align = "left"
+    )
+  )
+)
+
+tbl
 
 ```
+
+
+### <b><font face="Arial" size="4px" color="#000000">Claims getting "evaluacion de fondo" per entity</font></b>  
 
 
 ```{r, include=FALSE}
@@ -373,6 +420,7 @@ clean_claims_21_ch$numero_fud <- gsub('NAN', '', clean_claims_21_ch$numero_fud)
 
 #creating variable that will help us with the merge
 clean_claims_21_ch$clean_claims_21 <- "1"
+raw_claims_feb21_ch$raw_claims_feb21 <- "1"
 
 ```
 
