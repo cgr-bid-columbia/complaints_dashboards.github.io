@@ -260,7 +260,7 @@ AOC_entity %>%
 ### <b><font face="Arial" size="4px" color="#000000">Claims per type of primary class</font></b>  
 
 
-```{r, include=FALSE}
+```{r}
 
 #delete special characters from TIPO_DENUNCIA_PRIMARIO_14_CLASES
 clean_claims_21$TIPO_DENUNCIA_PRIMARIO_14_CLASES <- iconv(clean_claims_21$TIPO_DENUNCIA_PRIMARIO_14_CLASES, from="UTF-8",to="ASCII//TRANSLIT")
@@ -328,6 +328,8 @@ tbl
 ```
 
 
+### <b><font face="Arial" size="4px" color="#000000">Corruption claims</font></b>  
+
 ```{r, include=FALSE}
 
 # creating a variable that identifies corruption claims
@@ -342,9 +344,45 @@ corruption_claims_count <- subset(clean_claims_21, corruption_denunc!= "" ) %>%
 
 corruption_claims_count$percentage <- round( (corruption_claims_count$n/sum(corruption_claims_count$n) )*100, 1)
 
-corruption_claims_count
+corruption_claims_count <- corruption_claims_count %>%
+  mutate(
+    type = ifelse(corruption_claims_count$corruption_denunc == 1, "Yes", "No"),
+    hover_text = paste0(type, ": ", n)
+  ) %>%
+  mutate(percentage_label = paste0(percentage,"%"))
+
+
 
 ```
+
+
+```{r}
+library(ggplot2)
+library(ggiraph)
+
+
+donut_plot <- ggplot(corruption_claims_count, aes(y = n, fill = type)) +
+  geom_bar_interactive(
+    aes(x = 1, tooltip = hover_text),
+    width = 0.1,
+    stat = "identity",
+    show.legend = FALSE
+    ) +
+  annotate(
+    geom = "text",
+    x = 0,
+    y = 0,
+    label = corruption_claims_count[["percentage_label"]][corruption_claims_count[["type"]] == "Yes"],
+    size = 18,
+    color = "magenta"
+    ) +
+  scale_fill_manual(values = c(No = "blue", Yes = "magenta")) +
+  coord_polar(theta = "y") +
+  theme_void()
+
+ggiraph(ggobj = donut_plot, width = 0.65)
+```
+
 
 ```{r, include=FALSE}
 
