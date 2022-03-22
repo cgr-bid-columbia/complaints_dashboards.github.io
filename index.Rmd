@@ -153,20 +153,26 @@ valueBox(value = paste(format(n_sc, big.mark = ","), "", sep = " "),
 ## Row
 -----------------------------------------------------------------------
 
+### <b><font face="Arial" size="4px" color="#000000">HEC status</font></b>
+
+```{r}
+#Donut chart: hec status
+
+
+```
+
 
 ### <b><font face="Arial" size="4px" color="#000000">FUR status</font></b>
 
-```{r, include=FALSE}
-
+```{r}
 # Recategorization for fur status
 raw_claims_feb21 <- mutate(raw_claims_feb21, ARA_decision =
                                    case_when(estado_fur == "Aceptado a trámite" | estado_fur == "Admitido" ~ "Accept",
                                              estado_fur == "Derivado" ~ "Derive",
                                              estado_fur == "Desestimado" | estado_fur == "Devuelto" | estado_fur == "No aceptado a trámite" | estado_fur == "No admitido" ~ "Reject",
                                              estado_fur == "En evaluación" | estado_fur == "Pendiente" ~ "Waiting" ) )
-```
 
-```{r}
+
 #Donut chart: fur status
 fur_status_df <- as.data.frame(table(raw_claims_feb21$ARA_decision))
 
@@ -179,6 +185,33 @@ fig <- fig %>% layout(showlegend = T,
                       yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
 
 fig
+```
+
+### <b><font face="Arial" size="4px" color="#000000">FUD status</font></b>
+
+```{r}
+# Recategorization for fud status
+raw_claims_feb21 <- mutate(raw_claims_feb21, fud_status_re =
+                                   case_when(estado_fud == ""  ~ "Missings",
+                                             estado_fud == "Derivado" ~ "Derive",
+                                             estado_fud == "Asociado" ~ "Associated",
+                                             estado_fud == "Devuelto" | estado_fud == "Desestimado" ~ "Reject",
+                                             estado_fud == "Sin atender" ~ "Waiting" ) )
+
+
+#Donut chart: fur status
+fud_status_df <- as.data.frame(table(raw_claims_feb21$fud_status_re))
+
+colnames(fud_status_df) <- c("fud_status", "n")
+ 
+fig <- fud_status_df %>% plot_ly(labels = ~fud_status, values = ~n, marker = list(colors = c('#00aa7f', '#ccccc7', '#ff0000', "#2675fc" )))
+fig <- fig %>% add_pie(hole = 0.55, textfont = list(size = 15))
+fig <- fig %>% layout(showlegend = T,
+                      xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+                      yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
+
+fig
+
 ```
 
 
