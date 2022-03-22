@@ -6,6 +6,7 @@ output:
     vertical_layout: scroll
 ---
 
+
 ```{r setup, include=FALSE}
 library(flexdashboard)
 library(rio)
@@ -15,6 +16,12 @@ library(tidyverse)
 library(plotly)
 library(reactable)
 library(htmltools)
+library(ggplot2)
+library(ggiraph)
+```
+
+```{r}
+knitr::opts_chunk$set(fig.width=5, fig.height=3) 
 ```
 
 
@@ -143,15 +150,35 @@ valueBox(value = paste(format(n_sc, big.mark = ","), "", sep = " "),
 ```
 
 
-```{r}
+## Row
+-----------------------------------------------------------------------
+
+
+### <b><font face="Arial" size="4px" color="#000000">FUR status</font></b>
+
+```{r, include=FALSE}
+
 # Recategorization for fur status
 raw_claims_feb21 <- mutate(raw_claims_feb21, ARA_decision =
                                    case_when(estado_fur == "Aceptado a trámite" | estado_fur == "Admitido" ~ "Accept",
                                              estado_fur == "Derivado" ~ "Derive",
                                              estado_fur == "Desestimado" | estado_fur == "Devuelto" | estado_fur == "No aceptado a trámite" | estado_fur == "No admitido" ~ "Reject",
                                              estado_fur == "En evaluación" | estado_fur == "Pendiente" ~ "Waiting" ) )
+```
 
-        
+```{r}
+#Donut chart: fur status
+fur_status_df <- as.data.frame(table(raw_claims_feb21$ARA_decision))
+
+colnames(fur_status_df) <- c("fur_status", "n")
+ 
+fig <- fur_status_df %>% plot_ly(labels = ~fur_status, values = ~n, marker = list(colors = c('#00aa7f', '#ff0000','#ccccc7', "#2675fc" )))
+fig <- fig %>% add_pie(hole = 0.55, textfont = list(size = 15))
+fig <- fig %>% layout(showlegend = T,
+                      xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+                      yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
+
+fig
 ```
 
 
@@ -309,9 +336,6 @@ corruption_claims_count <- corruption_claims_count %>%
 
 
 ```{r}
-library(ggplot2)
-library(ggiraph)
-
 
 donut_plot <- ggplot(corruption_claims_count, aes(y = n, fill = type)) +
   geom_bar_interactive(
@@ -332,7 +356,8 @@ donut_plot <- ggplot(corruption_claims_count, aes(y = n, fill = type)) +
   coord_polar(theta = "y") +
   theme_void()
 
-ggiraph(ggobj = donut_plot, width = 0.2)
+
+ggiraph(ggobj = donut_plot, width = 0.3 )
 ```
 
 
