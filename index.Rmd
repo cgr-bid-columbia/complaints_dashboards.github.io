@@ -143,8 +143,16 @@ valueBox(value = paste(format(n_sc, big.mark = ","), "", sep = " "),
 ```
 
 
+```{r}
+# Recategorization for fur status
+raw_claims_feb21 <- mutate(raw_claims_feb21, ARA_decision =
+                                   case_when(estado_fur == "Aceptado a trámite" | estado_fur == "Admitido" ~ "Accept",
+                                             estado_fur == "Derivado" ~ "Derive",
+                                             estado_fur == "Desestimado" | estado_fur == "Devuelto" | estado_fur == "No aceptado a trámite" | estado_fur == "No admitido" ~ "Reject",
+                                             estado_fur == "En evaluación" | estado_fur == "Pendiente" ~ "Waiting" ) )
 
-
+        
+```
 
 
 ## Row
