@@ -74,53 +74,19 @@ clean_claims_21 <-import("stacking_encoded.dta")
 ```
 
 
+```{r, include=FALSE}
+# import raw_claims_feb21 
+#raw_claims_feb21 <- dbReadTable(conn, "raw_claims_feb21")
+```
+
 
 ```{r, include=FALSE}
-### Create a plot with error rate per encoder (Andrea/Edwar) (x axis is for number of batch, y for the error rate)
+#TEMPORAL: (delete after last commit)
+setwd("C:/BID_Columbia")
 
-#keeping just claims reviewed by Jaime
-tie_breaking_append <- clean_claims_21[ clean_claims_21$tiebraker_name == "Jaime", ]
+raw_claims_feb21 <-import("raw_claims_feb21.dta")
 
-#Andrea's number of errors
-tie_breaking_append$error_andrea <- rep(0, nrow(tie_breaking_append))
-tie_breaking_append$error_andrea[tie_breaking_append$chosen_encoder != "Andrea" & tie_breaking_append$chosen_encoder != "Andrea/Edwar"] <- 1
-
-#Edwar's number of errors
-tie_breaking_append$error_edwar <- rep(0, nrow(tie_breaking_append))
-tie_breaking_append$error_edwar[tie_breaking_append$chosen_encoder != "Edwar" & tie_breaking_append$chosen_encoder != "Andrea/Edwar"] <- 1
-
-#Number of observartions per batches
-df2<- tie_breaking_append %>%
-    group_by(date_batch) %>%
-    summarise(obs = n()) 
-
-#Number of errors per encoder and batch
-df_andrea <- aggregate(tie_breaking_append$error_andrea, by=list(date_batch=tie_breaking_append$date_batch), FUN=sum)
-
-colnames(df_andrea)[2] <- "error_andrea"
-
-df_edwar <- aggregate(tie_breaking_append$error_edwar, by=list(date_batch=tie_breaking_append$date_batch), FUN=sum)
-
-colnames(df_edwar)[2] <- "error_edwar"
-
-#Error rate per encoder and batch
-df_error_rate = merge(df2, df_andrea, by = "date_batch", all.x = TRUE)
-
-df_error_rate = merge(df_error_rate, df_edwar, by = "date_batch", all.x = TRUE)
-
-
-df_error_rate$error_rate_andrea <- round( (df_error_rate$error_andrea/df_error_rate$obs)*100 , 1)
-
-df_error_rate$error_rate_edwar <- round( (df_error_rate$error_edwar/df_error_rate$obs)*100 , 1)
-
-
-#Error rate per date batch and encoder
-df_andrea_rate = df_error_rate[c('date_batch','error_rate_andrea')]
-
-df_edwar_rate = df_error_rate[c('date_batch','error_rate_edwar')]
-
-
-data_plot <- merge(df_andrea_rate, df_edwar_rate, by = "date_batch")
+##############
 ```
 
 
@@ -131,24 +97,53 @@ Claims 2021
 ## Row
 -----------------------------------------------------------------------
 
-### confirmed {.value-box}
+### Number of claims {.value-box}
 
 ```{r}
+n_claims <- nrow(raw_claims_feb21)
 
-valueBox(value = 5, 
-         caption = "Total Confirmed Cases", 
-         icon = "fas fa-user-md")#, 
-         #color = confirmed_color)
+valueBox(value = paste(format(n_claims, big.mark = ","), "", sep = " "), 
+         caption = "Total Claims",
+         icon = "fa-database",             #https://fontawesome.com/v4/icons/
+         color = "purple")
 ```
 
 
-### active {.value-box}
+### Number of encoded claims {.value-box}
 
 ```{r}
-valueBox(value = 5, 
-         caption = "Active Cases", icon = "fas fa-ambulance")#, 
+n_encoded <- nrow(clean_claims_21)
+percent_encoded <- paste( round(n_encoded/n_claims,1)*100, "%")
+
+valueBox(value = paste(format(n_encoded, big.mark = ","), "/", percent_encoded  , sep = " "), 
+         caption = "Encoded Claims", icon = "fa-arrow-circle-up")
+```
+
+
+### Number of claims that are CGR responsability {.value-box}
+
+```{r}
+n_cgr <- sum(raw_claims_feb21$competencia_cgr == 'S')
+
+valueBox(value = paste(format(n_cgr, big.mark = ","), "", sep = " "),
+         caption = "Claims that are CGR responsability", icon = "fa-tasks")
+
+```
+
+
+
+### Number of claims with simultaneous control {.value-box}
+
+```{r}
+n_sc <- sum(raw_claims_feb21$a_control_simultaneo == 'S')
+
+valueBox(value = paste(format(n_sc, big.mark = ","), "", sep = " "), 
+         caption = "Claims with Simultaneous Control")#, 
          #color = active_color)
 ```
+
+
+
 
 
 
@@ -206,6 +201,55 @@ tbl
 
 
 ### <b><font face="Arial" size="4px" color="#000000">Plot with error rate per encoder (Andrea/Edwar)</font></b>  
+
+
+```{r, include=FALSE}
+### Create a plot with error rate per encoder (Andrea/Edwar) (x axis is for number of batch, y for the error rate)
+
+#keeping just claims reviewed by Jaime
+tie_breaking_append <- clean_claims_21[ clean_claims_21$tiebraker_name == "Jaime", ]
+
+#Andrea's number of errors
+tie_breaking_append$error_andrea <- rep(0, nrow(tie_breaking_append))
+tie_breaking_append$error_andrea[tie_breaking_append$chosen_encoder != "Andrea" & tie_breaking_append$chosen_encoder != "Andrea/Edwar"] <- 1
+
+#Edwar's number of errors
+tie_breaking_append$error_edwar <- rep(0, nrow(tie_breaking_append))
+tie_breaking_append$error_edwar[tie_breaking_append$chosen_encoder != "Edwar" & tie_breaking_append$chosen_encoder != "Andrea/Edwar"] <- 1
+
+#Number of observartions per batches
+df2<- tie_breaking_append %>%
+    group_by(date_batch) %>%
+    summarise(obs = n()) 
+
+#Number of errors per encoder and batch
+df_andrea <- aggregate(tie_breaking_append$error_andrea, by=list(date_batch=tie_breaking_append$date_batch), FUN=sum)
+
+colnames(df_andrea)[2] <- "error_andrea"
+
+df_edwar <- aggregate(tie_breaking_append$error_edwar, by=list(date_batch=tie_breaking_append$date_batch), FUN=sum)
+
+colnames(df_edwar)[2] <- "error_edwar"
+
+#Error rate per encoder and batch
+df_error_rate = merge(df2, df_andrea, by = "date_batch", all.x = TRUE)
+
+df_error_rate = merge(df_error_rate, df_edwar, by = "date_batch", all.x = TRUE)
+
+
+df_error_rate$error_rate_andrea <- round( (df_error_rate$error_andrea/df_error_rate$obs)*100 , 1)
+
+df_error_rate$error_rate_edwar <- round( (df_error_rate$error_edwar/df_error_rate$obs)*100 , 1)
+
+
+#Error rate per date batch and encoder
+df_andrea_rate = df_error_rate[c('date_batch','error_rate_andrea')]
+
+df_edwar_rate = df_error_rate[c('date_batch','error_rate_edwar')]
+
+
+data_plot <- merge(df_andrea_rate, df_edwar_rate, by = "date_batch")
+```
 
 
 ```{r}
@@ -520,21 +564,6 @@ corruption_claims_dep %>%
 Page 2
 =====================================  
 
-```{r, include=FALSE}
-# import raw_claims_feb21 
-#raw_claims_feb21 <- dbReadTable(conn, "raw_claims_feb21")
-```
-
-
-```{r, include=FALSE}
-#TEMPORAL: (delete after last commit)
-setwd("C:/BID_Columbia")
-
-raw_claims_feb21 <-import("raw_claims_feb21.dta")
-
-##############
-```
-
 
 
 ```{r}
@@ -545,20 +574,6 @@ names(raw_claims_feb21)
 ```{r}
 table(raw_claims_feb21$estado_hec)
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
