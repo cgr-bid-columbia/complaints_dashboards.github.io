@@ -2,7 +2,7 @@
 title: "Complaints dashboard"
 output: 
   flexdashboard::flex_dashboard:
-    orientation: columns
+    orientation: rows
     vertical_layout: scroll
 ---
 
@@ -128,9 +128,82 @@ data_plot <- merge(df_andrea_rate, df_edwar_rate, by = "date_batch")
 Claims 2021
 =====================================  
 
-   
-Column {data-width=500}
--------------------------------------
+## Row
+-----------------------------------------------------------------------
+
+### confirmed {.value-box}
+
+```{r}
+
+valueBox(value = 5, 
+         caption = "Total Confirmed Cases", 
+         icon = "fas fa-user-md")#, 
+         #color = confirmed_color)
+```
+
+
+### active {.value-box}
+
+```{r}
+valueBox(value = 5, 
+         caption = "Active Cases", icon = "fas fa-ambulance")#, 
+         #color = active_color)
+```
+
+
+
+## Row
+-----------------------------------------------------------------------
+
+
+### <b><font face="Arial" size="4px" color="#000000">Table per encoded variable with the number and percentage of missing observations</font></b>
+
+```{r, include=FALSE}
+
+#table(clean_claims_21$aoc_willay)
+
+#dataframe with two columns: variable and number of missings
+
+df_missings <- ldply(clean_claims_21, function(var_value) sum(var_value ==""))
+colnames(df_missings) <- c("variable", "n_missings")
+
+#adding a new column: percentage of missings obs 
+df_missings$percentage_missing = df_missings$n_missings/ nrow(clean_claims_21)
+```
+
+
+```{r}
+bar_chart <- function(label, width = "100%", height = "14px", fill = "#00bfc4", background = NULL) {
+  bar <- htmltools::div(style = list(background = fill, width = width, height = height))
+  chart <- htmltools::div(style = list(flexGrow = 1, marginLeft = "6px", background = background), bar)
+  htmltools::div(style = list(display = "flex", alignItems = "center"), label, chart)
+}
+
+tbl <- reactable::reactable(df_missings,
+                     pagination = FALSE,
+                     highlight = TRUE,
+                     height = 400,
+                     sortable = TRUE,
+                     borderless = TRUE,
+                     defaultPageSize = nrow(df_missings),
+                     defaultSortOrder = "desc",
+                     defaultSorted = "percentage_missing",
+                     columns = list(
+                       variable = reactable::colDef(name = "Variable", minWidth = 50, maxWidth = 100),
+                       n_missings = reactable::colDef(name = "Number of missings",  minWidth = 50, maxWidth = 100),
+                       percentage_missing = reactable::colDef(name = "% missings",  
+                                                      minWidth = 50, maxWidth = 200,
+                                                      cell = function(value) {
+                                                        # Format as percentages with 1 decimal place
+                                                        value <- paste0(format(round(value * 100, 2), nsmall = 1), "%")
+                                                        bar_chart(value, width = value, fill = "red", background = "#e1e1e1")
+                                                      },
+                       align = "left"))
+)
+
+tbl
+```
+
 
 ### <b><font face="Arial" size="4px" color="#000000">Plot with error rate per encoder (Andrea/Edwar)</font></b>  
 
@@ -152,6 +225,67 @@ fig <- fig %>%
 fig
 ```
 
+## Row
+-----------------------------------------------------------------------
+
+### <b><font face="Arial" size="4px" color="#000000">Corruption claims</font></b>  
+
+```{r, include=FALSE}
+
+# creating a variable that identifies corruption claims
+clean_claims_21$corruption_denunc<- ifelse(clean_claims_21$TIPO_DENUNCIA_PRIMARIO_14_CLASES=='LUCRO ILEGAL'| clean_claims_21$TIPO_DENUNCIA_PRIMARIO_14_CLASES=='USO INAPROPIADO DE RECURSOS NO FINANCIEROS'| clean_claims_21$TIPO_DENUNCIA_PRIMARIO_14_CLASES== 'FAVORITISMO' | clean_claims_21$TIPO_DENUNCIA_PRIMARIO_14_CLASES== 'COLUSION'| clean_claims_21$TIPO_DENUNCIA_PRIMARIO_14_CLASES== 'ABUSO DE AUTORIDAD O EXTORSION', 1, 0)
+
+clean_claims_21$corruption_denunc<- ifelse(clean_claims_21$TIPO_DENUNCIA_PRIMARIO_14_CLASES=='', '', clean_claims_21$corruption_denunc)
+
+
+# number and percentage of corruption claims 
+corruption_claims_count <- subset(clean_claims_21, corruption_denunc!= "" ) %>% 
+                         count(corruption_denunc, sort = TRUE)
+
+corruption_claims_count$percentage <- round( (corruption_claims_count$n/sum(corruption_claims_count$n) )*100, 1)
+
+corruption_claims_count <- corruption_claims_count %>%
+  mutate(
+    type = ifelse(corruption_claims_count$corruption_denunc == 1, "Yes", "No"),
+    hover_text = paste0(type, ": ", n)
+  ) %>%
+  mutate(percentage_label = paste0(percentage,"%"))
+
+
+
+```
+
+
+```{r}
+library(ggplot2)
+library(ggiraph)
+
+
+donut_plot <- ggplot(corruption_claims_count, aes(y = n, fill = type)) +
+  geom_bar_interactive(
+    aes(x = 1, tooltip = hover_text),
+    width = 0.1,
+    stat = "identity",
+    show.legend = FALSE
+    ) +
+  annotate(
+    geom = "text",
+    x = 0,
+    y = 0,
+    label = corruption_claims_count[["percentage_label"]][corruption_claims_count[["type"]] == "Yes"],
+    size = 18,
+    color = "magenta"
+    ) +
+  scale_fill_manual(values = c(No = "blue", Yes = "magenta")) +
+  coord_polar(theta = "y") +
+  theme_void()
+
+ggiraph(ggobj = donut_plot, width = 0.2)
+```
+
+
+## Row
+-----------------------------------------------------------------------
 
 ### <b><font face="Arial" size="4px" color="#000000">Claims by entity</font></b>  
 
@@ -363,62 +497,6 @@ tbl
 ```
 
 
-### <b><font face="Arial" size="4px" color="#000000">Corruption claims</font></b>  
-
-```{r, include=FALSE}
-
-# creating a variable that identifies corruption claims
-clean_claims_21$corruption_denunc<- ifelse(clean_claims_21$TIPO_DENUNCIA_PRIMARIO_14_CLASES=='LUCRO ILEGAL'| clean_claims_21$TIPO_DENUNCIA_PRIMARIO_14_CLASES=='USO INAPROPIADO DE RECURSOS NO FINANCIEROS'| clean_claims_21$TIPO_DENUNCIA_PRIMARIO_14_CLASES== 'FAVORITISMO' | clean_claims_21$TIPO_DENUNCIA_PRIMARIO_14_CLASES== 'COLUSION'| clean_claims_21$TIPO_DENUNCIA_PRIMARIO_14_CLASES== 'ABUSO DE AUTORIDAD O EXTORSION', 1, 0)
-
-clean_claims_21$corruption_denunc<- ifelse(clean_claims_21$TIPO_DENUNCIA_PRIMARIO_14_CLASES=='', '', clean_claims_21$corruption_denunc)
-
-
-# number and percentage of corruption claims 
-corruption_claims_count <- subset(clean_claims_21, corruption_denunc!= "" ) %>% 
-                         count(corruption_denunc, sort = TRUE)
-
-corruption_claims_count$percentage <- round( (corruption_claims_count$n/sum(corruption_claims_count$n) )*100, 1)
-
-corruption_claims_count <- corruption_claims_count %>%
-  mutate(
-    type = ifelse(corruption_claims_count$corruption_denunc == 1, "Yes", "No"),
-    hover_text = paste0(type, ": ", n)
-  ) %>%
-  mutate(percentage_label = paste0(percentage,"%"))
-
-
-
-```
-
-
-```{r}
-library(ggplot2)
-library(ggiraph)
-
-
-donut_plot <- ggplot(corruption_claims_count, aes(y = n, fill = type)) +
-  geom_bar_interactive(
-    aes(x = 1, tooltip = hover_text),
-    width = 0.1,
-    stat = "identity",
-    show.legend = FALSE
-    ) +
-  annotate(
-    geom = "text",
-    x = 0,
-    y = 0,
-    label = corruption_claims_count[["percentage_label"]][corruption_claims_count[["type"]] == "Yes"],
-    size = 18,
-    color = "magenta"
-    ) +
-  scale_fill_manual(values = c(No = "blue", Yes = "magenta")) +
-  coord_polar(theta = "y") +
-  theme_void()
-
-ggiraph(ggobj = donut_plot, width = 0.65)
-```
-
-
 ```{r, include=FALSE}
 
 #delete special characters from DEPARTAMENTO
@@ -436,59 +514,6 @@ corruption_claims_dep %>%
 
 ```
 
-
-
-Column {data-width=500}
--------------------------------------
-
-### <b><font face="Arial" size="4px" color="#000000">Table per encoded variable with the number and percentage of missing observations</font></b>  
-
-
-```{r, include=FALSE}
-
-#table(clean_claims_21$aoc_willay)
-
-#dataframe with two columns: variable and number of missings
-
-df_missings <- ldply(clean_claims_21, function(var_value) sum(var_value ==""))
-colnames(df_missings) <- c("variable", "n_missings")
-
-#adding a new column: percentage of missings obs 
-df_missings$percentage_missing = df_missings$n_missings/ nrow(clean_claims_21)
-```
-
-
-```{r}
-bar_chart <- function(label, width = "100%", height = "14px", fill = "#00bfc4", background = NULL) {
-  bar <- htmltools::div(style = list(background = fill, width = width, height = height))
-  chart <- htmltools::div(style = list(flexGrow = 1, marginLeft = "6px", background = background), bar)
-  htmltools::div(style = list(display = "flex", alignItems = "center"), label, chart)
-}
-
-tbl <- reactable::reactable(df_missings,
-                     pagination = FALSE,
-                     highlight = TRUE,
-                     height = 400,
-                     sortable = TRUE,
-                     borderless = TRUE,
-                     defaultPageSize = nrow(df_missings),
-                     defaultSortOrder = "desc",
-                     defaultSorted = "percentage_missing",
-                     columns = list(
-                       variable = reactable::colDef(name = "Variable", minWidth = 50, maxWidth = 100),
-                       n_missings = reactable::colDef(name = "Number of missings",  minWidth = 50, maxWidth = 100),
-                       percentage_missing = reactable::colDef(name = "% missings",  
-                                                      minWidth = 50, maxWidth = 200,
-                                                      cell = function(value) {
-                                                        # Format as percentages with 1 decimal place
-                                                        value <- paste0(format(round(value * 100, 2), nsmall = 1), "%")
-                                                        bar_chart(value, width = value, fill = "red", background = "#e1e1e1")
-                                                      },
-                       align = "left"))
-)
-
-tbl
-```
 
 
 
@@ -511,7 +536,33 @@ raw_claims_feb21 <-import("raw_claims_feb21.dta")
 ```
 
 
+
 ```{r}
+names(raw_claims_feb21)
+```
+
+
+```{r}
+table(raw_claims_feb21$estado_hec)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+```{r, include=FALSE}
 #convert all vars to string
 clean_claims_21_ch <- clean_claims_21 %>%
   mutate(across(everything(), as.character))
@@ -545,7 +596,7 @@ raw_claims_feb21_ch$raw_claims_feb21 <- "1"
 
 ```
 
-```{r}
+```{r, include=FALSE}
 #solving issues with expediente var (deleting leading zeros)
 
 clean_claims_21_ch$expediente <- sub("^0+", "", clean_claims_21_ch$expediente) 
