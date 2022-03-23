@@ -153,52 +153,22 @@ valueBox(value = paste(format(n_sc, big.mark = ","), "", sep = " "),
 ## Row
 -----------------------------------------------------------------------
 
-### <b><font face="Arial" size="4px" color="#000000">HEC status</font></b>
-
-```{r}
-#todo: validate recategorization
-
-# Recategorization for hec status
-raw_claims_feb21 <- mutate(raw_claims_feb21, hec_status_re =
-                                   case_when(estado_hec == "Calificado" | estado_hec == "Concluido" ~ "Accept",
-                                             estado_hec == "Anulado" ~ "Reject",
-                                             estado_hec == "En Proceso" | estado_hec == "Pendiente" ~ "Waiting" ) )
-
-
-#Donut chart: hec status
-hec_status_df <- as.data.frame(table(raw_claims_feb21$hec_status_re))
-
-colnames(hec_status_df) <- c("hec_status", "n")
- 
-fig <- hec_status_df %>% plot_ly(labels = ~hec_status, values = ~n, marker = list(colors = c('#00aa7f', '#ff0000',"#2675fc")))
-fig <- fig %>% add_pie(hole = 0.55, textfont = list(size = 13))
-fig <- fig %>% layout(showlegend = T,
-                      xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
-                      yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
-
-fig
-
-
-```
-
 
 ### <b><font face="Arial" size="4px" color="#000000">FUR status</font></b>
 
 ```{r}
 # Recategorization for fur status
-raw_claims_feb21 <- mutate(raw_claims_feb21, ARA_decision =
-                                   case_when(estado_fur == "Aceptado a trámite" | estado_fur == "Admitido" ~ "Accept",
-                                             estado_fur == "Derivado" ~ "Derive",
-                                             estado_fur == "Desestimado" | estado_fur == "Devuelto" | estado_fur == "No aceptado a trámite" | estado_fur == "No admitido" ~ "Reject",
-                                             estado_fur == "En evaluación" | estado_fur == "Pendiente" ~ "Waiting" ) )
+raw_claims_feb21 <- mutate(raw_claims_feb21, FUR_decision =
+                                   case_when(estado_hec == "Calificado" | estado_hec == "Concluido" ~ "Yes",
+                                             estado_hec == "Anulado" | estado_hec == "En Proceso" | estado_hec == "Pendiente" ~ "No" ) )
 
 
 #Donut chart: fur status
-fur_status_df <- as.data.frame(table(raw_claims_feb21$ARA_decision))
+fur_status_df <- as.data.frame(table(raw_claims_feb21$FUR_decision))
 
 colnames(fur_status_df) <- c("fur_status", "n")
  
-fig <- fur_status_df %>% plot_ly(labels = ~fur_status, values = ~n, marker = list(colors = c('#00aa7f', '#ccccc7','#ff0000', "#2675fc" )))
+fig <- fur_status_df %>% plot_ly(labels = ~fur_status, values = ~n, marker = list(colors = c('#ff0000', '#00aa7f' )))
 fig <- fig %>% add_pie(hole = 0.55, textfont = list(size = 13))
 fig <- fig %>% layout(showlegend = T,
                       xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
@@ -211,20 +181,15 @@ fig
 
 ```{r}
 # Recategorization for fud status
-raw_claims_feb21 <- mutate(raw_claims_feb21, fud_status_re =
-                                   case_when(estado_fud == ""  ~ "Missings",
-                                             estado_fud == "Derivado" ~ "Derive",
-                                             estado_fud == "Asociado" ~ "Associated",
-                                             estado_fud == "Devuelto" | estado_fud == "Desestimado" ~ "Reject",
-                                             estado_fud == "Sin atender" ~ "Waiting" ) )
+raw_claims_feb21$FUD_decision<- ifelse(raw_claims_feb21$FUR_decision == "Yes" & raw_claims_feb21$numero_fud != "", "Yes", "No")
 
 
 #Donut chart: fud status
-fud_status_df <- as.data.frame(table(raw_claims_feb21$fud_status_re))
+fud_status_df <- as.data.frame(table(raw_claims_feb21$FUD_decision))
 
 colnames(fud_status_df) <- c("fud_status", "n")
  
-fig <- fud_status_df %>% plot_ly(labels = ~fud_status, values = ~n, marker = list(colors = c('#00aa7f', '#ccccc7', '#ff0000', "#2675fc" )))
+fig <- fud_status_df %>% plot_ly(labels = ~fud_status, values = ~n, marker = list(colors = c('#ff0000', '#00aa7f')))
 fig <- fig %>% add_pie(hole = 0.55, textfont = list(size = 13))
 fig <- fig %>% layout(showlegend = T,
                       xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
@@ -235,13 +200,61 @@ fig
 ```
 
 
+### <b><font face="Arial" size="4px" color="#000000">PDE status</font></b>
+
+```{r}
+# Recategorization for PDE status
+raw_claims_feb21$PDE_decision<- ifelse(raw_claims_feb21$numero_he != "" & (raw_claims_feb21$producto_aprobado == "Carpeta Atención de Denuncia" | raw_claims_feb21$producto_aprobado == "Desestimado") , "Yes", "No")
+
+
+#Donut chart: PDE status
+pde_status_df <- as.data.frame(table(raw_claims_feb21$PDE_decision))
+
+colnames(pde_status_df) <- c("pde_status", "n")
+ 
+fig <- pde_status_df %>% plot_ly(labels = ~pde_status, values = ~n, marker = list(colors = c('#ff0000', '#00aa7f')))
+fig <- fig %>% add_pie(hole = 0.55, textfont = list(size = 13))
+fig <- fig %>% layout(showlegend = T,
+                      xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+                      yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
+
+fig
+
+```
+
+
+### <b><font face="Arial" size="4px" color="#000000">CAD status</font></b>
+
+
+```{r}
+# Recategorization for CAD status
+raw_claims_feb21$CAD_decision<- ifelse(raw_claims_feb21$numero_he != "" &  raw_claims_feb21$producto_aprobado == "Carpeta Atención de Denuncia" , "Yes", "No")
+
+
+#Donut chart: PDE status
+cad_status_df <- as.data.frame(table(raw_claims_feb21$CAD_decision))
+
+colnames(cad_status_df) <- c("cad_status", "n")
+ 
+fig <- cad_status_df %>% plot_ly(labels = ~cad_status, values = ~n, marker = list(colors = c('#ff0000', '#00aa7f')))
+fig <- fig %>% add_pie(hole = 0.55, textfont = list(size = 13))
+fig <- fig %>% layout(showlegend = T,
+                      xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+                      yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
+
+fig
+```
+
+
+
+
 
 ```{r, include=FALSE}
 
 #creating accept claim var based on ARA decision
 raw_claims_feb21 <- mutate(raw_claims_feb21, accept_claim =
-                                   case_when(ARA_decision == "Accept" ~ 1,
-                                             ARA_decision != "Accept" ~ 0 ) )
+                                   case_when(FUR_decision == "Accept" ~ 1,
+                                             FUR_decision != "Accept" ~ 0 ) )
 
 ## PRODUCTS
 
