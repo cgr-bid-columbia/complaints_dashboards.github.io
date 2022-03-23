@@ -6,6 +6,13 @@ output:
     vertical_layout: scroll
 ---
 
+```{css}
+.value-box {
+  height: 100px;
+}
+
+```
+
 
 ```{r setup, include=FALSE}
 library(flexdashboard)
@@ -112,7 +119,7 @@ n_claims <- nrow(raw_claims_feb21)
 valueBox(value = paste(format(n_claims, big.mark = ","), "", sep = " "), 
          caption = "Total Claims",
          icon = "fa-database",             #https://fontawesome.com/v4/icons/
-         color = "purple")
+         color = "#7636b3")
 ```
 
 
@@ -120,16 +127,20 @@ valueBox(value = paste(format(n_claims, big.mark = ","), "", sep = " "),
 
 ```{r}
 n_encoded <- nrow(clean_claims_21)
-percent_encoded <- paste( round(n_encoded/n_claims,1)*100, "%")
+percent_encoded <- paste( round(n_encoded/n_claims,2)*100, "%")
 
 valueBox(value = paste(format(n_encoded, big.mark = ","), "/", percent_encoded  , sep = " "), 
-         caption = "Encoded Claims", icon = "fa-arrow-circle-up")
+         caption = "Encoded Claims",
+         icon = "fa-arrow-circle-up",
+         color = "#a249f5")
 ```
 
 
+
+```{r, include=FALSE}
+
 ### Number of claims that are CGR responsability {.value-box}
 
-```{r}
 n_cgr <- sum(raw_claims_feb21$competencia_cgr == 'S')
 
 valueBox(value = paste(format(n_cgr, big.mark = ","), "", sep = " "),
@@ -138,10 +149,10 @@ valueBox(value = paste(format(n_cgr, big.mark = ","), "", sep = " "),
 ```
 
 
+```{r, include=FALSE}
 
 ### Number of claims with simultaneous control {.value-box}
 
-```{r}
 n_sc <- sum(raw_claims_feb21$a_control_simultaneo == 'S')
 
 valueBox(value = paste(format(n_sc, big.mark = ","), "", sep = " "), 
@@ -154,14 +165,84 @@ valueBox(value = paste(format(n_sc, big.mark = ","), "", sep = " "),
 -----------------------------------------------------------------------
 
 
-### <b><font face="Arial" size="4px" color="#000000">FUR status</font></b>
-
 ```{r}
 # Recategorization for fur status
 raw_claims_feb21 <- mutate(raw_claims_feb21, FUR_decision =
                                    case_when(estado_hec == "Calificado" | estado_hec == "Concluido" ~ "Yes",
                                              estado_hec == "Anulado" | estado_hec == "En Proceso" | estado_hec == "Pendiente" ~ "No" ) )
 
+# Recategorization for fud status
+raw_claims_feb21$FUD_decision<- ifelse(raw_claims_feb21$FUR_decision == "Yes" & raw_claims_feb21$numero_fud != "", "Yes", "No")
+
+
+# Recategorization for PDE status
+raw_claims_feb21$PDE_decision<- ifelse(raw_claims_feb21$numero_he != "" & (raw_claims_feb21$producto_aprobado == "Carpeta Atención de Denuncia" | raw_claims_feb21$producto_aprobado == "Desestimado") , "Yes", "No")
+
+
+# Recategorization for CAD status
+raw_claims_feb21$CAD_decision<- ifelse(raw_claims_feb21$numero_he != "" &  raw_claims_feb21$producto_aprobado == "Carpeta Atención de Denuncia" , "Yes", "No")
+```
+
+
+### FUR claims {.value-box}
+
+```{r}
+fur_claims <- sum(raw_claims_feb21$FUR_decision == "Yes")
+percent_fur <-  paste( round(fur_claims/n_claims,2)*100, "%")
+
+valueBox(value = paste(format(fur_claims, big.mark = ","), "/", percent_fur  , sep = " "),
+         caption = "FUR Claims",
+         icon = "fa-folder-open",            
+         color = '#3fc1c9')
+```
+
+### FUD claims {.value-box}
+
+```{r}
+fud_claims <- sum(raw_claims_feb21$FUD_decision == "Yes")
+percent_fud <-  paste( round(fud_claims/n_claims,2)*100, "%")
+
+valueBox(value = paste(format(fud_claims, big.mark = ","), "/", percent_fud  , sep = " "),
+         caption = "FUD Claims",
+         icon = "fa-folder-open",             
+         color = '#3fc1c9')
+```
+
+
+### PDE claims {.value-box}
+
+```{r}
+pde_claims <- sum(raw_claims_feb21$PDE_decision == "Yes")
+percent_pde <-  paste( round(pde_claims/n_claims,2)*100, "%")
+
+valueBox(value = paste(format(pde_claims, big.mark = ","), "/", percent_pde  , sep = " "),
+         caption = "PDE Claims",
+         icon = "fa-folder-open",             
+         color = '#3fc1c9')
+```
+
+
+### CAD claims {.value-box}
+
+```{r}
+cad_claims <- sum(raw_claims_feb21$CAD_decision == "Yes")
+percent_cad <-  paste( round(cad_claims/n_claims,2)*100, "%")
+
+valueBox(value = paste(format(cad_claims, big.mark = ","), "/", percent_cad , sep = " "),
+         caption = "CAD Claims",
+         icon = "fa-folder-open",             
+         color = '#3fc1c9')
+```
+
+
+
+## Row
+-----------------------------------------------------------------------
+
+
+### <b><font face="Arial" size="4px" color="#000000">FUR status</font></b>
+
+```{r}
 
 #Donut chart: fur status
 fur_status_df <- as.data.frame(table(raw_claims_feb21$FUR_decision))
@@ -180,10 +261,6 @@ fig
 ### <b><font face="Arial" size="4px" color="#000000">FUD status</font></b>
 
 ```{r}
-# Recategorization for fud status
-raw_claims_feb21$FUD_decision<- ifelse(raw_claims_feb21$FUR_decision == "Yes" & raw_claims_feb21$numero_fud != "", "Yes", "No")
-
-
 #Donut chart: fud status
 fud_status_df <- as.data.frame(table(raw_claims_feb21$FUD_decision))
 
@@ -203,10 +280,6 @@ fig
 ### <b><font face="Arial" size="4px" color="#000000">PDE status</font></b>
 
 ```{r}
-# Recategorization for PDE status
-raw_claims_feb21$PDE_decision<- ifelse(raw_claims_feb21$numero_he != "" & (raw_claims_feb21$producto_aprobado == "Carpeta Atención de Denuncia" | raw_claims_feb21$producto_aprobado == "Desestimado") , "Yes", "No")
-
-
 #Donut chart: PDE status
 pde_status_df <- as.data.frame(table(raw_claims_feb21$PDE_decision))
 
@@ -227,10 +300,6 @@ fig
 
 
 ```{r}
-# Recategorization for CAD status
-raw_claims_feb21$CAD_decision<- ifelse(raw_claims_feb21$numero_he != "" &  raw_claims_feb21$producto_aprobado == "Carpeta Atención de Denuncia" , "Yes", "No")
-
-
 #Donut chart: PDE status
 cad_status_df <- as.data.frame(table(raw_claims_feb21$CAD_decision))
 
