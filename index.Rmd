@@ -235,6 +235,55 @@ fig
 ```
 
 
+
+```{r, include=FALSE}
+
+#creating accept claim var based on ARA decision
+raw_claims_feb21 <- mutate(raw_claims_feb21, accept_claim =
+                                   case_when(ARA_decision == "Accept" ~ 1,
+                                             ARA_decision != "Accept" ~ 0 ) )
+
+## PRODUCTS
+
+#binary measure for whether the claim gets "evaluacion de fondo" // todo: una mejor variable es cod_aoc_willay, porque aoc_willay tiene comas (corregir esto en la tabla de abajo de evaluacion de fondo)
+raw_claims_feb21$assigned_AOC <- ifelse(raw_claims_feb21$aoc_willay != '', 1, 0)
+
+
+#creating alarm var 
+raw_claims_feb21$alarm<- ifelse(raw_claims_feb21$producto_propuesto=='Carpeta Atención de Denuncia', 1, NA)
+		
+```
+
+
+```{r, include=FALSE}
+
+#BAR PLOT (TODO)
+
+#claims getting "evaluacion de fondo" per UO
+AOC_UO <- subset(raw_claims_feb21[c("uo_ara", "assigned_AOC")] , uo_ara!= "" )
+
+AOC_UO_count <- AOC_UO %>% 
+                    group_by(uo_ara) %>% summarise_each(funs(sum))
+
+AOC_UO_count
+```
+
+
+```{r, include=FALSE}
+
+#BAR PLOT (TODO)
+
+#claims getting "alertas de control" per UO
+AOC_UO <- subset(raw_claims_feb21[c("uo_ara", "alarm")] , alarm!= "" )
+
+AOC_UO_count <- AOC_UO %>% 
+                    group_by(uo_ara) %>% summarise_each(funs(sum))
+
+AOC_UO_count
+```
+
+
+
 ## Row
 -----------------------------------------------------------------------
 
