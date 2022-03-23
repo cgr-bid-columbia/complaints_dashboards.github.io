@@ -316,8 +316,6 @@ fig
 
 
 
-
-
 ```{r, include=FALSE}
 
 #creating accept claim var based on ARA decision
@@ -382,40 +380,58 @@ df_missings <- ldply(clean_claims_21, function(var_value) sum(var_value ==""))
 colnames(df_missings) <- c("variable", "n_missings")
 
 #adding a new column: percentage of missings obs 
-df_missings$percentage_missing = df_missings$n_missings/ nrow(clean_claims_21)
+df_missings$percentage_missing = round( (df_missings$n_missings/ nrow(clean_claims_21))*100 , 1)
 ```
 
 
 ```{r}
+# Render a bar chart with a label on the left
 bar_chart <- function(label, width = "100%", height = "14px", fill = "#00bfc4", background = NULL) {
-  bar <- htmltools::div(style = list(background = fill, width = width, height = height))
-  chart <- htmltools::div(style = list(flexGrow = 1, marginLeft = "6px", background = background), bar)
-  htmltools::div(style = list(display = "flex", alignItems = "center"), label, chart)
+  bar <- div(style = list(background = fill, width = width, height = height))
+  chart <- div(style = list(flexGrow = 1, marginLeft = "6px", background = background), bar)
+  div(style = list(display = "flex", alignItems = "center"), label, chart)
 }
 
-tbl <- reactable::reactable(df_missings,
-                     pagination = FALSE,
-                     highlight = TRUE,
-                     height = 400,
-                     sortable = TRUE,
-                     borderless = TRUE,
-                     defaultPageSize = nrow(df_missings),
-                     defaultSortOrder = "desc",
-                     defaultSorted = "percentage_missing",
-                     columns = list(
-                       variable = reactable::colDef(name = "Variable", minWidth = 50, maxWidth = 100),
-                       n_missings = reactable::colDef(name = "Number of missings",  minWidth = 50, maxWidth = 100),
-                       percentage_missing = reactable::colDef(name = "% missings",  
-                                                      minWidth = 50, maxWidth = 200,
-                                                      cell = function(value) {
-                                                        # Format as percentages with 1 decimal place
-                                                        value <- paste0(format(round(value * 100, 2), nsmall = 1), "%")
-                                                        bar_chart(value, width = value, fill = "red", background = "#e1e1e1")
-                                                      },
-                       align = "left"))
+
+tbl <- reactable(
+  df_missings,
+  pagination = TRUE,
+  defaultSorted = "percentage_missing",
+  defaultColDef = colDef(headerClass = "header", align = "left"),
+  columns = list(
+    variable = colDef(name = "Encoded variable"
+ 
+    ),
+    n_missings = colDef(
+      name = "Number of missings",
+      defaultSortOrder = "desc",
+      # Render the bar charts using a custom cell render function
+      cell = function(value) {
+        width <- paste0(value * 100 / max(df_missings$n_missing), "%")
+        # Add thousands separators
+        value <- format(value, big.mark = ",")
+        bar_chart(value, width = width, fill = "#3fc1c9")
+      },
+      # And left-align the columns
+      align = "left"
+    ),
+    percentage_missing = colDef(
+      name = "% missings",
+      defaultSortOrder = "desc",
+      # Render the bar charts using a custom cell render function
+      cell = function(value) {
+        # Format as percentages with 1 decimal place
+        value <- paste0(format(value , nsmall = 1), "%")
+        bar_chart(value, width = value, fill = "#fc5185", background = "#e1e1e1")
+      },
+      # And left-align the columns
+      align = "left"
+    )
+  )
 )
 
 tbl
+
 ```
 
 
@@ -672,7 +688,7 @@ tbl <- reactable(
       defaultSortOrder = "desc",
       # Render the bar charts using a custom cell render function
       cell = function(value) {
-        width <- paste0(value * 100 / max(type_entity_count$n), "%")
+        width <- paste0(value * 100 / max(AOC_entity_count$assigned_AOC), "%")
         # Add thousands separators
         value <- format(value, big.mark = ",")
         bar_chart(value, width = width, fill = "#3fc1c9")
@@ -731,7 +747,7 @@ tbl <- reactable(
       defaultSortOrder = "desc",
       # Render the bar charts using a custom cell render function
       cell = function(value) {
-        width <- paste0(value * 100 / max(type_entity_count$n), "%")
+        width <- paste0(value * 100 / max(primary_class_count$n), "%")
         # Add thousands separators
         value <- format(value, big.mark = ",")
         bar_chart(value, width = width, fill = "#3fc1c9")
