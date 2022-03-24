@@ -901,64 +901,11 @@ corruption_claims_dep %>%
 ## Row
 -----------------------------------------------------------------------
 
-```{r, include=FALSE}
-
-#PARECE QUE YA NO!!!!
-
-#Solving issues with aoc_willay values
-#clean_claims_21$aoc_willay[clean_claims_21$aoc_willay == ","] <- ""
-
-#creating accept claim var based on ARA decision
-#raw_claims_feb21 <- mutate(raw_claims_feb21, accept_claim =
-                                 #  case_when(FUR_decision == "Accept" ~ 1,
-                                  #           FUR_decision != "Accept" ~ 0 ) )
-
-## PRODUCTS
-
-#binary measure for whether the claim gets "evaluacion de fondo" // todo: una mejor variable es cod_aoc_willay, porque aoc_willay tiene comas (corregir esto en la tabla de abajo de evaluacion de fondo)
-#raw_claims_feb21$assigned_AOC <- ifelse(raw_claims_feb21$aoc_willay != '', 1, 0)
-
-
-#creating alarm var 
-#raw_claims_feb21$alarm<- ifelse(raw_claims_feb21$producto_propuesto=='Carpeta Atención de Denuncia', 1, NA)
-		
-```
-
-
-```{r, include=FALSE}
-
-#BAR PLOT (TODO)
-
-#claims getting "evaluacion de fondo" per UO
-#AOC_UO <- subset(raw_claims_feb21[c("uo_ara", "assigned_AOC")] , uo_ara!= "" )
-
-#AOC_UO_count <- AOC_UO %>% 
-                    #group_by(uo_ara) %>% summarise_each(funs(sum))
-
-#AOC_UO_count
-```
-
-
-```{r, include=FALSE}
-
-#BAR PLOT (TODO)
-
-#claims getting "alertas de control" per UO
-#AOC_UO <- subset(raw_claims_feb21[c("uo_ara", "alarm")] , alarm!= "" )
-
-#AOC_UO_count <- AOC_UO %>% 
-                    #group_by(uo_ara) %>% summarise_each(funs(sum))
-
-
-#AOC_UO_count
-```
-
 
 ### <b><font face="Arial" size="4px" color="#000000">Claims by office</font></b>  
 
 
 ```{r}
-# number and percentage of claims per type of entity
 
 uo_ara_count <- subset(raw_claims_feb21, uo_ara!= "" ) %>%
   group_by(uo_ara) %>%
@@ -1015,6 +962,69 @@ tbl <- reactable(
 
 tbl
 ```
+
+
+### <b><font face="Arial" size="4px" color="#000000">Claims by analyst</font></b>  
+
+
+```{r}
+
+ara_count <- subset(raw_claims_feb21, ara!= ", " ) %>%
+  group_by(ara) %>%
+  summarise(
+    n = n(),
+    percentage = NaN,
+    n_fur = sum(FUR_decision == "Yes"),
+    n_fud = sum(FUD_decision == "Yes"),
+    n_pde = sum(PDE_decision == "Yes"),
+    n_cad = sum(CAD_decision == "Yes"),
+  )
+
+ara_count$percentage <- round( (ara_count$n/sum(ara_count$n) )*100, 1)
+
+
+tbl <- reactable(
+  ara_count,
+  pagination = TRUE,
+  defaultSorted = "n",
+  defaultColDef = colDef(headerClass = "header", align = "left"),
+  columns = list(
+    ara = colDef(name = "Analyst name", width = 200),
+    n = colDef(
+      name = "Number of claims",
+      defaultSortOrder = "desc",
+      # Render the bar charts using a custom cell render function
+      cell = function(value) {
+        width <- paste0(value * 100 / max(ara_count$n), "%")
+        # Add thousands separators
+        value <- format(value, big.mark = ",")
+        bar_chart(value, width = width, fill = "#3fc1c9")
+      },
+      # And left-align the columns
+      align = "left"
+    ),
+    percentage = colDef(
+      name = "Percentage",
+      defaultSortOrder = "desc",
+      # Render the bar charts using a custom cell render function
+      cell = function(value) {
+        # Format as percentages with 1 decimal place
+        value <- paste0(format(value , nsmall = 1), "%")
+        bar_chart(value, width = value, fill = "#fc5185", background = "#e1e1e1")
+      },
+      # And left-align the columns
+      align = "left"
+    ),
+    n_fur = colDef(name = "FUR", width = 55),
+    n_fud = colDef(name = "FUD", width = 55),
+    n_pde = colDef(name = "PDE", width = 55),
+    n_cad = colDef(name = "CAD", width = 55)
+  )
+)
+
+tbl
+```
+
 
 
 
