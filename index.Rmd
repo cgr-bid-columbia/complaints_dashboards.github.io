@@ -512,8 +512,6 @@ fig
 ## Row
 -----------------------------------------------------------------------
 
-### <b><font face="Arial" size="4px" color="#000000">Encoded Claims: corruption claims</font></b>  
-
 ```{r, include=FALSE}
 
 # creating a variable that identifies corruption claims
@@ -538,6 +536,21 @@ corruption_claims_count <- corruption_claims_count %>%
 
 
 ```
+
+
+### <b><font face="Arial" size="4px" color="#000000">Encoded Claims: corruption claims</font></b>  
+
+```{r}
+max = sum(corruption_claims_count$n)
+
+gauge(corruption_claims_count$n[corruption_claims_count$corruption_denunc == 1], min = 0, max = max , gaugeSectors(
+  success = c(round((2/3)*max) + 1 , max ), warning = c(round(max/3) + 1, round((2/3)*max) ), danger = c(0, round(max/3) ))
+  , abbreviate = FALSE, abbreviateDecimals = 1)
+```
+
+
+### <b><font face="Arial" size="4px" color="#000000">Encoded Claims: corruption claims (%)</font></b>  
+
 
 ```{r}
 gauge(corruption_claims_count$percentage[corruption_claims_count$corruption_denunc == 1], min = 0, max = 100, symbol = '%', gaugeSectors(
@@ -569,14 +582,6 @@ donut_plot <- ggplot(corruption_claims_count, aes(y = n, fill = type)) +
 
 ggiraph(ggobj = donut_plot )
 ```
-
-
-### <b><font face="Arial" size="4px" color="#000000">Encoded Claims: XX</font></b>  
-
-
-
-### <b><font face="Arial" size="4px" color="#000000">Encoded Claims: XX</font></b>  
-
 
 
 
@@ -721,10 +726,10 @@ tbl <- reactable(
       # And left-align the columns
       align = "left"
     ),
-    n_fur = colDef(name = "FUR"),
-    n_fud = colDef(name = "FUD"),
-    n_pde = colDef(name = "PDE"),
-    n_cad = colDef(name = "CAD")
+    n_fur = colDef(name = "FUR", width = 55),
+    n_fud = colDef(name = "FUD", width = 55),
+    n_pde = colDef(name = "PDE", width = 55),
+    n_cad = colDef(name = "CAD", width = 55)
   )
 )
 
