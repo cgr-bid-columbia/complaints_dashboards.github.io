@@ -732,57 +732,6 @@ tbl
 ```
 
 
-### <b><font face="Arial" size="4px" color="#000000">Claims getting "evaluacion de fondo" per entity</font></b>  
-
-
-```{r}
-#binary measure for whether the claim gets "evaluacion de fondo"
-clean_claims_21$assigned_AOC <- ifelse(clean_claims_21$aoc_willay != '', 1, 0)
-
-#claims getting "evaluacion de fondo" per entity
-AOC_entity <- subset(clean_claims_21[c("TIPO_DE_ENTIDAD", "assigned_AOC")] , TIPO_DE_ENTIDAD!= "" )
-
-AOC_entity_count <- AOC_entity %>% 
-                    group_by(TIPO_DE_ENTIDAD) %>% summarise_each(funs(sum))
-
-
-# Render a bar chart with a label on the left
-bar_chart <- function(label, width = "100%", height = "14px", fill = "#00bfc4", background = NULL) {
-  bar <- div(style = list(background = fill, width = width, height = height))
-  chart <- div(style = list(flexGrow = 1, marginLeft = "6px", background = background), bar)
-  div(style = list(display = "flex", alignItems = "center"), label, chart)
-}
-
-
-tbl <- reactable(
-  AOC_entity_count,
-  pagination = TRUE,
-  defaultSorted = "assigned_AOC",
-  defaultColDef = colDef(headerClass = "header", align = "left"),
-  columns = list(
-    TIPO_DE_ENTIDAD = colDef(name = "Entity type"
- 
-    ),
-    assigned_AOC = colDef(
-      name = "Number of obs",
-      defaultSortOrder = "desc",
-      # Render the bar charts using a custom cell render function
-      cell = function(value) {
-        width <- paste0(value * 100 / max(AOC_entity_count$assigned_AOC), "%")
-        # Add thousands separators
-        value <- format(value, big.mark = ",")
-        bar_chart(value, width = width, fill = "#3fc1c9")
-      },
-      # And left-align the columns
-      align = "left"
-    )
-  )
-)
-
-tbl
-```
-
-
 ### <b><font face="Arial" size="4px" color="#000000">Claims per type of primary class</font></b>  
 
 
