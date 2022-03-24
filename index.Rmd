@@ -316,59 +316,6 @@ fig
 
 
 
-```{r, include=FALSE}
-
-#PARECE QUE YA NO!!!!
-
-#Solving issues with aoc_willay values
-clean_claims_21$aoc_willay[clean_claims_21$aoc_willay == ","] <- ""
-
-#creating accept claim var based on ARA decision
-raw_claims_feb21 <- mutate(raw_claims_feb21, accept_claim =
-                                   case_when(FUR_decision == "Accept" ~ 1,
-                                             FUR_decision != "Accept" ~ 0 ) )
-
-## PRODUCTS
-
-#binary measure for whether the claim gets "evaluacion de fondo" // todo: una mejor variable es cod_aoc_willay, porque aoc_willay tiene comas (corregir esto en la tabla de abajo de evaluacion de fondo)
-raw_claims_feb21$assigned_AOC <- ifelse(raw_claims_feb21$aoc_willay != '', 1, 0)
-
-
-#creating alarm var 
-raw_claims_feb21$alarm<- ifelse(raw_claims_feb21$producto_propuesto=='Carpeta Atención de Denuncia', 1, NA)
-		
-```
-
-
-```{r, include=FALSE}
-
-#BAR PLOT (TODO)
-
-#claims getting "evaluacion de fondo" per UO
-AOC_UO <- subset(raw_claims_feb21[c("uo_ara", "assigned_AOC")] , uo_ara!= "" )
-
-AOC_UO_count <- AOC_UO %>% 
-                    group_by(uo_ara) %>% summarise_each(funs(sum))
-
-AOC_UO_count
-```
-
-
-```{r, include=FALSE}
-
-#BAR PLOT (TODO)
-
-#claims getting "alertas de control" per UO
-AOC_UO <- subset(raw_claims_feb21[c("uo_ara", "alarm")] , alarm!= "" )
-
-AOC_UO_count <- AOC_UO %>% 
-                    group_by(uo_ara) %>% summarise_each(funs(sum))
-
-AOC_UO_count
-```
-
-
-
 ## Row
 -----------------------------------------------------------------------
 
@@ -389,14 +336,20 @@ df_missings$percentage_missing = round( (df_missings$n_missings/ nrow(clean_clai
 ```
 
 
-```{r}
+```{r, include=FALSE}
+
+## FUNCTION FOR CUSTOMIZING NEXT TABLES
+ 
 # Render a bar chart with a label on the left
 bar_chart <- function(label, width = "100%", height = "14px", fill = "#00bfc4", background = NULL) {
   bar <- div(style = list(background = fill, width = width, height = height))
   chart <- div(style = list(flexGrow = 1, marginLeft = "6px", background = background), bar)
   div(style = list(display = "flex", alignItems = "center"), label, chart)
 }
+```
 
+
+```{r}
 
 tbl <- reactable(
   df_missings,
@@ -616,13 +569,6 @@ corruption_dep$percentage <- round( (corruption_dep$n/sum(corruption_dep$n) )*10
 
 
 ```{r}
-# Render a bar chart with a label on the left
-bar_chart <- function(label, width = "100%", height = "14px", fill = "#00bfc4", background = NULL) {
-  bar <- div(style = list(background = fill, width = width, height = height))
-  chart <- div(style = list(flexGrow = 1, marginLeft = "6px", background = background), bar)
-  div(style = list(display = "flex", alignItems = "center"), label, chart)
-}
-
 
 tbl <- reactable(
   corruption_dep,
@@ -716,7 +662,7 @@ dep_plot <- ggplot() +
         theme_void() +
         scale_fill_viridis(option = 'D', trans = "log2",  breaks = trans_breaks("log2", function(x) 2^x), name="Claims") +
         theme(  
-                text = element_text(size= 10, color = "#22211d"),
+                text = element_text(size= 7, color = "#22211d"),
                 
                 plot.title = element_text(size= 14, hjust=0.01, color = "black", margin = margin(b = -0.1, t = 0.4, l = 2, unit = "cm")),
                 plot.subtitle = element_text(size= 12, hjust=0.01, color = "#4e4d47", margin = margin(b = -0.1, t = 0.43, l = 2, unit = "cm")),
@@ -828,14 +774,6 @@ type_entity_count <- subset(claims_21, TIPO_DE_ENTIDAD!= "" ) %>%
 type_entity_count$percentage <- round( (type_entity_count$n/sum(type_entity_count$n) )*100, 1)
 
 
-# Render a bar chart with a label on the left
-bar_chart <- function(label, width = "100%", height = "14px", fill = "#00bfc4", background = NULL) {
-  bar <- div(style = list(background = fill, width = width, height = height))
-  chart <- div(style = list(flexGrow = 1, marginLeft = "6px", background = background), bar)
-  div(style = list(display = "flex", alignItems = "center"), label, chart)
-}
-
-
 tbl <- reactable(
   type_entity_count,
   pagination = TRUE,
@@ -901,14 +839,6 @@ primary_class_count <- subset(clean_claims_21_ch, TIPO_DENUNCIA_PRIMARIO_14_CLAS
 primary_class_count$percentage <- round( (primary_class_count$n/sum(primary_class_count$n) )*100, 1)
 
 
-# Render a bar chart with a label on the left
-bar_chart <- function(label, width = "100%", height = "14px", fill = "#00bfc4", background = NULL) {
-  bar <- div(style = list(background = fill, width = width, height = height))
-  chart <- div(style = list(flexGrow = 1, marginLeft = "6px", background = background), bar)
-  div(style = list(display = "flex", alignItems = "center"), label, chart)
-}
-
-
 tbl <- reactable(
   primary_class_count,
   pagination = TRUE,
@@ -967,6 +897,124 @@ corruption_claims_dep %>%
 
 ```
 
+
+## Row
+-----------------------------------------------------------------------
+
+```{r, include=FALSE}
+
+#PARECE QUE YA NO!!!!
+
+#Solving issues with aoc_willay values
+#clean_claims_21$aoc_willay[clean_claims_21$aoc_willay == ","] <- ""
+
+#creating accept claim var based on ARA decision
+#raw_claims_feb21 <- mutate(raw_claims_feb21, accept_claim =
+                                 #  case_when(FUR_decision == "Accept" ~ 1,
+                                  #           FUR_decision != "Accept" ~ 0 ) )
+
+## PRODUCTS
+
+#binary measure for whether the claim gets "evaluacion de fondo" // todo: una mejor variable es cod_aoc_willay, porque aoc_willay tiene comas (corregir esto en la tabla de abajo de evaluacion de fondo)
+#raw_claims_feb21$assigned_AOC <- ifelse(raw_claims_feb21$aoc_willay != '', 1, 0)
+
+
+#creating alarm var 
+#raw_claims_feb21$alarm<- ifelse(raw_claims_feb21$producto_propuesto=='Carpeta Atención de Denuncia', 1, NA)
+		
+```
+
+
+```{r, include=FALSE}
+
+#BAR PLOT (TODO)
+
+#claims getting "evaluacion de fondo" per UO
+#AOC_UO <- subset(raw_claims_feb21[c("uo_ara", "assigned_AOC")] , uo_ara!= "" )
+
+#AOC_UO_count <- AOC_UO %>% 
+                    #group_by(uo_ara) %>% summarise_each(funs(sum))
+
+#AOC_UO_count
+```
+
+
+```{r, include=FALSE}
+
+#BAR PLOT (TODO)
+
+#claims getting "alertas de control" per UO
+#AOC_UO <- subset(raw_claims_feb21[c("uo_ara", "alarm")] , alarm!= "" )
+
+#AOC_UO_count <- AOC_UO %>% 
+                    #group_by(uo_ara) %>% summarise_each(funs(sum))
+
+
+#AOC_UO_count
+```
+
+
+### <b><font face="Arial" size="4px" color="#000000">Claims by office</font></b>  
+
+
+```{r}
+# number and percentage of claims per type of entity
+
+uo_ara_count <- subset(raw_claims_feb21, uo_ara!= "" ) %>%
+  group_by(uo_ara) %>%
+  summarise(
+    n = n(),
+    percentage = NaN,
+    n_fur = sum(FUR_decision == "Yes"),
+    n_fud = sum(FUD_decision == "Yes"),
+    n_pde = sum(PDE_decision == "Yes"),
+    n_cad = sum(CAD_decision == "Yes"),
+  )
+
+uo_ara_count$percentage <- round( (uo_ara_count$n/sum(uo_ara_count$n) )*100, 1)
+
+
+tbl <- reactable(
+  uo_ara_count,
+  pagination = TRUE,
+  defaultSorted = "n",
+  defaultColDef = colDef(headerClass = "header", align = "left"),
+  columns = list(
+    uo_ara = colDef(name = "Office name", width = 200),
+    n = colDef(
+      name = "Number of claims",
+      defaultSortOrder = "desc",
+      # Render the bar charts using a custom cell render function
+      cell = function(value) {
+        width <- paste0(value * 100 / max(uo_ara_count$n), "%")
+        # Add thousands separators
+        value <- format(value, big.mark = ",")
+        bar_chart(value, width = width, fill = "#3fc1c9")
+      },
+      # And left-align the columns
+      align = "left"
+    ),
+    percentage = colDef(
+      name = "Percentage",
+      defaultSortOrder = "desc",
+      # Render the bar charts using a custom cell render function
+      cell = function(value) {
+        # Format as percentages with 1 decimal place
+        value <- paste0(format(value , nsmall = 1), "%")
+        bar_chart(value, width = value, fill = "#fc5185", background = "#e1e1e1")
+      },
+      # And left-align the columns
+      align = "left"
+    ),
+    n_fur = colDef(name = "FUR", width = 55),
+    n_fud = colDef(name = "FUD", width = 55),
+    n_pde = colDef(name = "PDE", width = 55),
+    n_cad = colDef(name = "CAD", width = 55)
+  )
+)
+
+tbl
+```
 
 
 
