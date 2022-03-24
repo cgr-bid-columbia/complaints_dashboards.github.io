@@ -583,7 +583,94 @@ donut_plot <- ggplot(corruption_claims_count, aes(y = n, fill = type)) +
 ggiraph(ggobj = donut_plot )
 ```
 
+## Row
+-----------------------------------------------------------------------
 
+
+### <b><font face="Arial" size="4px" color="#000000">Encoded Claims: corruption claims by deparment</font></b>  
+
+```{r}
+corruption_dep <- subset(mutate_each(clean_claims_21, funs(toupper)), DEPARTAMENTO!= "" )
+
+#delete special characters from DEPARTAMENTO
+corruption_dep$DEPARTAMENTO <- iconv(corruption_dep$DEPARTAMENTO, from="UTF-8",to="ASCII//TRANSLIT")
+
+#Solving some issues with DEPARTAMENTO (temporal) / this is not necessarily correct 
+corruption_dep$DEPARTAMENTO <- gsub('AREQUIPA, LIMA', 'AREQUIPA', corruption_dep$DEPARTAMENTO)
+corruption_dep$DEPARTAMENTO <- gsub('LIMA, AYACUCHO', 'LIMA', corruption_dep$DEPARTAMENTO)
+corruption_dep$DEPARTAMENTO <- gsub('MINISTERIO DE DEFENSA', 'LIMA', corruption_dep$DEPARTAMENTO)
+corruption_dep$DEPARTAMENTO <- gsub('PIURA, LIMA', 'LIMA', corruption_dep$DEPARTAMENTO)
+corruption_dep$DEPARTAMENTO <- gsub('TUMBES, PIURA, LAMBAYEQUE, CALLAO, TACNA, AREQUIPA', 'TUMBES', corruption_dep$DEPARTAMENTO)
+corruption_dep$DEPARTAMENTO <- gsub('MONQUEGUA', 'MOQUEGUA', corruption_dep$DEPARTAMENTO)
+
+
+corruption_dep <- corruption_dep %>%
+  group_by(DEPARTAMENTO) %>%
+  summarise(
+    n = n()
+  )
+
+#corruption_dep$percentage <- round( (corruption_dep$n/sum(corruption_dep$n) )*100, 1)
+```
+
+
+```{r, include=FALSE}
+library(rgdal)
+library(broom)
+library(rgeos)
+library(maptools)
+library(ggplot2)
+library(viridis)
+library(scales)
+
+#Map file location (TEMPORAL)
+dirmapas <- "C:/BID_Columbia/claims_dashboard/maps/DEPARTAMENTO" 
+setwd(dirmapas)
+
+# The black and white polygon map
+departamentos<-readOGR(dsn="DEPARTAMENTO_27_04_2015.shp", layer="DEPARTAMENTO_27_04_2015")
+
+#summary(departamentos)
+
+departamentos$NOMBDEP
+
+#head(departamentos@data)
+
+#plot(departamentos)
+
+#We must transform the data to be able to make a graph with ggplot
+departamentos_fortified <- tidy(departamentos, region =  "NOMBDEP")
+#unique(departamentos_fortified$id)
+
+
+#We leave only the id and n columns
+corruption_dep$id <- corruption_dep$DEPARTAMENTO
+corruption_dep <- corruption_dep[,c("id","n")]
+
+#left join
+departamentos_fortified_ <-merge(x = departamentos_fortified, y = corruption_dep, by = c("id"), all.x = TRUE)
+
+
+```
+
+
+```{r}
+#map plot
+dep_plot <- ggplot() +
+        geom_polygon(data = departamentos_fortified_, aes(fill = n, x = long, y = lat, group = group), colour= "gray", size=0.05, alpha=0.9) +
+        theme_void() +
+        scale_fill_viridis(option = 'D', trans = "log2",  breaks = trans_breaks("log2", function(x) 2^x), name="Claims") +
+        theme(  
+                text = element_text(color = "#22211d"),
+                
+                plot.title = element_text(size= 14, hjust=0.01, color = "black", margin = margin(b = -0.1, t = 0.4, l = 2, unit = "cm")),
+                plot.subtitle = element_text(size= 12, hjust=0.01, color = "#4e4d47", margin = margin(b = -0.1, t = 0.43, l = 2, unit = "cm")),
+                plot.caption = element_text( size=10, color = "black", margin = margin(b = 0.3, r=-99, unit = "cm") ),
+        ) +
+        coord_map()
+
+dep_plot
+```
 
 
 ## Row
