@@ -765,13 +765,15 @@ type_entity_count <- subset(claims_21, TIPO_DE_ENTIDAD!= "" ) %>%
   summarise(
     n = n(),
     percentage = NaN,
-    n_fur = sum(FUR_decision == "YES"),
-    n_fud = sum(FUD_decision == "YES"),
-    n_pde = sum(PDE_decision == "YES"),
+    n_hec = sum(FUR_decision == "NO" & FUD_decision == "NO" & PDE_decision == "NO" & CAD_decision == "NO"),
+    n_fur = sum(FUR_decision == "YES" & FUD_decision == "NO" & PDE_decision == "NO" & CAD_decision == "NO"),
+    n_fud = sum(FUD_decision == "YES" & PDE_decision == "NO" & CAD_decision == "NO" ),
+    n_pde = sum(PDE_decision == "YES" & CAD_decision == "NO"),
     n_cad = sum(CAD_decision == "YES"),
   )
 
 type_entity_count$percentage <- round( (type_entity_count$n/sum(type_entity_count$n) )*100, 1)
+type_entity_count$n_hec <- round( (type_entity_count$n_hec/type_entity_count$n )*100, 1)
 type_entity_count$n_fur <- round( (type_entity_count$n_fur/type_entity_count$n )*100, 1)
 type_entity_count$n_fud <- round( (type_entity_count$n_fud/type_entity_count$n )*100, 1)
 type_entity_count$n_pde <- round( (type_entity_count$n_pde/type_entity_count$n )*100, 1)
@@ -810,6 +812,12 @@ tbl <- reactable(
       # And left-align the columns
       align = "left"
     ),
+    n_hec = colDef(
+      name = "HEC", width = 60,
+      cell = function(value) {
+      # Format as percentages with 1 decimal place
+        value <- paste0(format(value , nsmall = 1), "%")
+      }),
     n_fur = colDef(
       name = "FUR", width = 60,
       cell = function(value) {
@@ -936,17 +944,20 @@ uo_ara_count <- subset(raw_claims_feb21, uo_ara!= "" ) %>%
   summarise(
     n = n(),
     percentage = NaN,
-    n_fur = sum(FUR_decision == "Yes"),
-    n_fud = sum(FUD_decision == "Yes"),
-    n_pde = sum(PDE_decision == "Yes"),
+    n_hec = sum(FUR_decision == "No" & FUD_decision == "No" & PDE_decision == "No" & CAD_decision == "No"),
+    n_fur = sum(FUR_decision == "Yes" & FUD_decision == "No" & PDE_decision == "No" & CAD_decision == "No"),
+    n_fud = sum(FUD_decision == "Yes" & PDE_decision == "No" & CAD_decision == "No" ),
+    n_pde = sum(PDE_decision == "Yes" & CAD_decision == "No"),
     n_cad = sum(CAD_decision == "Yes"),
   )
 
 uo_ara_count$percentage <- round( (uo_ara_count$n/sum(uo_ara_count$n) )*100, 1)
+uo_ara_count$n_hec <- round( (uo_ara_count$n_hec/uo_ara_count$n )*100, 1)
 uo_ara_count$n_fur <- round( (uo_ara_count$n_fur/uo_ara_count$n )*100, 1)
 uo_ara_count$n_fud <- round( (uo_ara_count$n_fud/uo_ara_count$n )*100, 1)
 uo_ara_count$n_pde <- round( (uo_ara_count$n_pde/uo_ara_count$n )*100, 1)
 uo_ara_count$n_cad <- round( (uo_ara_count$n_cad/uo_ara_count$n )*100, 1)
+
 
 tbl <- reactable(
   uo_ara_count,
@@ -980,6 +991,12 @@ tbl <- reactable(
       # And left-align the columns
       align = "left"
     ),
+    n_hec = colDef(
+      name = "HEC", width = 60,
+      cell = function(value) {
+      # Format as percentages with 1 decimal place
+        value <- paste0(format(value , nsmall = 1), "%")
+      }),
     n_fur = colDef(
       name = "FUR", width = 60,
       cell = function(value) {
@@ -1021,13 +1038,20 @@ ara_count <- subset(raw_claims_feb21, ara!= ", " ) %>%
   summarise(
     n = n(),
     percentage = NaN,
-    n_fur = sum(FUR_decision == "Yes"),
-    n_fud = sum(FUD_decision == "Yes"),
-    n_pde = sum(PDE_decision == "Yes"),
+    n_hec = sum(FUR_decision == "No" & FUD_decision == "No" & PDE_decision == "No" & CAD_decision == "No"),
+    n_fur = sum(FUR_decision == "Yes" & FUD_decision == "No" & PDE_decision == "No" & CAD_decision == "No"),
+    n_fud = sum(FUD_decision == "Yes" & PDE_decision == "No" & CAD_decision == "No" ),
+    n_pde = sum(PDE_decision == "Yes" & CAD_decision == "No"),
     n_cad = sum(CAD_decision == "Yes"),
   )
 
+
 ara_count$percentage <- round( (ara_count$n/sum(ara_count$n) )*100, 1)
+ara_count$n_hec <- round( (ara_count$n_hec/ara_count$n )*100, 1)
+ara_count$n_fur <- round( (ara_count$n_fur/ara_count$n )*100, 1)
+ara_count$n_fud <- round( (ara_count$n_fud/ara_count$n )*100, 1)
+ara_count$n_pde <- round( (ara_count$n_pde/ara_count$n )*100, 1)
+ara_count$n_cad <- round( (ara_count$n_cad/ara_count$n )*100, 1)
 
 
 tbl <- reactable(
@@ -1062,10 +1086,36 @@ tbl <- reactable(
       # And left-align the columns
       align = "left"
     ),
-    n_fur = colDef(name = "FUR", width = 55),
-    n_fud = colDef(name = "FUD", width = 55),
-    n_pde = colDef(name = "PDE", width = 55),
-    n_cad = colDef(name = "CAD", width = 55)
+    n_hec = colDef(
+      name = "HEC", width = 60,
+      cell = function(value) {
+      # Format as percentages with 1 decimal place
+        value <- paste0(format(value , nsmall = 1), "%")
+      }),
+    n_fur = colDef(
+      name = "FUR", width = 60,
+      cell = function(value) {
+      # Format as percentages with 1 decimal place
+        value <- paste0(format(value , nsmall = 1), "%")
+      }),
+    n_fud = colDef(
+      name = "FUD", width = 60,
+      cell = function(value) {
+      # Format as percentages with 1 decimal place
+        value <- paste0(format(value , nsmall = 1), "%")
+      }),
+    n_pde = colDef(
+      name = "PDE", width = 60,
+      cell = function(value) {
+      # Format as percentages with 1 decimal place
+        value <- paste0(format(value , nsmall = 1), "%")
+      }),
+    n_cad = colDef(
+      name = "CAD", width = 60,
+      cell = function(value) {
+      # Format as percentages with 1 decimal place
+        value <- paste0(format(value , nsmall = 1), "%")
+      })
   )
 )
 
