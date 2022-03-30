@@ -772,6 +772,10 @@ type_entity_count <- subset(claims_21, TIPO_DE_ENTIDAD!= "" ) %>%
   )
 
 type_entity_count$percentage <- round( (type_entity_count$n/sum(type_entity_count$n) )*100, 1)
+type_entity_count$n_fur <- round( (type_entity_count$n_fur/type_entity_count$n )*100, 1)
+type_entity_count$n_fud <- round( (type_entity_count$n_fud/type_entity_count$n )*100, 1)
+type_entity_count$n_pde <- round( (type_entity_count$n_pde/type_entity_count$n )*100, 1)
+type_entity_count$n_cad <- round( (type_entity_count$n_cad/type_entity_count$n )*100, 1)
 
 
 tbl <- reactable(
@@ -780,7 +784,7 @@ tbl <- reactable(
   defaultSorted = "n",
   defaultColDef = colDef(headerClass = "header", align = "left"),
   columns = list(
-    TIPO_DE_ENTIDAD = colDef(name = "Entity type", width = 200),
+    TIPO_DE_ENTIDAD = colDef(name = "Entity type", width = 180),
     n = colDef(
       name = "Number of claims",
       defaultSortOrder = "desc",
@@ -806,10 +810,30 @@ tbl <- reactable(
       # And left-align the columns
       align = "left"
     ),
-    n_fur = colDef(name = "FUR", width = 55),
-    n_fud = colDef(name = "FUD", width = 55),
-    n_pde = colDef(name = "PDE", width = 55),
-    n_cad = colDef(name = "CAD", width = 55)
+    n_fur = colDef(
+      name = "FUR", width = 60,
+      cell = function(value) {
+      # Format as percentages with 1 decimal place
+        value <- paste0(format(value , nsmall = 1), "%")
+      }),
+    n_fud = colDef(
+      name = "FUD", width = 60,
+      cell = function(value) {
+      # Format as percentages with 1 decimal place
+        value <- paste0(format(value , nsmall = 1), "%")
+      }),
+    n_pde = colDef(
+      name = "PDE", width = 60,
+      cell = function(value) {
+      # Format as percentages with 1 decimal place
+        value <- paste0(format(value , nsmall = 1), "%")
+      }),
+    n_cad = colDef(
+      name = "CAD", width = 60,
+      cell = function(value) {
+      # Format as percentages with 1 decimal place
+        value <- paste0(format(value , nsmall = 1), "%")
+      })
   )
 )
 
