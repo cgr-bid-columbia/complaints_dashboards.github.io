@@ -176,7 +176,7 @@ raw_claims_feb21$FUD_decision<- ifelse(raw_claims_feb21$FUR_decision == "Yes" & 
 
 
 # Recategorization for PDE status (dummy)
-raw_claims_feb21$PDE_decision<- ifelse(raw_claims_feb21$numero_he != "" & (raw_claims_feb21$producto_aprobado == "Carpeta Atención de Denuncia" | raw_claims_feb21$producto_aprobado == "Desestimado") , "Yes", "No")
+raw_claims_feb21$PDE_decision<- ifelse(raw_claims_feb21$numero_he != "" & (raw_claims_feb21$producto_aprobado == "Carpeta Atención de Denuncia" | raw_claims_feb21$producto_aprobado == "Desestimado" | raw_claims_feb21$producto_aprobado == "En proceso") , "Yes", "No")
 
 
 # Recategorization for CAD status (dummy)
@@ -358,7 +358,7 @@ pde_status_df <- as.data.frame(table(PDE_categories_df$PDE_decision_categories))
 
 colnames(pde_status_df) <- c("pde_status", "n")
  
-fig <- pde_status_df %>% plot_ly(labels = ~pde_status, values = ~n, marker = list(colors = c('#00aa7f', '#ff0000')))
+fig <- pde_status_df %>% plot_ly(labels = ~pde_status, values = ~n, marker = list(colors = c('#00aa7f', '#ccccc7', '#ff0000')))
 fig <- fig %>% add_pie(hole = 0.55, textfont = list(size = 13))
 fig <- fig %>% layout(showlegend = T,
                       xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
