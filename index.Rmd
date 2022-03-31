@@ -166,47 +166,45 @@ valueBox(value = paste(format(n_sc, big.mark = ","), "", sep = " "),
 
 
 ```{r, include=FALSE}
-# Recategorization for fur status
+# Recategorization for fur status (dummy)
 raw_claims_feb21 <- mutate(raw_claims_feb21, FUR_decision =
                                    case_when(estado_hec == "Calificado" | estado_hec == "Concluido" ~ "Yes",
                                              estado_hec == "Anulado" | estado_hec == "En Proceso" | estado_hec == "Pendiente" ~ "No" ) )
 
-
-raw_claims_feb21 <- mutate(raw_claims_feb21, FUR_decision_categories =
-                                   case_when(estado_hec == "Calificado" | estado_hec == "Concluido" ~ "Aprobado",
-                                             estado_hec == "Anulado"  ~ "Rechazado",
-                                             estado_hec == "En Proceso" | estado_hec == "Pendiente" ~ "Pendiente" ) )
-
-
-# Recategorization for fud status
+# Recategorization for fud status (dummy)
 raw_claims_feb21$FUD_decision<- ifelse(raw_claims_feb21$FUR_decision == "Yes" & raw_claims_feb21$numero_fud != "", "Yes", "No")
 
-table(raw_claims_feb21$estado_fud)
-#table(raw_claims_feb21$FUD_decision[raw_claims_feb21$estado_fud=="Desestimado"])
-#table(raw_claims_feb21$FUD_decision[raw_claims_feb21$estado_fud=="Sin atender"])
-#table(raw_claims_feb21$FUD_decision[raw_claims_feb21$estado_fud=="Devuelto"])
-#table(raw_claims_feb21$FUD_decision[raw_claims_feb21$estado_fud=="Asociado"])
 
-#raw_claims_feb21 <- mutate(raw_claims_feb21, FUD_decision_categories =
-#                                   case_when(estado_fud == "Desestimado" 
-                                            
-                                           
-                                           
-                     #              ) )
-
-# Recategorization for PDE status
+# Recategorization for PDE status (dummy)
 raw_claims_feb21$PDE_decision<- ifelse(raw_claims_feb21$numero_he != "" & (raw_claims_feb21$producto_aprobado == "Carpeta Atención de Denuncia" | raw_claims_feb21$producto_aprobado == "Desestimado") , "Yes", "No")
 
 
-raw_claims_feb21 <- mutate(raw_claims_feb21, PDE_decision_categories =
-                                   case_when(producto_aprobado == "Desestimado" ~ "Anulado",
-                                             producto_aprobado == "En proceso" & PDE_decision == "Yes" ~ "Pendiente",
-                                             producto_aprobado == "Carpeta Atención de Denuncia" & PDE_decision == "Yes" ~ "Aprobado"
-                                   ) )
-
-
-# Recategorization for CAD status
+# Recategorization for CAD status (dummy)
 raw_claims_feb21$CAD_decision<- ifelse(raw_claims_feb21$numero_he != "" &  raw_claims_feb21$producto_aprobado == "Carpeta Atención de Denuncia" , "Yes", "No")
+```
+
+
+```{r}
+##Aprobado, rechazado, pendiente categories
+
+#FUR categories
+FUR_categories_df <- mutate(subset(raw_claims_feb21, FUR_decision == "Yes"), FUR_decision_categories =
+                                   case_when( FUD_decision == "Yes" ~ "Aprobado",
+                                              FUD_decision == "No" & (estado_fur == "No admitido" | estado_fur == "No aceptado a trámite") ~ "Rechazado",
+                                              TRUE  ~ "Pendiente") )
+
+#FUD categories
+FUD_categories_df <- mutate(subset(raw_claims_feb21, FUD_decision == "Yes"), FUD_decision_categories =
+                                   case_when( PDE_decision == "Yes" ~ "Aprobado",
+                                              PDE_decision == "No" & (estado_fud == "Sin atender" | estado_fud == "Devuelto")  ~ "Pendiente",
+                                              TRUE ~ "Rechazado") )
+	
+#PDE categories
+PDE_categories_df  <- mutate(subset(raw_claims_feb21, PDE_decision == "Yes"), PDE_decision_categories =
+                                   case_when( CAD_decision == "Yes" ~ "Aprobado",
+                                              CAD_decision == "No" & producto_aprobado == "En proceso" ~ "Pendiente",
+                                              TRUE ~ "Rechazado") )
+
 ```
 
 
@@ -268,7 +266,7 @@ valueBox(value = paste(format(cad_claims, big.mark = ","), "/", percent_cad , se
 
 ### <b><font face="Arial" size="4px" color="#000000">Estado FUR</font></b>
 
-```{r}
+```{r, include=FALSE}
 
 #Donut chart: fur status
 fur_status_df <- as.data.frame(table(raw_claims_feb21$FUR_decision))
@@ -284,9 +282,26 @@ fig <- fig %>% layout(showlegend = T,
 fig
 ```
 
+```{r}
+#Donut chart: fur status - categories
+fur_status_df <- as.data.frame(table(FUR_categories_df$FUR_decision_categories))
+
+colnames(fur_status_df) <- c("fur_status", "n")
+ 
+fig <- fur_status_df %>% plot_ly(labels = ~fur_status, values = ~n, marker = list(colors = c('#00aa7f', '#ccccc7', '#ff0000')))
+fig <- fig %>% add_pie(hole = 0.55, textfont = list(size = 13))
+fig <- fig %>% layout(showlegend = T,
+                      xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+                      yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
+
+fig
+
+```
+
+
 ### <b><font face="Arial" size="4px" color="#000000">Estado FUD</font></b>
 
-```{r}
+```{r, include = FALSE}
 #Donut chart: fud status
 fud_status_df <- as.data.frame(table(raw_claims_feb21$FUD_decision))
 
@@ -302,10 +317,25 @@ fig
 
 ```
 
+```{r}
+#Donut chart: fud status  - categories
+fud_status_df <- as.data.frame(table(FUD_categories_df$FUD_decision_categories))
+
+colnames(fud_status_df) <- c("fud_status", "n")
+ 
+fig <- fud_status_df %>% plot_ly(labels = ~fud_status, values = ~n, marker = list(colors = c('#00aa7f', '#ccccc7', '#ff0000')))
+fig <- fig %>% add_pie(hole = 0.55, textfont = list(size = 13))
+fig <- fig %>% layout(showlegend = T,
+                      xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+                      yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
+
+fig
+
+```
 
 ### <b><font face="Arial" size="4px" color="#000000">Estado PDE</font></b>
 
-```{r}
+```{r, include = FALSE}
 #Donut chart: PDE status
 pde_status_df <- as.data.frame(table(raw_claims_feb21$PDE_decision))
 
@@ -322,11 +352,27 @@ fig
 ```
 
 
+```{r}
+#Donut chart: PDE status - categories
+pde_status_df <- as.data.frame(table(PDE_categories_df$PDE_decision_categories))
+
+colnames(pde_status_df) <- c("pde_status", "n")
+ 
+fig <- pde_status_df %>% plot_ly(labels = ~pde_status, values = ~n, marker = list(colors = c('#00aa7f', '#ff0000')))
+fig <- fig %>% add_pie(hole = 0.55, textfont = list(size = 13))
+fig <- fig %>% layout(showlegend = T,
+                      xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+                      yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
+
+fig
+
+```
+
+
+```{r, include = FALSE}
 ### <b><font face="Arial" size="4px" color="#000000">Estado CAD</font></b>
 
-
-```{r}
-#Donut chart: PDE status
+#Donut chart: CAD status
 cad_status_df <- as.data.frame(table(raw_claims_feb21$CAD_decision))
 
 colnames(cad_status_df) <- c("cad_status", "n")
