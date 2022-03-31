@@ -1,5 +1,5 @@
 ---
-title: "Complaints dashboard"
+title: "Dashboard de denuncias"
 output: 
   flexdashboard::flex_dashboard:
     orientation: rows
@@ -105,7 +105,7 @@ raw_claims_feb21 <-import("raw_claims_feb21.dta")
 
 
 
-Claims 2021
+Denuncias 2021
 =====================================  
 
 ## Row
@@ -117,7 +117,7 @@ Claims 2021
 n_claims <- nrow(raw_claims_feb21)
 
 valueBox(value = paste(format(n_claims, big.mark = ","), "", sep = " "), 
-         caption = "Total Claims",
+         caption = "Hechos totales",
          icon = "fa-database",             #https://fontawesome.com/v4/icons/
          color = "#7636b3")
 ```
@@ -130,7 +130,7 @@ n_encoded <- nrow(clean_claims_21)
 percent_encoded <- paste( round(n_encoded/n_claims,2)*100, "%")
 
 valueBox(value = paste(format(n_encoded, big.mark = ","), "/", percent_encoded  , sep = " "), 
-         caption = "Encoded Claims",
+         caption = "Hechos codificados",
          icon = "fa-arrow-circle-up",
          color = "#a249f5")
 ```
@@ -165,18 +165,44 @@ valueBox(value = paste(format(n_sc, big.mark = ","), "", sep = " "),
 -----------------------------------------------------------------------
 
 
-```{r}
+```{r, include=FALSE}
 # Recategorization for fur status
 raw_claims_feb21 <- mutate(raw_claims_feb21, FUR_decision =
                                    case_when(estado_hec == "Calificado" | estado_hec == "Concluido" ~ "Yes",
                                              estado_hec == "Anulado" | estado_hec == "En Proceso" | estado_hec == "Pendiente" ~ "No" ) )
 
+
+raw_claims_feb21 <- mutate(raw_claims_feb21, FUR_decision_categories =
+                                   case_when(estado_hec == "Calificado" | estado_hec == "Concluido" ~ "Aprobado",
+                                             estado_hec == "Anulado"  ~ "Rechazado",
+                                             estado_hec == "En Proceso" | estado_hec == "Pendiente" ~ "Pendiente" ) )
+
+
 # Recategorization for fud status
 raw_claims_feb21$FUD_decision<- ifelse(raw_claims_feb21$FUR_decision == "Yes" & raw_claims_feb21$numero_fud != "", "Yes", "No")
 
+table(raw_claims_feb21$estado_fud)
+#table(raw_claims_feb21$FUD_decision[raw_claims_feb21$estado_fud=="Desestimado"])
+#table(raw_claims_feb21$FUD_decision[raw_claims_feb21$estado_fud=="Sin atender"])
+#table(raw_claims_feb21$FUD_decision[raw_claims_feb21$estado_fud=="Devuelto"])
+#table(raw_claims_feb21$FUD_decision[raw_claims_feb21$estado_fud=="Asociado"])
+
+#raw_claims_feb21 <- mutate(raw_claims_feb21, FUD_decision_categories =
+#                                   case_when(estado_fud == "Desestimado" 
+                                            
+                                           
+                                           
+                     #              ) )
 
 # Recategorization for PDE status
 raw_claims_feb21$PDE_decision<- ifelse(raw_claims_feb21$numero_he != "" & (raw_claims_feb21$producto_aprobado == "Carpeta Atención de Denuncia" | raw_claims_feb21$producto_aprobado == "Desestimado") , "Yes", "No")
+
+
+raw_claims_feb21 <- mutate(raw_claims_feb21, PDE_decision_categories =
+                                   case_when(producto_aprobado == "Desestimado" ~ "Anulado",
+                                             producto_aprobado == "En proceso" & PDE_decision == "Yes" ~ "Pendiente",
+                                             producto_aprobado == "Carpeta Atención de Denuncia" & PDE_decision == "Yes" ~ "Aprobado"
+                                   ) )
 
 
 # Recategorization for CAD status
@@ -191,7 +217,7 @@ fur_claims <- sum(raw_claims_feb21$FUR_decision == "Yes")
 percent_fur <-  paste( round(fur_claims/n_claims,2)*100, "%")
 
 valueBox(value = paste(format(fur_claims, big.mark = ","), "/", percent_fur  , sep = " "),
-         caption = "FUR Claims",
+         caption = "Hechos FUR",
          icon = "fa-folder-open",            
          color = '#3fc1c9')
 ```
@@ -203,7 +229,7 @@ fud_claims <- sum(raw_claims_feb21$FUD_decision == "Yes")
 percent_fud <-  paste( round(fud_claims/n_claims,2)*100, "%")
 
 valueBox(value = paste(format(fud_claims, big.mark = ","), "/", percent_fud  , sep = " "),
-         caption = "FUD Claims",
+         caption = "Hechos FUD",
          icon = "fa-folder-open",             
          color = '#3fc1c9')
 ```
@@ -216,7 +242,7 @@ pde_claims <- sum(raw_claims_feb21$PDE_decision == "Yes")
 percent_pde <-  paste( round(pde_claims/n_claims,2)*100, "%")
 
 valueBox(value = paste(format(pde_claims, big.mark = ","), "/", percent_pde  , sep = " "),
-         caption = "PDE Claims",
+         caption = "Hechos PDE",
          icon = "fa-folder-open",             
          color = '#3fc1c9')
 ```
@@ -229,7 +255,7 @@ cad_claims <- sum(raw_claims_feb21$CAD_decision == "Yes")
 percent_cad <-  paste( round(cad_claims/n_claims,2)*100, "%")
 
 valueBox(value = paste(format(cad_claims, big.mark = ","), "/", percent_cad , sep = " "),
-         caption = "CAD Claims",
+         caption = "Hechos CAD",
          icon = "fa-folder-open",             
          color = '#3fc1c9')
 ```
@@ -240,7 +266,7 @@ valueBox(value = paste(format(cad_claims, big.mark = ","), "/", percent_cad , se
 -----------------------------------------------------------------------
 
 
-### <b><font face="Arial" size="4px" color="#000000">FUR status</font></b>
+### <b><font face="Arial" size="4px" color="#000000">Estado FUR</font></b>
 
 ```{r}
 
@@ -258,7 +284,7 @@ fig <- fig %>% layout(showlegend = T,
 fig
 ```
 
-### <b><font face="Arial" size="4px" color="#000000">FUD status</font></b>
+### <b><font face="Arial" size="4px" color="#000000">Estado FUD</font></b>
 
 ```{r}
 #Donut chart: fud status
@@ -277,7 +303,7 @@ fig
 ```
 
 
-### <b><font face="Arial" size="4px" color="#000000">PDE status</font></b>
+### <b><font face="Arial" size="4px" color="#000000">Estado PDE</font></b>
 
 ```{r}
 #Donut chart: PDE status
@@ -296,7 +322,7 @@ fig
 ```
 
 
-### <b><font face="Arial" size="4px" color="#000000">CAD status</font></b>
+### <b><font face="Arial" size="4px" color="#000000">Estado CAD</font></b>
 
 
 ```{r}
@@ -320,7 +346,7 @@ fig
 -----------------------------------------------------------------------
 
 
-### <b><font face="Arial" size="4px" color="#000000">Encoded Claims: missings</font></b>
+### <b><font face="Arial" size="4px" color="#000000">Hechos codificados: valores faltantes</font></b>
 
 ```{r, include=FALSE}
 
@@ -357,11 +383,11 @@ tbl <- reactable(
   defaultSorted = "percentage_missing",
   defaultColDef = colDef(headerClass = "header", align = "left"),
   columns = list(
-    variable = colDef(name = "Encoded variable"
+    variable = colDef(name = "Variable codificada"
  
     ),
     n_missings = colDef(
-      name = "Number of missings",
+      name = "N° de valores faltantes",
       defaultSortOrder = "desc",
       # Render the bar charts using a custom cell render function
       cell = function(value) {
@@ -374,7 +400,7 @@ tbl <- reactable(
       align = "left"
     ),
     percentage_missing = colDef(
-      name = "% missings",
+      name = "% de valores faltantes",
       defaultSortOrder = "desc",
       # Render the bar charts using a custom cell render function
       cell = function(value) {
@@ -393,7 +419,7 @@ tbl
 ```
 
 
-### <b><font face="Arial" size="4px" color="#000000">Encoded Claims: error rate per encoder</font></b>  
+### <b><font face="Arial" size="4px" color="#000000">Hechos codificados: tasa de error por codificador</font></b>  
 
 
 ```{r, include=FALSE}
@@ -454,9 +480,9 @@ fig <- fig %>% add_trace(y = ~error_rate_edwar, name = 'Edwar',
 
 fig <- fig %>% 
         layout(title = "",
-         xaxis = list(title = "Date batch",
+         xaxis = list(title = "Fecha del batch",
                       zeroline = FALSE),
-         yaxis = list(title = "Error rate (%)",
+         yaxis = list(title = "Tasa de error (%)",
                       zeroline = FALSE))
 
 fig
@@ -491,7 +517,7 @@ corruption_claims_count <- corruption_claims_count %>%
 ```
 
 
-### <b><font face="Arial" size="4px" color="#000000">Encoded Claims: corruption claims</font></b>  
+### <b><font face="Arial" size="4px" color="#000000">Hechos codificados: hechos de corrupción</font></b>  
 
 ```{r}
 max = sum(corruption_claims_count$n)
@@ -502,7 +528,7 @@ gauge(corruption_claims_count$n[corruption_claims_count$corruption_denunc == 1],
 ```
 
 
-### <b><font face="Arial" size="4px" color="#000000">Encoded Claims: corruption claims (%)</font></b>  
+### <b><font face="Arial" size="4px" color="#000000">Hechos codificados: hechos de corrupción (%)</font></b>  
 
 
 ```{r}
@@ -540,7 +566,7 @@ ggiraph(ggobj = donut_plot )
 -----------------------------------------------------------------------
 
 
-### <b><font face="Arial" size="4px" color="#000000">Encoded Claims: corruption claims by deparment - statistics</font></b>  
+### <b><font face="Arial" size="4px" color="#000000">Hechos codificados: hechos de corrupción por departamento - estadísticos</font></b>  
 
 
 ```{r, include=FALSE}
@@ -576,11 +602,11 @@ tbl <- reactable(
   defaultSorted = "n",
   defaultColDef = colDef(headerClass = "header", align = "left"),
   columns = list(
-    DEPARTAMENTO = colDef(name = "Department"
+    DEPARTAMENTO = colDef(name = "Departamento"
  
     ),
     n = colDef(
-      name = "Number of claims",
+      name = "N° de hechos",
       defaultSortOrder = "desc",
       # Render the bar charts using a custom cell render function
       cell = function(value) {
@@ -593,7 +619,7 @@ tbl <- reactable(
       align = "left"
     ),
     percentage = colDef(
-      name = "Percentage",
+      name = "Porcentaje",
       defaultSortOrder = "desc",
       # Render the bar charts using a custom cell render function
       cell = function(value) {
@@ -612,7 +638,7 @@ tbl
 
 
 
-### <b><font face="Arial" size="4px" color="#000000">Encoded Claims: corruption claims by deparment - map</font></b>  
+### <b><font face="Arial" size="4px" color="#000000">Hechos codificados: hechos de corrupción por departamento - mapa</font></b>  
 
 
 ```{r, include=FALSE}
@@ -660,7 +686,7 @@ departamentos_fortified_ <-merge(x = departamentos_fortified, y = corruption_dep
 dep_plot <- ggplot() +
         geom_polygon(data = departamentos_fortified_, aes(fill = n, x = long, y = lat, group = group), colour= "gray", size=0.05, alpha=0.9) +
         theme_void() +
-        scale_fill_viridis(option = 'D', trans = "log2",  breaks = trans_breaks("log2", function(x) 2^x), name="Claims") +
+        scale_fill_viridis(option = 'D', trans = "log2",  breaks = trans_breaks("log2", function(x) 2^x), name="N° de hechos") +
         theme(  
                 text = element_text(size= 7, color = "#22211d"),
                 
@@ -732,7 +758,7 @@ nrow(clean_claims_21) - table(claims_21$clean_claims_21)
 ```
 
 
-### <b><font face="Arial" size="4px" color="#000000">Claims by entity</font></b>  
+### <b><font face="Arial" size="4px" color="#000000">Hechos por entidad</font></b>  
 
 
 ```{r, include=FALSE}
@@ -786,9 +812,9 @@ tbl <- reactable(
   defaultSorted = "n",
   defaultColDef = colDef(headerClass = "header", align = "left"),
   columns = list(
-    TIPO_DE_ENTIDAD = colDef(name = "Entity type", width = 180),
+    TIPO_DE_ENTIDAD = colDef(name = "Tipo de entidad", width = 180),
     n = colDef(
-      name = "Number of claims",
+      name = "N° de hechos",
       defaultSortOrder = "desc",
       # Render the bar charts using a custom cell render function
       cell = function(value) {
@@ -801,7 +827,7 @@ tbl <- reactable(
       align = "left"
     ),
     percentage = colDef(
-      name = "Percentage",
+      name = "Porcentaje",
       defaultSortOrder = "desc",
       # Render the bar charts using a custom cell render function
       cell = function(value) {
@@ -849,7 +875,7 @@ tbl
 ```
 
 
-### <b><font face="Arial" size="4px" color="#000000">Claims per type of primary class</font></b>  
+### <b><font face="Arial" size="4px" color="#000000">Hechos por tipología primaria</font></b>  
 
 
 ```{r}
@@ -877,11 +903,11 @@ tbl <- reactable(
   defaultSorted = "n",
   defaultColDef = colDef(headerClass = "header", align = "left"),
   columns = list(
-    TIPO_DENUNCIA_PRIMARIO_14_CLASES = colDef(name = "Type of primary class"
+    TIPO_DENUNCIA_PRIMARIO_14_CLASES = colDef(name = "Tipo de denuncia"
  
     ),
     n = colDef(
-      name = "Number of obs",
+      name = "N° de hechos",
       defaultSortOrder = "desc",
       # Render the bar charts using a custom cell render function
       cell = function(value) {
@@ -894,7 +920,7 @@ tbl <- reactable(
       align = "left"
     ),
     percentage = colDef(
-      name = "Percentage",
+      name = "Porcentaje",
       defaultSortOrder = "desc",
       # Render the bar charts using a custom cell render function
       cell = function(value) {
@@ -934,7 +960,7 @@ corruption_claims_dep %>%
 -----------------------------------------------------------------------
 
 
-### <b><font face="Arial" size="4px" color="#000000">Claims by office</font></b>  
+### <b><font face="Arial" size="4px" color="#000000">Hechos por unidad orgánica del analista</font></b>  
 
 
 ```{r}
@@ -965,9 +991,9 @@ tbl <- reactable(
   defaultSorted = "n",
   defaultColDef = colDef(headerClass = "header", align = "left"),
   columns = list(
-    uo_ara = colDef(name = "Office name", width = 180),
+    uo_ara = colDef(name = "Unidad Orgánica", width = 180),
     n = colDef(
-      name = "Number of claims",
+      name = "N° de hechos",
       defaultSortOrder = "desc",
       # Render the bar charts using a custom cell render function
       cell = function(value) {
@@ -980,7 +1006,7 @@ tbl <- reactable(
       align = "left"
     ),
     percentage = colDef(
-      name = "Percentage",
+      name = "Porcentaje",
       defaultSortOrder = "desc",
       # Render the bar charts using a custom cell render function
       cell = function(value) {
@@ -1028,7 +1054,7 @@ tbl
 ```
 
 
-### <b><font face="Arial" size="4px" color="#000000">Claims by analyst</font></b>  
+### <b><font face="Arial" size="4px" color="#000000">Hechos por analista</font></b>  
 
 
 ```{r}
@@ -1060,9 +1086,9 @@ tbl <- reactable(
   defaultSorted = "n",
   defaultColDef = colDef(headerClass = "header", align = "left"),
   columns = list(
-    ara = colDef(name = "Analyst name", width = 180),
+    ara = colDef(name = "Nombre del analista", width = 180),
     n = colDef(
-      name = "Number of claims",
+      name = "N° de hechos",
       defaultSortOrder = "desc",
       # Render the bar charts using a custom cell render function
       cell = function(value) {
@@ -1075,7 +1101,7 @@ tbl <- reactable(
       align = "left"
     ),
     percentage = colDef(
-      name = "Percentage",
+      name = "Porcentaje",
       defaultSortOrder = "desc",
       # Render the bar charts using a custom cell render function
       cell = function(value) {
@@ -1125,7 +1151,7 @@ tbl
 
 
 
-Page 2
+Página 2 
 =====================================  
 
 
