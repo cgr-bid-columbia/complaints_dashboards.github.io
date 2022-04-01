@@ -82,8 +82,8 @@ library(DBI)
 #TEMPORAL: (delete after last commit)
 setwd("C:/BID_Columbia/claims_assigment/outputs_temp")
 
-#clean_claims_21 <-import("stacking_encoded.dta")
-clean_claims_21 <-import("clean_claims21_v4.dta")
+clean_claims_21 <-import("stacking_encoded.dta")
+#clean_claims_21 <-import("clean_claims21_v4.dta")
 
 ##############
 ```
@@ -484,8 +484,8 @@ tie_breaking_append$error_edwar <- rep(0, nrow(tie_breaking_append))
 tie_breaking_append$error_edwar[tie_breaking_append$chosen_encoder != "Edwar" & tie_breaking_append$chosen_encoder != "Andrea/Edwar"] <- 1
 
 #Ganet's number of errors
-tie_breaking_append$error_ganet <- rep(0, nrow(tie_breaking_append))
-tie_breaking_append$error_ganet[tie_breaking_append$chosen_encoder != "Ganet" & tie_breaking_append$chosen_encoder != "Ganet/Edwar"] <- 1
+#tie_breaking_append$error_ganet <- rep(0, nrow(tie_breaking_append))
+#tie_breaking_append$error_ganet[tie_breaking_append$chosen_encoder != "Ganet" & tie_breaking_append$chosen_encoder != "Ganet/Edwar"] <- 1
 
 #Number of observartions per batches
 df2<- tie_breaking_append %>%
@@ -501,16 +501,16 @@ df_edwar <- aggregate(tie_breaking_append$error_edwar, by=list(date_batch=tie_br
 
 colnames(df_edwar)[2] <- "error_edwar"
 
-df_ganet <- aggregate(tie_breaking_append$error_ganet, by=list(date_batch=tie_breaking_append$date_batch), FUN=sum)
+#df_ganet <- aggregate(tie_breaking_append$error_ganet, by=list(date_batch=tie_breaking_append$date_batch), FUN=sum)
 
-colnames(df_ganet)[2] <- "error_ganet"
+#colnames(df_ganet)[2] <- "error_ganet"
 
 #Error rate per encoder and batch
 df_error_rate = merge(df2, df_andrea, by = "date_batch", all.x = TRUE)
 
 df_error_rate = merge(df_error_rate, df_edwar, by = "date_batch", all.x = TRUE)
 
-df_error_rate = merge(df_error_rate, df_ganet, by = "date_batch", all.x = TRUE)
+#df_error_rate = merge(df_error_rate, df_ganet, by = "date_batch", all.x = TRUE)
 
 
 
@@ -518,7 +518,7 @@ df_error_rate$error_rate_andrea <- round( (df_error_rate$error_andrea/df_error_r
 
 df_error_rate$error_rate_edwar <- round( (df_error_rate$error_edwar/df_error_rate$obs)*100 , 1)
 
-df_error_rate$error_rate_ganet <- round( (df_error_rate$error_ganet/df_error_rate$obs)*100 , 1)
+#df_error_rate$error_rate_ganet <- round( (df_error_rate$error_ganet/df_error_rate$obs)*100 , 1)
 
 
 #Error rate per date batch and encoder
@@ -526,12 +526,12 @@ df_andrea_rate = df_error_rate[c('date_batch','error_rate_andrea')]
 
 df_edwar_rate = df_error_rate[c('date_batch','error_rate_edwar')]
 
-df_ganet_rate = df_error_rate[c('date_batch','error_rate_ganet')]
+#df_ganet_rate = df_error_rate[c('date_batch','error_rate_ganet')]
 
 
 
 data_plot <- merge(df_andrea_rate, df_edwar_rate, by = "date_batch")
-data_plot <- merge(data_plot, df_ganet_rate, by = "date_batch")
+#data_plot <- merge(data_plot, df_ganet_rate, by = "date_batch")
 
 ```
 
@@ -1024,10 +1024,9 @@ corruption_claims_dep %>%
 ## Row
 -----------------------------------------------------------------------
 
+
+```{r, include=FALSE}
 ### <b><font face="Arial" size="4px" color="#000000">Hechos por analista</font></b>  
-
-
-```{r}
 
 ara_count <- subset(raw_claims_feb21, ara!= ", " ) %>%
   group_by(ara) %>%
