@@ -1080,6 +1080,54 @@ corruption_claims_dep %>%
 ## Row
 -----------------------------------------------------------------------
 
+```{r, include=FALSE}
+### <b><font face="Arial" size="4px" color="#000000">Etnicidad de analistas y aoc</font></b>  
+
+setwd("C:/BID_Columbia/claims_dashboard/surnames")
+
+dictionary_surnames <- import("dictionary_surnames.dta")
+
+not_in_dictionary <- import("not_in_dictionary.dta")
+
+not_in_dictionary_ind_output <- import("not_in_dictionary_ind_output.dta")
+
+
+```
+
+```{r, include=FALSE}
+
+ara_ethnicity <- raw_claims_feb21 %>% 
+mutate(surnames=unlist(lapply(strsplit(ara,", "),function(x) x[2])),
+       s_father = unlist(lapply(strsplit(surnames," "),function(x) x[1])),
+       s_mother = unlist(lapply(strsplit(surnames," "),function(x) ifelse( is.na(x[3]), x[2] , paste(x[2],x[3]) ) ) )
+        ) 
+
+ara_ethnicity <- ara_ethnicity[,c("ara", "surnames", "s_father", "s_mother")]
+
+ara_ethnicity_father <-merge(x = ara_ethnicity, y = dictionary_surnames, by.x = "s_father", by.y = "Surname" , all.x = TRUE)
+#ara_ethnicity_mother <-merge(x = ara_ethnicity, y = dictionary_surnames, by = c("id"), all.x = TRUE)
+
+ara_ethnicity_mother <-merge(x = ara_ethnicity, y = dictionary_surnames, by.x = "s_mother", by.y = "Surname" , all.x = TRUE)
+
+```
+
+```{r, include=FALSE}
+
+aoc_ethnicity <- raw_claims_feb21 %>% 
+mutate(surnames=unlist(lapply(strsplit(aoc_willay,", "),function(x) x[2])),
+       s_father = unlist(lapply(strsplit(surnames," "),function(x) x[1])),
+       s_mother = unlist(lapply(strsplit(surnames," "),function(x) ifelse( is.na(x[3]), x[2] , paste(x[2],x[3]) ) ) )
+        ) 
+
+aoc_ethnicity <- aoc_ethnicity[,c("aoc_willay", "surnames", "s_father", "s_mother")]
+
+aoc_ethnicity_father <-merge(x = aoc_ethnicity, y = dictionary_surnames, by.x = "s_father", by.y = "Surname" , all.x = TRUE)
+#ara_ethnicity_mother <-merge(x = ara_ethnicity, y = dictionary_surnames, by = c("id"), all.x = TRUE)
+
+aoc_ethnicity_mother <-merge(x = aoc_ethnicity, y = dictionary_surnames, by.x = "s_mother", by.y = "Surname" , all.x = TRUE)
+
+```
+
 
 ```{r, include=FALSE}
 ### <b><font face="Arial" size="4px" color="#000000">Hechos por analista</font></b>  
