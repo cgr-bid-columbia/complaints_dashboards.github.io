@@ -662,6 +662,13 @@ corruption_dep$DEPARTAMENTO <- gsub('PIURA, LIMA', 'LIMA', corruption_dep$DEPART
 corruption_dep$DEPARTAMENTO <- gsub('TUMBES, PIURA, LAMBAYEQUE, CALLAO, TACNA, AREQUIPA', 'TUMBES', corruption_dep$DEPARTAMENTO)
 corruption_dep$DEPARTAMENTO <- gsub('MONQUEGUA', 'MOQUEGUA', corruption_dep$DEPARTAMENTO)
 
+corruption_dep$DEPARTAMENTO <- gsub('TRUJILLO', 'LA LIBERTAD', corruption_dep$DEPARTAMENTO)
+corruption_dep$DEPARTAMENTO <- gsub('URUBAMBA', 'CUSCO', corruption_dep$DEPARTAMENTO)
+corruption_dep$DEPARTAMENTO <- gsub('SAN AGUSTIN', 'AREQUIPA', corruption_dep$DEPARTAMENTO)
+corruption_dep$DEPARTAMENTO <- gsub('CELENDIN', 'CAJAMARCA', corruption_dep$DEPARTAMENTO)
+corruption_dep$DEPARTAMENTO <- gsub('CARHUAZ', 'ANCASH', corruption_dep$DEPARTAMENTO)
+corruption_dep$DEPARTAMENTO <- gsub('AOURIMAC', 'APURIMAC', corruption_dep$DEPARTAMENTO)
+
 
 corruption_dep <- corruption_dep %>%
   group_by(DEPARTAMENTO) %>%
@@ -674,9 +681,24 @@ corruption_dep$percentage <- round( (corruption_dep$n/sum(corruption_dep$n) )*10
 
 
 ```{r}
+setwd("C:/BID_Columbia/claims_dashboard/census")
+
+census_dep <-import("departments_census2017.dta")
+
+#claims per department, per 100k inhabitants
+
+corruption_dep_census <-merge(x = corruption_dep, y = census_dep, by.x = "DEPARTAMENTO", by.y = "dep" )
+
+
+corruption_dep_census$N_dpt_claims100Kpop <- round( corruption_dep_census$n/(corruption_dep_census$pop17/100000) ,1)
+```
+
+
+
+```{r}
 
 tbl <- reactable(
-  corruption_dep,
+  corruption_dep_census[,c("DEPARTAMENTO", "n", "percentage", "N_dpt_claims100Kpop")],
   pagination = TRUE,
   defaultSorted = "n",
   defaultColDef = colDef(headerClass = "header", align = "left"),
@@ -689,7 +711,7 @@ tbl <- reactable(
       defaultSortOrder = "desc",
       # Render the bar charts using a custom cell render function
       cell = function(value) {
-        width <- paste0(value * 100 / max(corruption_dep$n), "%")
+        width <- paste0(value * 100 / max(corruption_dep_census$n), "%")
         # Add thousands separators
         value <- format(value, big.mark = ",")
         bar_chart(value, width = width, fill = "#3fc1c9")
@@ -708,9 +730,24 @@ tbl <- reactable(
       },
       # And left-align the columns
       align = "left"
+    ),
+    N_dpt_claims100Kpop = colDef(
+      name = "N° de hechos por 100 mil habitantes",
+      defaultSortOrder = "desc",
+      # Render the bar charts using a custom cell render function
+      cell = function(value) {
+        width <- paste0(value * 100 / max(corruption_dep_census$N_dpt_claims100Kpop), "%")
+        # Add thousands separators
+        value <- format(value, big.mark = ",")
+        bar_chart(value, width = width, fill = "#00aa7f")
+      },
+      # And left-align the columns
+      align = "left"
     )
   )
 )
+
+
 
 tbl
 ```
@@ -777,6 +814,11 @@ dep_plot <- ggplot() +
 
 dep_plot
 ```
+
+
+
+
+
 
 
 ## Row
