@@ -754,7 +754,7 @@ tbl
 
 
 
-### <b><font face="Arial" size="4px" color="#000000">Hechos codificados: hechos de corrupción por departamento - mapa</font></b>  
+### <b><font face="Arial" size="4px" color="#000000">Hechos codificados: hechos de corrupción por 100 mil habitantes por departamento - mapa</font></b>  
 
 
 ```{r, include=FALSE}
@@ -787,11 +787,11 @@ departamentos_fortified <- tidy(departamentos, region =  "NOMBDEP")
 
 
 #We leave only the id and n columns
-corruption_dep$id <- corruption_dep$DEPARTAMENTO
-corruption_dep <- corruption_dep[,c("id","n")]
+corruption_dep_census$id <- corruption_dep_census$DEPARTAMENTO
+corruption_dep_census <- corruption_dep_census[,c("id","N_dpt_claims100Kpop")]
 
 #left join
-departamentos_fortified_ <-merge(x = departamentos_fortified, y = corruption_dep, by = c("id"), all.x = TRUE)
+departamentos_fortified_ <-merge(x = departamentos_fortified, y = corruption_dep_census, by = c("id"), all.x = TRUE)
 
 
 ```
@@ -800,7 +800,7 @@ departamentos_fortified_ <-merge(x = departamentos_fortified, y = corruption_dep
 ```{r}
 #map plot
 dep_plot <- ggplot() +
-        geom_polygon(data = departamentos_fortified_, aes(fill = n, x = long, y = lat, group = group), colour= "gray", size=0.05, alpha=0.9) +
+        geom_polygon(data = departamentos_fortified_, aes(fill = N_dpt_claims100Kpop, x = long, y = lat, group = group), colour= "gray", size=0.05, alpha=0.9) +
         theme_void() +
         scale_fill_viridis(option = 'D', trans = "log2",  name="N° de hechos") +
         #scale_fill_viridis(option = 'D', trans = "log2",  breaks = trans_breaks("log2", function(x) 2^x), name="N° de hechos") +
@@ -1319,8 +1319,7 @@ tbl
 
 
 
-Página 2 
-=====================================  
+
 
 
 
