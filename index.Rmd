@@ -802,7 +802,7 @@ departamentos_fortified_ <-merge(x = departamentos_fortified, y = corruption_dep
 dep_plot <- ggplot() +
         geom_polygon(data = departamentos_fortified_, aes(fill = N_dpt_claims100Kpop, x = long, y = lat, group = group), colour= "gray", size=0.05, alpha=0.9) +
         theme_void() +
-        scale_fill_viridis(option = 'D', trans = "log2",  name="N° de hechos") +
+        scale_fill_viridis(option = 'D',  direction = -1, trans = "log2",  name="N° de hechos") +
         #scale_fill_viridis(option = 'D', trans = "log2",  breaks = trans_breaks("log2", function(x) 2^x), name="N° de hechos") +
         theme(  
                 text = element_text(size= 7, color = "#22211d"),
