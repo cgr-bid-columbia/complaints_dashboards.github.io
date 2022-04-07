@@ -561,6 +561,188 @@ fig <- fig %>%
 fig
 ```
 
+
+## Row
+-----------------------------------------------------------------------
+
+```{r, include=FALSE}
+setwd("C:/BID_Columbia/claims_dashboard/census")
+
+census_dep <-import("departments_census2017.dta")
+```
+
+
+### <b><font face="Arial" size="4px" color="#000000">Hechos codificados: hechos por departamento - estadísticos</font></b>  
+
+
+```{r, include=FALSE}
+hechos_dep <- subset(mutate_each(clean_claims_21, funs(toupper)), DEPARTAMENTO!= "" )
+
+#delete special characters from DEPARTAMENTO
+hechos_dep$DEPARTAMENTO <- iconv(hechos_dep$DEPARTAMENTO, from="UTF-8",to="ASCII//TRANSLIT")
+
+#Solving some issues with DEPARTAMENTO (temporal) / this is not necessarily correct 
+hechos_dep$DEPARTAMENTO <- gsub('AREQUIPA, LIMA', 'AREQUIPA', hechos_dep$DEPARTAMENTO)
+hechos_dep$DEPARTAMENTO <- gsub('LIMA, AYACUCHO', 'LIMA', hechos_dep$DEPARTAMENTO)
+hechos_dep$DEPARTAMENTO <- gsub('MINISTERIO DE DEFENSA', 'LIMA', hechos_dep$DEPARTAMENTO)
+hechos_dep$DEPARTAMENTO <- gsub('PIURA, LIMA', 'LIMA', hechos_dep$DEPARTAMENTO)
+hechos_dep$DEPARTAMENTO <- gsub('TUMBES, PIURA, LAMBAYEQUE, CALLAO, TACNA, AREQUIPA', 'TUMBES', hechos_dep$DEPARTAMENTO)
+hechos_dep$DEPARTAMENTO <- gsub('MONQUEGUA', 'MOQUEGUA', hechos_dep$DEPARTAMENTO)
+
+hechos_dep$DEPARTAMENTO <- gsub('TRUJILLO', 'LA LIBERTAD', hechos_dep$DEPARTAMENTO)
+hechos_dep$DEPARTAMENTO <- gsub('URUBAMBA', 'CUSCO', hechos_dep$DEPARTAMENTO)
+hechos_dep$DEPARTAMENTO <- gsub('SAN AGUSTIN', 'AREQUIPA', hechos_dep$DEPARTAMENTO)
+hechos_dep$DEPARTAMENTO <- gsub('CELENDIN', 'CAJAMARCA', hechos_dep$DEPARTAMENTO)
+hechos_dep$DEPARTAMENTO <- gsub('CARHUAZ', 'ANCASH', hechos_dep$DEPARTAMENTO)
+hechos_dep$DEPARTAMENTO <- gsub('AOURIMAC', 'APURIMAC', hechos_dep$DEPARTAMENTO)
+
+
+hechos_dep <- hechos_dep %>%
+  group_by(DEPARTAMENTO) %>%
+  summarise(
+    n = n()
+  )
+
+hechos_dep$percentage <- round( (hechos_dep$n/sum(hechos_dep$n) )*100, 1)
+```
+
+
+```{r}
+
+#claims per department, per 100k inhabitants
+
+hechos_dep_census <-merge(x = hechos_dep, y = census_dep, by.x = "DEPARTAMENTO", by.y = "dep" )
+
+
+hechos_dep_census$N_dpt_claims100Kpop <- round( hechos_dep_census$n/(hechos_dep_census$pop17/100000) ,1)
+```
+
+
+
+```{r}
+
+tbl <- reactable(
+  hechos_dep_census[,c("DEPARTAMENTO", "n", "percentage", "N_dpt_claims100Kpop")],
+  pagination = TRUE,
+  defaultSorted = "n",
+  defaultColDef = colDef(headerClass = "header", align = "left"),
+  columns = list(
+    DEPARTAMENTO = colDef(name = "Departamento"
+ 
+    ),
+    n = colDef(
+      name = "N° de hechos",
+      defaultSortOrder = "desc",
+      # Render the bar charts using a custom cell render function
+      cell = function(value) {
+        width <- paste0(value * 100 / max(hechos_dep_census$n), "%")
+        # Add thousands separators
+        value <- format(value, big.mark = ",")
+        bar_chart(value, width = width, fill = "#3fc1c9")
+      },
+      # And left-align the columns
+      align = "left"
+    ),
+    percentage = colDef(
+      name = "Porcentaje",
+      defaultSortOrder = "desc",
+      # Render the bar charts using a custom cell render function
+      cell = function(value) {
+        # Format as percentages with 1 decimal place
+        value <- paste0(format(value , nsmall = 1), "%")
+        bar_chart(value, width = value, fill = "#fc5185", background = "#e1e1e1")
+      },
+      # And left-align the columns
+      align = "left"
+    ),
+    N_dpt_claims100Kpop = colDef(
+      name = "N° de hechos por 100 mil habitantes",
+      defaultSortOrder = "desc",
+      # Render the bar charts using a custom cell render function
+      cell = function(value) {
+        width <- paste0(value * 100 / max(hechos_dep_census$N_dpt_claims100Kpop), "%")
+        # Add thousands separators
+        value <- format(value, big.mark = ",")
+        bar_chart(value, width = width, fill = "#00aa7f")
+      },
+      # And left-align the columns
+      align = "left"
+    )
+  )
+)
+
+
+
+tbl
+```
+
+
+
+### <b><font face="Arial" size="4px" color="#000000">Hechos codificados: hechos por 100 mil habitantes por departamento - mapa</font></b>  
+
+
+```{r, include=FALSE}
+library(rgdal)
+library(broom)
+library(rgeos)
+library(maptools)
+library(ggplot2)
+library(viridis)
+library(scales)
+
+#Map file location (TEMPORAL)
+dirmapas <- "C:/BID_Columbia/claims_dashboard/maps/DEPARTAMENTO" 
+setwd(dirmapas)
+
+# The black and white polygon map
+departamentos<-readOGR(dsn="DEPARTAMENTO_27_04_2015.shp", layer="DEPARTAMENTO_27_04_2015")
+
+#summary(departamentos)
+
+departamentos$NOMBDEP
+
+#head(departamentos@data)
+
+#plot(departamentos)
+
+#We must transform the data to be able to make a graph with ggplot
+departamentos_fortified <- tidy(departamentos, region =  "NOMBDEP")
+#unique(departamentos_fortified$id)
+
+
+#We leave only the id and n columns
+hechos_dep_census$id <- hechos_dep_census$DEPARTAMENTO
+hechos_dep_census <- hechos_dep_census[,c("id","N_dpt_claims100Kpop")]
+
+#left join
+departamentos_fortified_ <-merge(x = departamentos_fortified, y = hechos_dep_census, by = c("id"), all.x = TRUE)
+
+
+```
+
+
+```{r}
+#map plot
+dep_plot <- ggplot() +
+        geom_polygon(data = departamentos_fortified_, aes(fill = N_dpt_claims100Kpop, x = long, y = lat, group = group), colour= "gray", size=0.05, alpha=0.9) +
+        theme_void() +
+        scale_fill_viridis(option = 'D',  direction = -1, trans = "log2",  name="N° de hechos") +
+        #scale_fill_viridis(option = 'D', trans = "log2",  breaks = trans_breaks("log2", function(x) 2^x), name="N° de hechos") +
+        theme(  
+                text = element_text(size= 7, color = "#22211d"),
+                
+                plot.title = element_text(size= 14, hjust=0.01, color = "black", margin = margin(b = -0.1, t = 0.4, l = 2, unit = "cm")),
+                plot.subtitle = element_text(size= 12, hjust=0.01, color = "#4e4d47", margin = margin(b = -0.1, t = 0.43, l = 2, unit = "cm")),
+                plot.caption = element_text( size=10, color = "black", margin = margin(b = 0.3, r=-99, unit = "cm") ),
+        ) +
+        coord_map()
+
+dep_plot
+```
+
+
+
+
 ## Row
 -----------------------------------------------------------------------
 
@@ -617,29 +799,6 @@ gauge(corruption_claims_count$percentage[corruption_claims_count$corruption_denu
 ```
 
 
-```{r, include=FALSE}
-
-donut_plot <- ggplot(corruption_claims_count, aes(y = n, fill = type)) +
-  geom_bar_interactive(
-    aes(x = 1, tooltip = hover_text),
-    width = 0.1,
-    stat = "identity",
-    show.legend = FALSE
-    ) +
-  annotate(
-    geom = "text",
-    x = 0,
-    y = 0,
-    label = corruption_claims_count[["percentage_label"]][corruption_claims_count[["type"]] == "Yes"],
-    size = 18,
-    color = "magenta"
-    ) +
-  scale_fill_manual(values = c(No = "blue", Yes = "magenta")) +
-  coord_polar(theta = "y") + theme(legend.position = c(0.8, 0.2)) +
-  theme_void()
-
-ggiraph(ggobj = donut_plot )
-```
 
 ## Row
 -----------------------------------------------------------------------
@@ -649,7 +808,7 @@ ggiraph(ggobj = donut_plot )
 
 
 ```{r, include=FALSE}
-corruption_dep <- subset(mutate_each(clean_claims_21, funs(toupper)), DEPARTAMENTO!= "" )
+corruption_dep <- subset(mutate_each(clean_claims_21[clean_claims_21$corruption_denunc==1,], funs(toupper)), DEPARTAMENTO!= "" )
 
 #delete special characters from DEPARTAMENTO
 corruption_dep$DEPARTAMENTO <- iconv(corruption_dep$DEPARTAMENTO, from="UTF-8",to="ASCII//TRANSLIT")
@@ -681,9 +840,6 @@ corruption_dep$percentage <- round( (corruption_dep$n/sum(corruption_dep$n) )*10
 
 
 ```{r}
-setwd("C:/BID_Columbia/claims_dashboard/census")
-
-census_dep <-import("departments_census2017.dta")
 
 #claims per department, per 100k inhabitants
 
@@ -758,33 +914,6 @@ tbl
 
 
 ```{r, include=FALSE}
-library(rgdal)
-library(broom)
-library(rgeos)
-library(maptools)
-library(ggplot2)
-library(viridis)
-library(scales)
-
-#Map file location (TEMPORAL)
-dirmapas <- "C:/BID_Columbia/claims_dashboard/maps/DEPARTAMENTO" 
-setwd(dirmapas)
-
-# The black and white polygon map
-departamentos<-readOGR(dsn="DEPARTAMENTO_27_04_2015.shp", layer="DEPARTAMENTO_27_04_2015")
-
-#summary(departamentos)
-
-departamentos$NOMBDEP
-
-#head(departamentos@data)
-
-#plot(departamentos)
-
-#We must transform the data to be able to make a graph with ggplot
-departamentos_fortified <- tidy(departamentos, region =  "NOMBDEP")
-#unique(departamentos_fortified$id)
-
 
 #We leave only the id and n columns
 corruption_dep_census$id <- corruption_dep_census$DEPARTAMENTO
@@ -815,10 +944,6 @@ dep_plot <- ggplot() +
 
 dep_plot
 ```
-
-
-
-
 
 
 
