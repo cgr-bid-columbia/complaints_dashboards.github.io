@@ -220,7 +220,7 @@ fur_claims <- sum(raw_claims_feb21$FUR_decision == "Yes")
 percent_fur <-  paste( round(fur_claims/n_claims,2)*100, "%")
 
 valueBox(value = paste(format(fur_claims, big.mark = ","), "/", percent_fur  , sep = " "),
-         caption = "Hechos FUR",
+         caption = "Hechos FUR (respecto a hechos totales)",
          icon = "fa-folder-open",            
          color = '#3fc1c9')
 ```
@@ -232,7 +232,7 @@ fud_claims <- sum(raw_claims_feb21$FUD_decision == "Yes")
 percent_fud <-  paste( round(fud_claims/n_claims,2)*100, "%")
 
 valueBox(value = paste(format(fud_claims, big.mark = ","), "/", percent_fud  , sep = " "),
-         caption = "Hechos FUD",
+         caption = "Hechos FUD (respecto a hechos totales)",
          icon = "fa-folder-open",             
          color = '#3fc1c9')
 ```
@@ -245,7 +245,7 @@ pde_claims <- sum(raw_claims_feb21$PDE_decision == "Yes")
 percent_pde <-  paste( round(pde_claims/n_claims,2)*100, "%")
 
 valueBox(value = paste(format(pde_claims, big.mark = ","), "/", percent_pde  , sep = " "),
-         caption = "Hechos PDE",
+         caption = "Hechos PDE (respecto a hechos totales)",
          icon = "fa-folder-open",             
          color = '#3fc1c9')
 ```
@@ -258,7 +258,7 @@ cad_claims <- sum(raw_claims_feb21$CAD_decision == "Yes")
 percent_cad <-  paste( round(cad_claims/n_claims,2)*100, "%")
 
 valueBox(value = paste(format(cad_claims, big.mark = ","), "/", percent_cad , sep = " "),
-         caption = "Hechos CAD",
+         caption = "Hechos CAD (respecto a hechos totales)",
          icon = "fa-folder-open",             
          color = '#3fc1c9')
 ```
