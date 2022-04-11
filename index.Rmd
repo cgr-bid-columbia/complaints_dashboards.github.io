@@ -4,6 +4,7 @@ output:
   flexdashboard::flex_dashboard:
     orientation: rows
     vertical_layout: scroll
+runtime: shiny
 ---
 
 ```{css}
@@ -104,6 +105,8 @@ clean_claims_21 <- clean_claims_21[ clean_claims_21$version == last_version, ]
 setwd("C:/BID_Columbia")
 
 raw_claims_feb21 <-import("raw_claims_feb21.dta")
+
+raw_historical_claims <-import("raw_historical_claims.dta")
 
 ##############
 ```
@@ -1443,15 +1446,78 @@ tbl
 
 
 
+Denuncias históricas
+=====================================  
+
+
+```{r, include = FALSE}
+
+#cleaning raw historial claims table
+
+#drop first observation
+raw_historical_claims <- raw_historical_claims %>% slice(-1) 
+
+#key vars : expediente estado_expediente numero_hecho numero_rac numerofcero numerohe
+
+```
+
+
+
+## Row
+-----------------------------------------------------------------------
+
+### Number of claims {.value-box}
+
+```{r}
+n_claims_historical <- nrow(raw_historical_claims)
+
+valueBox(value = paste(format(n_claims_historical, big.mark = ","), "", sep = " "), 
+         caption = "Hechos totales",
+         icon = "fa-database",             #https://fontawesome.com/v4/icons/
+         color = "#7636b3")
+```
 
 
 
 
+Row {.tabset}
+-----------------------------------------------------------------------
+
+### Tab1
+
+<div style='display:flex; flex-direction:row; justify-content:space-evenly; align-items:center;'>
+
+<div>
+```{r}
+
+```
+
+</div>
+
+<div>
+```{r}
+
+```
+</div>
+
+</div>
 
 
+### Tab2
 
+<div style='display:flex; flex-direction:row; justify-content:space-evenly; align-items:center;'>
 
+<div>
+```{r}
 
+```
+</div>
 
+<div>
+```{r}
 
+```
+</div>
+
+</div>
 
