@@ -17,6 +17,7 @@ runtime: shiny
 
 ```{r setup, include=FALSE}
 library(flexdashboard)
+library(shiny)
 library(rio)
 library ('plyr')
 library(dplyr)
@@ -1462,62 +1463,66 @@ raw_historical_claims <- raw_historical_claims %>% slice(-1)
 ```
 
 
+Column {.sidebar data-width=200}
+-----------------------------------------------------------------------
 
-## Row
+```{r}
+selectInput("year_selection", label = "Selecciona el año", choices = c("Todos los años", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020"))
+
+```
+
+
+
+Column {data-width=400}
 -----------------------------------------------------------------------
 
 ### Number of claims {.value-box}
 
 ```{r}
-n_claims_historical <- nrow(raw_historical_claims)
 
-valueBox(value = paste(format(n_claims_historical, big.mark = ","), "", sep = " "), 
-         caption = "Hechos totales",
-         icon = "fa-database",             #https://fontawesome.com/v4/icons/
-         color = "#7636b3")
+sum <- reactive({
+        
+        if (input$year_selection == "Todos los años") {
+                n_claims_historical <- nrow(raw_historical_claims)
+                n_claims_historical
+        
+        } else {
+                n_claims_historical <- nrow(subset(raw_historical_claims, year== input$year_selection ))
+                n_claims_historical
+        
+        }
+})
+ 
+
+renderPrint( {
+  sum()
+})
+
+#valueBox(value = paste(format(n_claims_historical, big.mark = ","), "", sep = " "), 
+#         caption = "Hechos totales",
+#         icon = "fa-database",             #https://fontawesome.com/v4/icons/
+#         color = "#7636b3")
+
 ```
 
 
-
-
-Row {.tabset}
+Column {data-width=400}
 -----------------------------------------------------------------------
 
-### Tab1
+### Chart B
 
-<div style='display:flex; flex-direction:row; justify-content:space-evenly; align-items:center;'>
-
-<div>
 ```{r}
 
 ```
 
-</div>
+### Chart C
 
-<div>
 ```{r}
 
 ```
-</div>
-
-</div>
 
 
-### Tab2
 
-<div style='display:flex; flex-direction:row; justify-content:space-evenly; align-items:center;'>
 
-<div>
-```{r}
 
-```
-</div>
-
-<div>
-```{r}
-
-```
-</div>
-
-</div>
 
