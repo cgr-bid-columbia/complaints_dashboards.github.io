@@ -1480,28 +1480,25 @@ Column {data-width=400}
 
 ```{r}
 
-sum <- reactive({
+renderValueBox({
         
+        #creating n_claims_historical variable
         if (input$year_selection == "Todos los años") {
                 n_claims_historical <- nrow(raw_historical_claims)
-                n_claims_historical
-        
+
         } else {
                 n_claims_historical <- nrow(subset(raw_historical_claims, year== input$year_selection ))
-                n_claims_historical
-        
+
         }
-})
- 
 
-renderPrint( {
-  sum()
+
+valueBox(value = paste(format(n_claims_historical, big.mark = ","), "", sep = " "), 
+         caption = "Hechos totales",
+         icon = "fa-database",             #https://fontawesome.com/v4/icons/
+         color = "#7636b3")
 })
 
-#valueBox(value = paste(format(n_claims_historical, big.mark = ","), "", sep = " "), 
-#         caption = "Hechos totales",
-#         icon = "fa-database",             #https://fontawesome.com/v4/icons/
-#         color = "#7636b3")
+
 
 ```
 
