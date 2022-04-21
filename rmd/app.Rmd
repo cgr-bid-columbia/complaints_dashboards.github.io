@@ -5,7 +5,7 @@ output: flexdashboard::flex_dashboard
     
 ```{r setup, include=FALSE}
 library(flexdashboard)
-library(tidyverse)
+library(ggplot2)
 
 data(mtcars)
 ```    
