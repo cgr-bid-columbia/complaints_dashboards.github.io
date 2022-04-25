@@ -1,5 +1,6 @@
 library(shiny)
 library(DBI)
+library(dplyr)
 
 
 #runApp("C:/Users/Yoseph/Documents/GitHub/complaints_dashboards/scripts")
