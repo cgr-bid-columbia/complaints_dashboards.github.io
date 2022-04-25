@@ -30,6 +30,7 @@ conn <- dbConnect(
 #raw_claims_feb21 <-import("raw_claims_feb21.dta")
 
 raw_claims_feb21 <- dbReadTable(conn, "raw_claims_feb21")
+clean_claims_21 <- dbReadTable(conn, "clean_claims_21")
 
 
 
