@@ -14,9 +14,10 @@ fields <- c("favorite_food")
 
 #functions
 
-saveData <- function(data) {
+saveData <- function(data, ip) {
         # The data must be a dataframe rather than a named vector
         data <- data %>% as.list() %>% data.frame()
+        data$ip <- ip
         # Add the data as a new row
         sheet_append("1saXE8aAt0ymhsNooGFIJ7Qjd9x3lSv-rmhIQyAkg38Q", data)
 }
@@ -36,6 +37,10 @@ df <- data.frame(question = "What is your favorite food?",
                  required = F)
 
 ui <- fluidPage(
+        # get IP user using Json's function
+        tags$script('$(document).on("shiny:sessioninitialized",function(){$.get("https://api.ipify.org", function(response) {Shiny.setInputValue("getIP", response);});})'),
+        
+        
         surveyOutput(df = df,
                      survey_title = "Hello, World!",
                      survey_description = "Welcome! This is a demo survey showing off the {shinysurveys} package."),
@@ -44,6 +49,9 @@ ui <- fluidPage(
 
 server <- function(input, output, session) {
         renderSurvey()
+        
+        #get IP from user
+        ip_user <- reactive(input$getIP)
         
         # Whenever a field is filled, aggregate all form data
         formData <- reactive({
@@ -54,7 +62,7 @@ server <- function(input, output, session) {
         
         # When the Submit button is clicked, save the form data
         observeEvent(input$submit, {
-                saveData(formData() )
+                saveData(formData(), ip_user() )
                 
         })
 
