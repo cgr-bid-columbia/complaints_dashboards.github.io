@@ -1,8 +1,6 @@
 library(shiny)
-library(shinysurveys)
 library(shinydashboard)
 library(ggplot2)
-
 library(googledrive)
 library(googlesheets4)
 
@@ -10,7 +8,7 @@ gs4_auth(cache = ".secrets", email = TRUE, use_oob = TRUE)
 
 
 # Define the fields we want to save from the form
-fields <- c("favorite_food")
+fields <- c("nacionalidad", "residencia")
 
 
 #functions
@@ -23,17 +21,6 @@ saveData <- function(data, ip, time) {
         # Add the data as a new row
         sheet_append("1saXE8aAt0ymhsNooGFIJ7Qjd9x3lSv-rmhIQyAkg38Q", data)
 }
-
-
-df <- data.frame(question = "What is your favorite food?",
-                 option = "Your Answer",
-                 input_type = "text",
-                 input_id = "favorite_food",
-                 dependence = NA,
-                 dependence_value = NA,
-                 required = F)
-
-
 
 
 #HEADER
@@ -97,16 +84,27 @@ body <- dashboardBody(
                 #Información general
                 ###################
                 tabItem(tabName = "info_survey",
-                        
-                        
-                        surveyOutput(df = df,
-                                     survey_title = "Hello, World!",
-                                     survey_description = "Welcome! This is a demo survey showing off the {shinysurveys} package.")
-                        
-
-                        
-                        ),
                 
+                        radioButtons("nacionalidad", label = "¿Cuál es su nacionalidad",
+                                     choices = c("peruana", "otra") ),
+                        
+                        conditionalPanel(
+                                condition = "input.nacionalidad == 'otra'",
+                                
+                                
+                                radioButtons("residencia", label = "¿Cuenta con residencia permanente peruana?",
+                                             choices = c("sí", "no") )
+                                
+
+                        ),
+                        
+                        actionButton("submit", "Enviar")
+                        
+                
+                        
+                ),
+
+        
                 tabItem(tabName = "info", 
                         
                         fluidRow(
@@ -186,18 +184,18 @@ shinyApp(
         server = function(input, output) {
                 
                 
-                renderSurvey()
-                
                 #get IP from user
                 ip_user <- reactive(input$getIP)
                 
                 # Whenever a field is filled, aggregate all form data
                 formData <- reactive({
                         data <- sapply(fields, function(x) input[[x]])
-                        data
+                        
+                        #TODO_ CREATE A CONDITION 
+                        #if input[[x]] == ""  then data$field == ""
+                        
                 })
-                
-                
+
                 # When the Submit button is clicked, save the form data
                 observeEvent(input$submit, {
                         saveData(formData(), ip_user() )
