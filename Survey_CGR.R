@@ -3,6 +3,7 @@ library(shinydashboard)
 library(ggplot2)
 library(googledrive)
 library(googlesheets4)
+library(shinyWidgets)
 
 gs4_auth(cache = ".secrets", email = TRUE, use_oob = TRUE)
 
@@ -84,23 +85,113 @@ body <- dashboardBody(
                 #Información general
                 ###################
                 tabItem(tabName = "info_survey",
-                
-                        radioButtons("nacionalidad", label = "¿Cuál es su nacionalidad",
-                                     choices = c("peruana", "otra") ),
                         
-                        conditionalPanel(
-                                condition = "input.nacionalidad == 'otra'",
+                        fluidRow(
                                 
+                                column(6, align="center",
+                                       
+                                       
+                                       p(br(),"¡¡Bienvenidos!!", br(),br(),
+                                         "La idea de esta aplicación web es presentar de manera ordenada y fácil de entender el progreso en la codificación de denuncias, 
+                                              así como estadísticos que permitan comprender los tipos de casos que han sido identificados y el progreso de la Contraloría General de la República (CGR)
+                                              en la evaluación de las denuncias recibidas. Si bien el desarrollo inicial ha estado en manos del equipo académico, se espera que mediante una estrecha coordinación
+                                              con la CGR, parte de los estadísticos que incorporará el Dashboard sean recomendados por especialistas internos de la mencionada institución"
+                                         , style = "text-align:justify;color:black;background-color:#fcebeb;padding:15px;border-radius:10px"),
+                                       
+                                       
+                                       br(),
+                                       
+                                       p("Instrucciones:
+                                       Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum"
+                                       ,
+                                         style="text-align:justify;color:black;background-color:#fcebeb;padding:15px;border-radius:10px")
+        
+                                       
+                                       ),
                                 
-                                radioButtons("residencia", label = "¿Cuenta con residencia permanente peruana?",
-                                             choices = c("sí", "no") )
-                                
+                                column(6, align="left",
+                                       
+                                       
+                                       tabBox(
+                                               id = "questions_1", width = 12,
+                                               
+                                               
+                                               tabPanel("Generales", icon = icon("briefcase-medical"),
+                                                        
+                                                        
+                                                        #1.
+                                                        radioButtons("nacionality", label = "1. Seleccione su nacionalidad (*)",
+                                                                     choices = c("Eliga una opción:", "peruana", "otra"),
+                                                                     inline=F),
+                                                        
+                                                        
+                                                        conditionalPanel(
+                                                                condition = "input.nacionality == 'otra'",
+                                                                
+                                                                
+                                                                radioButtons("residence", label = "1.1 ¿Cuenta con residencia permanente peruana?",
+                                                                             choices = c("sí", "no") )
+                                                                
+                                                                
+                                                        ),
+                                                        
+                                                        #2.
+                                                        radioButtons("age", label = "2. Seleccione su rango edad (*)",
+                                                                     choices = c("Eliga una opción:", "18 a 34 años", "35 a 54 años", "55 a 74 años", "75 años a más"),
+                                                                     inline=F),
+                                                        
+                                                        #3.
+                                                        radioButtons("gender", label = "3. Seleccione su género (*)",
+                                                                     choices = c("Eliga una opción:", "mujer", "hombre", "otro"),
+                                                                     inline=F),
+                                                        
+                                                        #4.
+                                                        radioButtons("education", label = "4. Seleccione el máximo nivel educativo que alcanzó (*)",
+                                                                     choices = c("Eliga una opción:", "ninguna", "primaria", "secundaria", "superior técnica", "superior universitaria"),
+                                                                     inline=F),
+                                                        
+                                                        
+                                                        #5
+                                                        radioGroupButtons(
+                                                                inputId = "Id073",
+                                                                label = "Nacionalidad (*)",
+                                                                choices = c("", 
+                                                                            "peruana", "otro"),
+                                                                individual = TRUE,
+                                                                checkIcon = list(
+                                                                        yes = tags$i(class = "fa fa-circle", 
+                                                                                     style = "color: steelblue"),
+                                                                        no = tags$i(class = "fa fa-circle-o", 
+                                                                                    style = "color: steelblue"))
+                                                        )
+                                                        
+                                                        
+                                                        
+                                               ),
+                                               
+                                               tabPanel("Ubicación", icon = icon("briefcase-medical"),
+                                                        
+                                                        
+                                                        
+                                                        
+                                                        
+                                                        
+                                                        
+                                               ),
+                                               
+                                               
+                                               
+                                       )
+                                       
 
+                                )
+                                
                         ),
                         
-                        actionButton("submit", "Enviar")
-                        
-                
+                        fluidRow(
+                                
+                                actionButton("submit", "Enviar")
+                        )
                         
                 ),
 
@@ -191,6 +282,8 @@ shinyApp(
                 formData <- reactive({
                         data <- sapply(fields, function(x) input[[x]])
                         
+                        #ifelse(input[[x]] != "", input[[x]], "NA")
+                        #ifelse
                         #TODO_ CREATE A CONDITION 
                         #if input[[x]] == ""  then data$field == ""
                         
