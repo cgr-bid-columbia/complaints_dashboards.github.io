@@ -91,7 +91,7 @@ body <- dashboardBody(
         
         tabItems(
                 ###################
-                #Información general
+                #Cuestionario inicial
                 ###################
                 tabItem(tabName = "info_survey",
                         
@@ -122,7 +122,8 @@ body <- dashboardBody(
                                        
                                        tabBox(
                                                id = "questions_1", width = 12, title = "Cuestionario inicial",
-
+                                               
+                                               # PREGUNTAS GENERALES
                                                tabPanel("Generales", icon = icon("user", lib = "glyphicon"),
 
                                                         #1.
@@ -143,33 +144,36 @@ body <- dashboardBody(
                                                         conditionalPanel(
                                                                 condition = "input.nacionality == 'otra'",
                                                                 
-                                                                
-                                                                column(6,
-                                                                        br(),
-                                                                        radioGroupButtons(
-                                                                                inputId = "nacionality_2",
-                                                                                label = "1.1 ¿Cuenta con residencia permanente peruana? (*)",
-                                                                                choices = c("sí", "no"),
-                                                                                individual = TRUE,
-                                                                                checkIcon = list(
-                                                                                        yes = tags$i(class = "fa fa-circle", 
-                                                                                                     style = "color: steelblue"),
-                                                                                        no = tags$i(class = "fa fa-circle-o", 
-                                                                                                    style = "color: steelblue"))
+                                                                fluidRow(
+                                                                        
+                                                                        column(6,
+                                                                               br(),
+                                                                               radioGroupButtons(
+                                                                                       inputId = "nacionality_2",
+                                                                                       label = "1.1 ¿Cuenta con residencia permanente peruana? (*)",
+                                                                                       choices = c("sí", "no"),
+                                                                                       individual = TRUE,
+                                                                                       checkIcon = list(
+                                                                                               yes = tags$i(class = "fa fa-circle", 
+                                                                                                            style = "color: steelblue"),
+                                                                                               no = tags$i(class = "fa fa-circle-o", 
+                                                                                                           style = "color: steelblue"))
+                                                                               )
+                                                                               
+                                                                        ),
+                                                                        
+                                                                        column(6,
+                                                                               br(),
+                                                                               textInput(
+                                                                                       inputId = "nacionality_3",
+                                                                                       label = "1.2 ¿Cuál es su nacionalidad?",
+                                                                                       value = "Opcional",
+                                                                                       
+                                                                               )
                                                                         )
                                                                         
-                                                                ),
-                                                                
-                                                                column(6,
-                                                                       br(),
-                                                                       textInput(
-                                                                               inputId = "nacionality_3",
-                                                                               label = "1.2 ¿Cuál es su nacionalidad?",
-                                                                               value = "Opcional",
-                                                                               
-                                                                       )
                                                                 )
-
+ 
                                                         ),
                                                         
                                                         #2.
@@ -264,29 +268,108 @@ body <- dashboardBody(
                                                         
                                                ),
                                                
+                                               #PREGUNTAS SOBRE UBICACIÓN
                                                tabPanel("Ubicación", icon = icon("globe", lib = "glyphicon"),
                                                         
-                                                        fluidRow(
+                                                        #6
+                                                        br(),
+                                                        radioGroupButtons(
+                                                                inputId = "residence",
+                                                                label = "6. ¿Reside en el Perú? (*)",
+                                                                choices = c("", 
+                                                                            "sí", "no"),
+                                                                individual = TRUE,
+                                                                checkIcon = list(
+                                                                        yes = tags$i(class = "fa fa-circle", 
+                                                                                     style = "color: steelblue"),
+                                                                        no = tags$i(class = "fa fa-circle-o", 
+                                                                                    style = "color: steelblue"))
+                                                        ),
+                                                        
+                                                        conditionalPanel(
+                                                                condition = "input.residence== 'sí'",
+                                                                
+                                                                fluidRow(
+                                                                        
+                                                                        br(),
+                                                                        column(3,
+                                                                               
+                                                                               pickerInput(
+                                                                                       inputId = "dep",
+                                                                                       label = "Departamento (*)", 
+                                                                                       choices = c(unique(dep_prov_dist$DEPARTAMENTO)),
+                                                                                       options = list(
+                                                                                               title = "Selecciona")
+                                                                               )  
+                                                                               
+                                                                               # selectizeInput('dep', 'Departamento: (*)', choices = c(unique(dep_prov_dist$DEPARTAMENTO))),
+                                                                        ),
+                                                                        
+                                                                        column(3,
+                                                                               
+                                                                               pickerInput(
+                                                                                       inputId = "prov",
+                                                                                       label = "Provincia (*)", 
+                                                                                       choices = NULL,
+                                                                                       options = list(
+                                                                                               title = "Selecciona")
+                                                                               )
+                                                                               
+                                                                               #selectizeInput('prov', 'Provincia: (*)', choices = NULL),
+                                                                        ),
+                                                                        
+                                                                        column(3,
+                                                                               
+                                                                               pickerInput(
+                                                                                       inputId = "dist",
+                                                                                       label = "Distrito (*)", 
+                                                                                       choices = NULL,
+                                                                                       options = list(
+                                                                                               title = "Selecciona")
+                                                                               )
+                                                                               #selectizeInput('dist', 'Distrito: (*)', choices = NULL),
+                                                                        )
+                                                                        
+                                                                )
+  
+                                                                
+                                                        ),
+                                                        
+                                                        conditionalPanel(
+                                                                condition = "input.residence== 'no'",
+                                                                
                                                                 
                                                                 br(),
-                                                                
-                                                                column(3,
-                                                                       selectizeInput('panel_dep', 'Departamento:', choices = c(unique(dep_prov_dist$DEPARTAMENTO))),
-                                                                ),
-                                                                
-                                                                column(3,
-                                                                       selectizeInput('panel_prov', 'Provincia:', choices = NULL),
-                                                                ),
-                                                                
-                                                                column(3,
-                                                                       selectizeInput('panel_dis', 'Distrito:', choices = NULL),
+                                                                textInput(
+                                                                        inputId = "residence_2",
+                                                                        label = "6.1 Especifique en qué país reside",
+                                                                        value = "Opcional"
                                                                 )
-                                                        )
+                                                                
+                                                        ),
                                                         
-     
+                                                        #7 
+                                                        br(),
+                                                        radioGroupButtons(
+                                                                inputId = "urban_rural",
+                                                                label = "7. Usted vive en (*)",
+                                                                choices = c("", 
+                                                                            "una ciudad", "la periferia de la ciudad/asentamiento humano", "un pueblo cercano a un área rural", "un área rural", "no sabe"),
+                                                                individual = TRUE,
+                                                                checkIcon = list(
+                                                                        yes = tags$i(class = "fa fa-circle", 
+                                                                                     style = "color: steelblue"),
+                                                                        no = tags$i(class = "fa fa-circle-o", 
+                                                                                    style = "color: steelblue"))
+                                                        ),
+                                                        
                                                ),
                                                
-                                               
+                                               #PREGUNTAS SOBRE CGR
+                                               tabPanel(
+                                                       
+                                               )
+       
                                                
                                        )
                                        
@@ -384,6 +467,7 @@ shinyApp(
                 #Add character limit to a text box
                 shinyjs::runjs("$('#nacionality_3').attr('maxlength',15)")  #15 characters
                 shinyjs::runjs("$('#work_2').attr('maxlength',15)")  #15 characters
+                shinyjs::runjs("$('#residence_2').attr('maxlength',15)")  #15 characters
                 
 
                 #get IP from user
@@ -414,24 +498,24 @@ shinyApp(
                 })
                 
                 
-                #Actualizar opciones para la serie de tiempo mensual-distrital
+                # Update dep, prov and dist options
                 observe({
-                        x <- input$panel_dep
+                        x <- input$dep
                         
-                        updateSelectizeInput(session, "panel_prov",
-                                             label = 'Provincia:',
-                                             choices = c( dep_prov_dist$PROVINCIA[dep_prov_dist$DEPARTAMENTO == x ])
+                        updatePickerInput(session, "prov",
+                                             label = 'Provincia (*)',
+                                             choices = c( unique(dep_prov_dist$PROVINCIA[dep_prov_dist$DEPARTAMENTO == x ]) )
                                              
                                              
                         )
                 })
                 
                 observe({
-                        y <- input$panel_prov
+                        y <- input$prov
                         
-                        updateSelectizeInput(session, "panel_dis",
-                                             label = 'Distrito:',
-                                             choices = c( dep_prov_dist$DISTRITO[dep_prov_dist$DEPARTAMENTO == input$panel_dep & dep_prov_dist$PROVINCIA == y ])
+                        updatePickerInput(session, "dist",
+                                             label = 'Distrito (*)',
+                                             choices = c( dep_prov_dist$DISTRITO[dep_prov_dist$DEPARTAMENTO == input$dep & dep_prov_dist$PROVINCIA == y ])
                         )
                 })
 
