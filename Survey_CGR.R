@@ -3,7 +3,8 @@ library(shinydashboard)
 library(ggplot2)
 library(googledrive)
 library(googlesheets4)
-library(shinyWidgets)
+library(shinyWidgets) #todo: install on AWS
+library(shinyjs) #todo: install on AWS
 
 gs4_auth(cache = ".secrets", email = TRUE, use_oob = TRUE)
 
@@ -29,7 +30,7 @@ header <- dashboardHeader(title = "Denuncias CGR")
 
 #SIDEBAR
 sidebar <- dashboardSidebar(width = 280,
-                            disable = FALSE, #don't show sidebar
+                            disable = TRUE, #don't show sidebar
                             sidebarMenu(
                                     menuItem("Preguntas generales", tabName = "info_survey"),
                                     menuItem("Información general", tabName = "info", icon=icon("home")),
@@ -40,6 +41,9 @@ sidebar <- dashboardSidebar(width = 280,
 
 #BODY
 body <- dashboardBody(
+        
+        useShinyjs(), #it allows to use java script
+        
         tags$head(tags$style(HTML('
                       .main-header .logo {
                         font-family: "Georgia", Times, "Times New Roman", serif;
@@ -88,7 +92,7 @@ body <- dashboardBody(
                         
                         fluidRow(
                                 
-                                column(6, align="center",
+                                column(5, align="center",
                                        
                                        
                                        p(br(),"¡¡Bienvenidos!!", br(),br(),
@@ -109,67 +113,153 @@ body <- dashboardBody(
                                        
                                        ),
                                 
-                                column(6, align="left",
-                                       
+                                column(7, align="left",
                                        
                                        tabBox(
-                                               id = "questions_1", width = 12,
-                                               
-                                               
-                                               tabPanel("Generales", icon = icon("briefcase-medical"),
-                                                        
-                                                        
+                                               id = "questions_1", width = 12, title = "Cuestionario inicial",
+
+                                               tabPanel("Generales", icon = icon("user", lib = "glyphicon"),
+
                                                         #1.
-                                                        radioButtons("nacionality", label = "1. Seleccione su nacionalidad (*)",
-                                                                     choices = c("Eliga una opción:", "peruana", "otra"),
-                                                                     inline=F),
-                                                        
-                                                        
-                                                        conditionalPanel(
-                                                                condition = "input.nacionality == 'otra'",
-                                                                
-                                                                
-                                                                radioButtons("residence", label = "1.1 ¿Cuenta con residencia permanente peruana?",
-                                                                             choices = c("sí", "no") )
-                                                                
-                                                                
-                                                        ),
-                                                        
-                                                        #2.
-                                                        radioButtons("age", label = "2. Seleccione su rango edad (*)",
-                                                                     choices = c("Eliga una opción:", "18 a 34 años", "35 a 54 años", "55 a 74 años", "75 años a más"),
-                                                                     inline=F),
-                                                        
-                                                        #3.
-                                                        radioButtons("gender", label = "3. Seleccione su género (*)",
-                                                                     choices = c("Eliga una opción:", "mujer", "hombre", "otro"),
-                                                                     inline=F),
-                                                        
-                                                        #4.
-                                                        radioButtons("education", label = "4. Seleccione el máximo nivel educativo que alcanzó (*)",
-                                                                     choices = c("Eliga una opción:", "ninguna", "primaria", "secundaria", "superior técnica", "superior universitaria"),
-                                                                     inline=F),
-                                                        
-                                                        
-                                                        #5
                                                         radioGroupButtons(
-                                                                inputId = "Id073",
-                                                                label = "Nacionalidad (*)",
+                                                                inputId = "nacionality",
+                                                                label = "1. Nacionalidad (*)",
                                                                 choices = c("", 
-                                                                            "peruana", "otro"),
+                                                                            "peruana", "otra"),
                                                                 individual = TRUE,
                                                                 checkIcon = list(
                                                                         yes = tags$i(class = "fa fa-circle", 
                                                                                      style = "color: steelblue"),
                                                                         no = tags$i(class = "fa fa-circle-o", 
                                                                                     style = "color: steelblue"))
-                                                        )
+                                                        ),
+                                                        
+                                                        
+                                                        conditionalPanel(
+                                                                condition = "input.nacionality == 'otra'",
+                                                                
+                                                                
+                                                                column(6,
+                                                                        br(),
+                                                                        radioGroupButtons(
+                                                                                inputId = "nacionality_2",
+                                                                                label = "1.1 ¿Cuenta con residencia permanente peruana? (*)",
+                                                                                choices = c("sí", "no"),
+                                                                                individual = TRUE,
+                                                                                checkIcon = list(
+                                                                                        yes = tags$i(class = "fa fa-circle", 
+                                                                                                     style = "color: steelblue"),
+                                                                                        no = tags$i(class = "fa fa-circle-o", 
+                                                                                                    style = "color: steelblue"))
+                                                                        )
+                                                                        
+                                                                ),
+                                                                
+                                                                column(6,
+                                                                       br(),
+                                                                       textInput(
+                                                                               inputId = "nacionality_3",
+                                                                               label = "1.2 ¿Cuál es su nacionalidad?",
+                                                                               value = "Opcional",
+                                                                               
+                                                                       )
+                                                                )
+
+                                                        ),
+                                                        
+                                                        #2.
+                                                        br(),
+                                                        radioGroupButtons(
+                                                                inputId = "age",
+                                                                label = "2. Rango de edad (*)",
+                                                                choices = c("", 
+                                                                            "18 a 34 años", "35 a 54 años", "55 a 74 años", "75 años a más"),
+                                                                individual = TRUE,
+                                                                checkIcon = list(
+                                                                        yes = tags$i(class = "fa fa-circle", 
+                                                                                     style = "color: steelblue"),
+                                                                        no = tags$i(class = "fa fa-circle-o", 
+                                                                                    style = "color: steelblue"))
+                                                        ),
+                                                        
+                                                        #3.
+                                                        br(),
+                                                        radioGroupButtons(
+                                                                inputId = "gender",
+                                                                label = "3. Género (*)",
+                                                                choices = c("", 
+                                                                            "mujer", "hombre", "otro"),
+                                                                individual = TRUE,
+                                                                checkIcon = list(
+                                                                        yes = tags$i(class = "fa fa-circle", 
+                                                                                     style = "color: steelblue"),
+                                                                        no = tags$i(class = "fa fa-circle-o", 
+                                                                                    style = "color: steelblue"))
+                                                        ),
+                                                        
+                                                        #4.
+                                                        br(),
+                                                        radioGroupButtons(
+                                                                inputId = "education",
+                                                                label = "4. Nivel educativo (*)",
+                                                                choices = c("", 
+                                                                            "ninguna", "primaria", "secundaria", "superior técnica", "universitaria"),
+                                                                individual = TRUE,
+                                                                checkIcon = list(
+                                                                        yes = tags$i(class = "fa fa-circle", 
+                                                                                     style = "color: steelblue"),
+                                                                        no = tags$i(class = "fa fa-circle-o", 
+                                                                                    style = "color: steelblue"))
+                                                        ),
+                                                        
+                                                        conditionalPanel(
+                                                                condition = "input.education!= 'ninguna' & input.education!= '' ",
+                                                                
+                                                                br(),
+                                                                p("Desmarque el botón si es que el nivel educativo seleccionado está incompleto."),
+
+                                                                materialSwitch(
+                                                                        inputId = "education_2",
+                                                                        label = "Completo", 
+                                                                        value = TRUE,
+                                                                        status = "primary"
+                                                                )
+                                                                
+                                                        ),
+ 
+                                                        #5
+                                                        br(),
+                                                        radioGroupButtons(
+                                                                inputId = "work",
+                                                                label = "5. Dedicación principal (*)",
+                                                                choices = c("", 
+                                                                            "trabajador", "estudiante", "cuidado del hogar", "jubilado/pensionista/incapacitado", "otro"),
+                                                                individual = TRUE,
+                                                                checkIcon = list(
+                                                                        yes = tags$i(class = "fa fa-circle", 
+                                                                                     style = "color: steelblue"),
+                                                                        no = tags$i(class = "fa fa-circle-o", 
+                                                                                    style = "color: steelblue"))
+                                                        ),
+                                                        
+                                                        conditionalPanel(
+                                                                condition = "input.work== 'otro'",
+                                                                
+                                                                br(),
+                                                                textInput(
+                                                                        inputId = "work_2",
+                                                                        label = "5.1 Especifique a qué otra actividad se dedica principalmente",
+                                                                        value = "Opcional"
+                                                                )
+                                                                
+                                                        ),
+                                                        
                                                         
                                                         
                                                         
                                                ),
                                                
-                                               tabPanel("Ubicación", icon = icon("briefcase-medical"),
+                                               tabPanel("Ubicación", icon = icon("globe", lib = "glyphicon"),
                                                         
                                                         
                                                         
@@ -274,7 +364,11 @@ shinyApp(
         
         server = function(input, output) {
                 
+                #Add character limit to a text box
+                shinyjs::runjs("$('#nacionality_3').attr('maxlength',15)")  #15 characters
+                shinyjs::runjs("$('#work_2').attr('maxlength',15)")  #15 characters
                 
+
                 #get IP from user
                 ip_user <- reactive(input$getIP)
                 
@@ -304,3 +398,5 @@ shinyApp(
 
         }
 )
+
+#runApp("C:/Users/Yoseph/Documents/GitHub/complaints_dashboards/Survey_CGR.R")
