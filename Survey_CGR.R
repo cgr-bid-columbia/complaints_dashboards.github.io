@@ -127,6 +127,7 @@ body <- dashboardBody(
                                                tabPanel("Generales", icon = icon("user", lib = "glyphicon"),
 
                                                         #1.
+                                                        br(),
                                                         radioGroupButtons(
                                                                 inputId = "nacionality",
                                                                 label = "1. Nacionalidad (*)",
@@ -366,7 +367,33 @@ body <- dashboardBody(
                                                ),
                                                
                                                #PREGUNTAS SOBRE CGR
-                                               tabPanel(
+                                               tabPanel("Sobre la CGR",
+                                                        
+                                                        #8
+                                                        br(),
+                                                        radioGroupButtons(
+                                                                inputId = "cgr_1",
+                                                                label = "8. ¿Tiene conocimientos sobre la labor de la Contraloría General de la República del Perú (CGR)? (*)",
+                                                                choices = c("", 
+                                                                            "sí", "no"),
+                                                                individual = TRUE,
+                                                                checkIcon = list(
+                                                                        yes = tags$i(class = "fa fa-circle", 
+                                                                                     style = "color: steelblue"),
+                                                                        no = tags$i(class = "fa fa-circle-o", 
+                                                                                    style = "color: steelblue"))
+                                                        ),
+                                                        
+                                                        # 9
+                                                        br(),
+                                                        textAreaInput(
+                                                                inputId = "cgr_2",
+                                                                label = "9. Describa brevemente qué conocimientos tiene sobre la labor de la CGR",
+                                                                value = "Opcional",
+                                                                
+                                                        )
+                                                        
+                                                        
                                                        
                                                )
        
@@ -380,7 +407,11 @@ body <- dashboardBody(
                         
                         fluidRow(
                                 
-                                actionButton("submit", "Enviar")
+                                column(8),
+                                
+                                column(4,
+                                       actionButton("submit", "Enviar")
+                                       )
                         )
                         
                 ),
@@ -468,6 +499,7 @@ shinyApp(
                 shinyjs::runjs("$('#nacionality_3').attr('maxlength',15)")  #15 characters
                 shinyjs::runjs("$('#work_2').attr('maxlength',15)")  #15 characters
                 shinyjs::runjs("$('#residence_2').attr('maxlength',15)")  #15 characters
+                shinyjs::runjs("$('#cgr_2').attr('maxlength',150)")
                 
 
                 #get IP from user
