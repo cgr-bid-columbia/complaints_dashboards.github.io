@@ -24,6 +24,11 @@ saveData <- function(data, ip, time) {
         sheet_append("1saXE8aAt0ymhsNooGFIJ7Qjd9x3lSv-rmhIQyAkg38Q", data)
 }
 
+#upload data
+dep_prov_dist <- read.csv("dep_prov_dist.csv", encoding = "UTF-8")
+colnames(dep_prov_dist) <- c("DEPARTAMENTO", "PROVINCIA", "DISTRITO")
+
+
 
 #HEADER
 header <- dashboardHeader(title = "Denuncias CGR")
@@ -261,12 +266,24 @@ body <- dashboardBody(
                                                
                                                tabPanel("Ubicación", icon = icon("globe", lib = "glyphicon"),
                                                         
+                                                        fluidRow(
+                                                                
+                                                                br(),
+                                                                
+                                                                column(3,
+                                                                       selectizeInput('panel_dep', 'Departamento:', choices = c(unique(dep_prov_dist$DEPARTAMENTO))),
+                                                                ),
+                                                                
+                                                                column(3,
+                                                                       selectizeInput('panel_prov', 'Provincia:', choices = NULL),
+                                                                ),
+                                                                
+                                                                column(3,
+                                                                       selectizeInput('panel_dis', 'Distrito:', choices = NULL),
+                                                                )
+                                                        )
                                                         
-                                                        
-                                                        
-                                                        
-                                                        
-                                                        
+     
                                                ),
                                                
                                                
@@ -362,7 +379,7 @@ shinyApp(
         ui = dashboardPage(skin = "red",
                            header, sidebar, body),
         
-        server = function(input, output) {
+        server = function(input, output, session) {
                 
                 #Add character limit to a text box
                 shinyjs::runjs("$('#nacionality_3').attr('maxlength',15)")  #15 characters
@@ -394,6 +411,28 @@ shinyApp(
                                 title = "Congrats, you completed your first shinysurvey!",
                                 "You can customize what actions happen when a user finishes a survey using input$submit."
                         ))
+                })
+                
+                
+                #Actualizar opciones para la serie de tiempo mensual-distrital
+                observe({
+                        x <- input$panel_dep
+                        
+                        updateSelectizeInput(session, "panel_prov",
+                                             label = 'Provincia:',
+                                             choices = c( dep_prov_dist$PROVINCIA[dep_prov_dist$DEPARTAMENTO == x ])
+                                             
+                                             
+                        )
+                })
+                
+                observe({
+                        y <- input$panel_prov
+                        
+                        updateSelectizeInput(session, "panel_dis",
+                                             label = 'Distrito:',
+                                             choices = c( dep_prov_dist$DISTRITO[dep_prov_dist$DEPARTAMENTO == input$panel_dep & dep_prov_dist$PROVINCIA == y ])
+                        )
                 })
 
         }
