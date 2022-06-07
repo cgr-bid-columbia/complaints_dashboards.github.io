@@ -124,7 +124,7 @@ body <- dashboardBody(
                                                id = "questions_1", width = 12, title = "Cuestionario inicial",
                                                
                                                # PREGUNTAS GENERALES
-                                               tabPanel("Generales", icon = icon("user", lib = "glyphicon"),
+                                               tabPanel("Generales",
 
                                                         #1.
                                                         br(),
@@ -270,7 +270,7 @@ body <- dashboardBody(
                                                ),
                                                
                                                #PREGUNTAS SOBRE UBICACIÓN
-                                               tabPanel("Ubicación", icon = icon("globe", lib = "glyphicon"),
+                                               tabPanel("Ubicación", 
                                                         
                                                         #6
                                                         br(),
@@ -394,14 +394,23 @@ body <- dashboardBody(
                                                                         value = "Opcional",
                                                                         
                                                                 )
-                                                                
-                                                                
                                                         ),
        
-                                               )
-       
+                                               ),
                                                
-                                       )
+                                               tags$script("
+                                                           $('body').mouseover(function() {
+                                                           list_tabs=[];
+                                                           $('#questions_1 li a').each(function(){
+                                                           list_tabs.push($(this).html())
+                                                           });
+                                                           Shiny.onInputChange('List_of_tab', list_tabs);})
+                                                           "
+                                               )
+
+                                       ),
+                                       # The uiOutput will contain the Next and Previous button
+                                       uiOutput("Next_Previous")
                                        
 
                                 )
@@ -420,7 +429,7 @@ body <- dashboardBody(
                 ),
 
         
-                tabItem(tabName = "info", 
+                tabItem(tabName = "info_1", 
                         
                         fluidRow(
                                 
@@ -492,11 +501,48 @@ body <- dashboardBody(
 
 
 
+
 shinyApp(
         ui = dashboardPage(skin = "red",
                            header, sidebar, body),
         
         server = function(input, output, session) {
+                
+                
+                #PREVIOUS/NEXT BUTTON for Cuestionario Inicial
+                Previous_Button=tags$div(actionButton("Prev_Tab",HTML('<div class="col-sm-4"><i class="fa fa-angle-double-left fa-2x"></i></div>
+                                                                  ')))
+                
+                Next_Button=div(actionButton("Next_Tab",HTML('<div class="col-sm-4"><i class="fa fa-angle-double-right fa-2x"></i></div>')))
+                
+
+                output$Next_Previous=renderUI({
+                        tab_list=input$List_of_tab[-length(input$List_of_tab)]
+                        nb_tab=length(tab_list)
+                        if (which(tab_list==input$questions_1)==nb_tab)
+                                column(1,offset=1,Previous_Button)
+                        else if (which(tab_list==input$questions_1)==1)
+                                column(1,offset = 10,Next_Button)
+                        else
+                                div(column(1,offset=1,Previous_Button),column(1,offset=8,Next_Button))
+                        
+                })
+                observeEvent(input$Prev_Tab,
+                             {
+                                     tab_list=input$List_of_tab
+                                     current_tab=which(tab_list==input$questions_1)
+                                     updateTabsetPanel(session,"questions_1",selected=tab_list[current_tab-1])
+                             }
+                )
+                observeEvent(input$Next_Tab,
+                             {
+                                     tab_list=input$List_of_tab
+                                     current_tab=which(tab_list==input$questions_1)
+                                     updateTabsetPanel(session,"questions_1",selected=tab_list[current_tab+1])
+                             }
+                )
+                
+
                 
                 #Add character limit to a text box
                 shinyjs::runjs("$('#nacionality_3').attr('maxlength',15)")  #15 characters
