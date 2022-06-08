@@ -36,7 +36,7 @@ header <- dashboardHeader(title = "Denuncias CGR")
 #SIDEBAR
 sidebar <- dashboardSidebar(width = 280,
                             disable = TRUE, #don't show sidebar
-                            sidebarMenu(
+                            sidebarMenu(id = "tabs",
                                     menuItem("Preguntas generales", tabName = "info_survey"),
                                     menuItem("Información general", tabName = "info", icon=icon("home")),
                                     menuItem("Denuncias 2021", tabName = "claims2021", icon = icon("th")),
@@ -429,7 +429,7 @@ body <- dashboardBody(
                 ),
 
         
-                tabItem(tabName = "info_1", 
+                tabItem(tabName = "info", 
                         
                         fluidRow(
                                 
@@ -493,9 +493,13 @@ body <- dashboardBody(
                         
                 )
                 
-                
-                
-        )
+        ),
+        
+        #previous/next button for tab items
+        hidden(actionButton(inputId ="Next", label = icon("arrow-right")))
+        
+        
+
 )
 
 
@@ -507,6 +511,38 @@ shinyApp(
                            header, sidebar, body),
         
         server = function(input, output, session) {
+                
+                #previous/next button for tab items / https://stackoverflow.com/questions/44309328/generic-button-for-go-to-next-and-previous-tabitem-shiny
+                
+                tab_id <- c("info_survey","info","claims2021","claims_hist")
+                
+                observe({
+                        lapply(c("Next"),
+                               toggle)
+                })
+                
+                Current <- reactiveValues(
+                        Tab = "info_survey"
+                )
+                
+                observeEvent(
+                        input[["tabs"]],
+                        {
+                                Current$Tab <- input[["tabs"]]
+                        }
+                )
+                
+                
+                observeEvent(
+                        input[["Next"]],
+                        {
+                                tab_id_position <- match(Current$Tab, tab_id) + 1
+                                if (tab_id_position > length(tab_id)) tab_id_position <- 1
+                                Current$Tab <- tab_id[tab_id_position]
+                                updateTabItems(session, "tabs", tab_id[tab_id_position]) 
+                        }
+                )
+                
                 
                 
                 #PREVIOUS/NEXT BUTTON for Cuestionario Inicial
