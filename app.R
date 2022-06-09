@@ -614,9 +614,9 @@ body <- dashboardBody(
                                                         br(),
                                                         radioGroupButtons(
                                                                 inputId = "corruption_2",
-                                                                label = "2. ¿Cree que en los próximos 5 años la corrupción en el Perú habrá aumentado, seguirá igual o habrá disminuido? (*)",
+                                                                label = "2. ¿Cree que en los próximos 5 años la corrupción en el Perú habra aumentado, seguirá igual o habra disminuido? (*)",
                                                                 choices = c("", 
-                                                                            "Habrá aumentado", "Seguirá igual", "Habrá disminuido", "No sabe"),
+                                                                            "Habra aumentado", "Seguirá igual", "Habra disminuido", "No sabe"),
                                                                 individual = TRUE,
                                                                 checkIcon = list(
                                                                         yes = tags$i(class = "fa fa-circle", 
@@ -721,7 +721,7 @@ body <- dashboardBody(
                                                         br(),
                                                         sliderTextInput(
                                                                 inputId = "transparency_5",
-                                                                label = "10. Usando una escala que va de 1, que significa “nada transparente” al 6, que significa “muy transparentel”, ¿Que tan transparente considera que son los procesos de elección de los funcionarios de la CGR? (*)",
+                                                                label = "10. Usando una escala que va de 1, que significa “nada transparente” al 6, que significa “muy transparente”, ¿Que tan transparente considera que son los procesos de elección de los funcionarios de la CGR? (*)",
                                                                 choices = c(1,2,3,4,5,6),
                                                                 grid = TRUE
                                                         )
@@ -1056,7 +1056,7 @@ shinyApp(
                 #Hechos por departamento - estadísticos
                 output$table_hechos_dep_historical <- renderReactable({
                         
-                        hechos_dep_census <- read.csv('out/hechos_dep_census_claims_historical.csv')
+                        hechos_dep_census <- read.csv('hechos_dep_census_claims_historical.csv')
                         
                         if (input$year_selection == "Todos los años") {
                                 
@@ -1190,7 +1190,7 @@ shinyApp(
                 #Hechos codificados: hechos de corrupción por departamento - estadísticos
                 output$table_corruption_historical <- renderReactable({
                         
-                        corruption_dep_census <- read.csv('out/corruption_dep_census_claims_historical.csv')
+                        corruption_dep_census <- read.csv('corruption_dep_census_claims_historical.csv')
                         
                         
                         if (input$year_selection == "Todos los años") {
