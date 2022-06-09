@@ -20,8 +20,13 @@ for( i in 1:ncol(raw_historical_claims)){
 }
 
 
-#raw_historical_claims = read_stata("data/raw_historical_claims.dta")
-#raw_historical_claims = raw_historical_claims %>% slice(-1)
+#Remove duplicates columns
+
+# Find Duplicate Column Names
+duplicated_names <- duplicated(colnames(raw_historical_claims))  #UO_ARA is duplicated
+
+# Remove Duplicate Column Names
+raw_historical_claims = raw_historical_claims[!duplicated_names]
 
 
 #------------------------------
