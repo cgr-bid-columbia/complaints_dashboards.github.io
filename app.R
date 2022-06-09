@@ -37,10 +37,9 @@ header <- dashboardHeader(title = "Denuncias CGR")
 sidebar <- dashboardSidebar(width = 280,
                             disable = TRUE, #don't show sidebar
                             sidebarMenu(id = "tabs",
-                                    menuItem("Preguntas generales", tabName = "info_survey"),
-                                    menuItem("Información general", tabName = "info", icon=icon("home")),
-                                    menuItem("Denuncias 2021", tabName = "claims2021", icon = icon("th")),
-                                    menuItem("Denuncias Históricas", tabName = "claims_hist", icon = icon("th"))
+                                    menuItem("Cuestionario Inicial", tabName = "info_survey"),
+                                    menuItem("Estadísticas", tabName = "statistics"),
+                                    menuItem("Cuestionario Percepción", tabName = "perception_survey")
                             ) 
 )
 
@@ -428,67 +427,21 @@ body <- dashboardBody(
                         
                 ),
 
-        
-                tabItem(tabName = "info", 
+                ###################
+                #Estadísticos
+                ###################
+                tabItem(tabName = "statistics", 
                         
-                        fluidRow(
-                                
-                                box( title = "Información General",
-                                     status = "danger", solidHeader = FALSE,
-                                     height = "300px",  width = 12, 
-                                     
-                                     p(br(),"¡¡Bienvenidos!!", br(),br(),
-                                       "La idea de esta aplicación web es presentar de manera ordenada y fácil de entender el progreso en la codificación de denuncias, 
-                                              así como estadísticos que permitan comprender los tipos de casos que han sido identificados y el progreso de la Contraloría General de la República (CGR)
-                                              en la evaluación de las denuncias recibidas. Si bien el desarrollo inicial ha estado en manos del equipo académico, se espera que mediante una estrecha coordinación
-                                              con la CGR, parte de los estadísticos que incorporará el Dashboard sean recomendados por especialistas internos de la mencionada institución"
-                                       , style = "text-align:justify; color: #14505B ; font-size: 18px")
-                                )
-                                
-                        ),
+                        p("hola1")
                         
-                        fluidRow(
-                                
-                                
-                                box( title = "Sobre la CGR",
-                                     status = "danger", solidHeader = FALSE,
-                                     height = "300px",  width = 6, 
-                                     
-                                     p(br(),"La CGR verifica la correcta aplicación de las políticas públicas y el uso de los recursos y bienes del Estado, 
-                                              a través de gerencias regionales de control, los Órganos de Control Institucional (OCI) y las Sociedades de Auditorías (SOA)"
-                                       , style = "text-align:justify; color: #14505B ; font-size: 18px")
-                                ),
-                                
-                                
-                                box( title = "Sobre la Gerencia de Control Social y Denuncia",
-                                     status = "danger", solidHeader = FALSE,
-                                     height = "300px",  width = 6, 
-                                     
-                                     p(br(),"La Gerencia de Control Social y Denuncias busca promover el control social y el fortalecimiento del Sistema Nacional de Control
-                                              mediante normas que regulen la atención de la demanda imprevisible de control proveniente de denuncias recibidas y/o autogeneradas,
-                                              mecanismos de participación ciudadana, mecanismos de análisis, así como de los servicios de control resultantes"
-                                       , style = "text-align:justify; color: #14505B ; font-size: 18px")
-                                )
-                                
-                                
-                                
-                        )
-                        
-                        
-                        
+         
                 ),
-                ####################
-                # Denuncias 2021
-                ####################
-                tabItem(tabName = "claims2021",
+                ###################
+                #Cuestionario Percepción
+                ###################
+                tabItem(tabName = "perception_survey",
                         
-                        
-                ),
-                #####################
-                # Denuncias históricas
-                ####################
-                tabItem(tabName = "claims_hist",
-                        
+                        p("hola2")
                         
                         
                 )
@@ -514,11 +467,12 @@ shinyApp(
                 
                 #previous/next button for tab items / https://stackoverflow.com/questions/44309328/generic-button-for-go-to-next-and-previous-tabitem-shiny
                 
-                tab_id <- c("info_survey","info","claims2021","claims_hist")
+                tab_id <- c("info_survey","statistics","perception_survey")
                 
                 observe({
                         lapply(c("Next"),
-                               toggle)
+                               toggle,
+                               condition = input[["tabs"]] != "perception_survey")
                 })
                 
                 Current <- reactiveValues(
