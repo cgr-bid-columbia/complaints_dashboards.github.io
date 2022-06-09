@@ -551,9 +551,198 @@ body <- dashboardBody(
                 ###################
                 tabItem(tabName = "perception_survey",
                         
-                        p("hola2")
                         
+                        fluidRow(
+                                
+                                column(5, align="center",
+                                       
+                                       
+                                       p(br(),"¡¡Bienvenidos!!", br(),br(),
+                                         "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum"
+                                         , style = "text-align:justify;color:black;background-color:#fcebeb;padding:15px;border-radius:10px"),
+                                       
+                                       
+                                       br(),
+                                       
+                                       p("Instrucciones:
+                                       Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum"
+                                         ,
+                                         style="text-align:justify;color:black;background-color:#fcebeb;padding:15px;border-radius:10px")
+                                       
+                                       
+                                ),
+                                
+                                column(7, align="left",
+                                       
+                                       tabBox(
+                                               id = "questions_2", width = 12, title = "Cuestionario sobre Percepciones",
+                                               
+                                               # PREGUNTAS SOBRE CORRUPCIÓN
+                                               tabPanel("Corrupción",
+                                                        
+                                                        #1.
+                                                        br(),
+                                                        radioGroupButtons(
+                                                                inputId = "corruption_1",
+                                                                label = "1. ¿Cree que en los últimos 5 años la corrupción en el Perú ha aumentado, sigue igual o ha disminuido? (*)",
+                                                                choices = c("", 
+                                                                            "Ha aumentado", "Sigue igual", "Ha disminuido", "No sabe"),
+                                                                individual = TRUE,
+                                                                checkIcon = list(
+                                                                        yes = tags$i(class = "fa fa-circle", 
+                                                                                     style = "color: steelblue"),
+                                                                        no = tags$i(class = "fa fa-circle-o", 
+                                                                                    style = "color: steelblue"))
+                                                        ),
+                                                        
+
+                                                        #2.
+                                                        br(),
+                                                        radioGroupButtons(
+                                                                inputId = "corruption_2",
+                                                                label = "2. ¿Cree que en los próximos 5 años la corrupción en el Perú habrá aumentado, seguirá igual o habrá disminuido? (*)",
+                                                                choices = c("", 
+                                                                            "Habrá aumentado", "Seguirá igual", "Habrá disminuido", "No sabe"),
+                                                                individual = TRUE,
+                                                                checkIcon = list(
+                                                                        yes = tags$i(class = "fa fa-circle", 
+                                                                                     style = "color: steelblue"),
+                                                                        no = tags$i(class = "fa fa-circle-o", 
+                                                                                    style = "color: steelblue"))
+                                                        ),
+                                                        
+                                                        #3.
+                                                        br(),
+                                                        radioGroupButtons(
+                                                                inputId = "corruption_3",
+                                                                label = "3. Teniendo en cuenta su experiencia o lo que ha oído mencionar, ¿la corrupción de los funcionarios públicos en el país está: (*)",
+                                                                choices = c("", 
+                                                                            "Muy generalizada", "Algo generalizada", "Poco generalizada", "Nada generalizada", "No sabe"),
+                                                                individual = TRUE,
+                                                                checkIcon = list(
+                                                                        yes = tags$i(class = "fa fa-circle", 
+                                                                                     style = "color: steelblue"),
+                                                                        no = tags$i(class = "fa fa-circle-o", 
+                                                                                    style = "color: steelblue"))
+                                                        ),
+                                                        
+                                                        #4.
+                                                        br(),
+                                                        radioGroupButtons(
+                                                                inputId = "corruption_4",
+                                                                label = "4. Pensando en los funcionarios de la CGR, ¿cuántos de ellos cree que están involucrados en corrupción? (*)",
+                                                                choices = c("", 
+                                                                            "Ninguno", "Menos de la mitad", "La mitada de ellos", "Más de la mitad", "Todos", "No sabe"),
+                                                                individual = TRUE,
+                                                                checkIcon = list(
+                                                                        yes = tags$i(class = "fa fa-circle", 
+                                                                                     style = "color: steelblue"),
+                                                                        no = tags$i(class = "fa fa-circle-o", 
+                                                                                    style = "color: steelblue"))
+                                                        ),
+
+                                                        #5
+                                                        br(),
+                                                        sliderTextInput(
+                                                                inputId = "corruption_5",
+                                                                label = "5. Usando una escala que va de 1, que significa “muy mala” al 6, que significa “muy buena”, ¿Cómo calificaría la gestión de la CGR en la lucha contra la corrupción? (*)",
+                                                                choices = c(1,2,3,4,5,6),
+                                                                grid = TRUE
+                                                        )
+      
+                                               ),
+                                               
+                                               #PREGUNTAS SOBRE TRANSPARENCIA
+                                               tabPanel("Transparencia", 
+                                                        
+                                                        #6
+                                                        br(),
+                                                        radioGroupButtons(
+                                                                inputId = "transparency_1",
+                                                                label = "6. ¿Considera que las entidades gubernamentes son transparentes en cuanto a provisión de información? (*)",
+                                                                choices = c("", 
+                                                                            "sí", "no", "no sabe"),
+                                                                individual = TRUE,
+                                                                checkIcon = list(
+                                                                        yes = tags$i(class = "fa fa-circle", 
+                                                                                     style = "color: steelblue"),
+                                                                        no = tags$i(class = "fa fa-circle-o", 
+                                                                                    style = "color: steelblue"))
+                                                        ),
+
+                                                        #7 
+                                                        br(),
+                                                        radioGroupButtons(
+                                                                inputId = "transparency_2",
+                                                                label = "7. Actualmente, ¿tiene usted confianza en institucionales tales como la Contraloría General de la República?",
+                                                                choices = c("", 
+                                                                            "nada", "poca", "suficiente", "bastante", "no sabe"),
+                                                                individual = TRUE,
+                                                                checkIcon = list(
+                                                                        yes = tags$i(class = "fa fa-circle", 
+                                                                                     style = "color: steelblue"),
+                                                                        no = tags$i(class = "fa fa-circle-o", 
+                                                                                    style = "color: steelblue"))
+                                                        ),
+                                                        
+                                                        #8
+                                                        br(),
+                                                        sliderTextInput(
+                                                                inputId = "transparency_3",
+                                                                label = "8. Usando una escala que va de 1, que significa “muy sencillo” al 6, que significa “muy díficil”, ¿Que tan sencillo considera que es conseguir información pública sobre la CGR? (*)",
+                                                                choices = c(1,2,3,4,5,6),
+                                                                grid = TRUE
+                                                        ),
+                                                        
+                                                        #9
+                                                        br(),
+                                                        sliderTextInput(
+                                                                inputId = "transparency_4",
+                                                                label = "9. Usando una escala que va de 1, que significa “muy sencillo” al 6, que significa “muy díficil”, ¿Que tan sencillo considera que es solicitar información a la CGR? (*)",
+                                                                choices = c(1,2,3,4,5,6),
+                                                                grid = TRUE
+                                                        ),
+                                                        
+                                                        #10
+                                                        br(),
+                                                        sliderTextInput(
+                                                                inputId = "transparency_5",
+                                                                label = "10. Usando una escala que va de 1, que significa “nada transparente” al 6, que significa “muy transparentel”, ¿Que tan transparente considera que son los procesos de elección de los funcionarios de la CGR? (*)",
+                                                                choices = c(1,2,3,4,5,6),
+                                                                grid = TRUE
+                                                        )
+                                                        
+                                               ),
+                                               
+                                               tags$script("
+                                                           $('body').mouseover(function() {
+                                                           list_tabs_2=[];
+                                                           $('#questions_2 li a').each(function(){
+                                                           list_tabs_2.push($(this).html())
+                                                           });
+                                                           Shiny.onInputChange('List_of_tab_2', list_tabs_2);})
+                                                           "
+                                               )
+                                               
+                                       ),
+                                       # The uiOutput will contain the Next and Previous button
+                                       uiOutput("Next_Previous_2")
+                                       
+                                       
+                                )
+                                
+                        ),
                         
+                        fluidRow(
+                                
+                                column(8),
+                                
+                                column(4,
+                                       actionButton("submit_2", "Enviar")
+                                )
+                        )
+                        
+
                 )
                 
         ),
@@ -642,6 +831,39 @@ shinyApp(
                              }
                 )
                 
+                
+                #PREVIOUS/NEXT BUTTON for Cuestionario Percepciones
+                Previous_Button_2=tags$div(actionButton("Prev_Tab_2",HTML('<div class="col-sm-4"><i class="fa fa-angle-double-left fa-2x"></i></div>
+                                                                  ')))
+                
+                Next_Button_2=div(actionButton("Next_Tab_2",HTML('<div class="col-sm-4"><i class="fa fa-angle-double-right fa-2x"></i></div>')))
+                
+                
+                output$Next_Previous_2=renderUI({
+                        tab_list_2=input$List_of_tab_2[-length(input$List_of_tab_2)]
+                        nb_tab_2=length(tab_list_2)
+                        if (which(tab_list_2==input$questions_2)==nb_tab_2)
+                                column(1,offset=1,Previous_Button_2)
+                        else if (which(tab_list_2==input$questions_2)==1)
+                                column(1,offset = 10,Next_Button_2)
+                        else
+                                div(column(1,offset=1,Previous_Button_2),column(1,offset=8,Next_Button_2))
+                        
+                })
+                observeEvent(input$Prev_Tab_2,
+                             {
+                                     tab_list_2=input$List_of_tab_2
+                                     current_tab_2=which(tab_list_2==input$questions_2)
+                                     updateTabsetPanel(session,"questions_2",selected=tab_list_2[current_tab_2-1])
+                             }
+                )
+                observeEvent(input$Next_Tab_2,
+                             {
+                                     tab_list_2=input$List_of_tab_2
+                                     current_tab_2=which(tab_list_2==input$questions_2)
+                                     updateTabsetPanel(session,"questions_2",selected=tab_list_2[current_tab_2+1])
+                             }
+                )
 
                 
                 #Add character limit to a text box
