@@ -530,6 +530,20 @@ body <- dashboardBody(
                                                                 
                                                          )
                                                  )
+                                        ),
+                                        
+                                        # Link denuncias online
+                                        tabPanel("Envía tu denuncia",
+                                                 
+                                                 fluidRow(
+                                                         
+                                                         p("Formulario Virtual de Denuncias", strong(tags$a(href="https://denunciaweb.contraloria.gob.pe/SAD_WEB/#/AtencionDenuncias", "aquí"
+                                                                                                              , target="_blank", style="color:black; text-decoration: underline"))
+                                                           
+                                                         )
+
+                                                 )
+                                                
                                         )
                                         
                                         
