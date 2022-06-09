@@ -5,6 +5,12 @@ library(googledrive)
 library(googlesheets4)
 library(shinyWidgets) #todo: install on AWS
 library(shinyjs) #todo: install on AWS
+library(dplyr)
+library(plotly)
+library(reactable)
+library(htmltools)
+library(ggplot2)
+
 
 gs4_auth(cache = ".secrets", email = TRUE, use_oob = TRUE)
 
@@ -14,7 +20,6 @@ fields <- c("nacionalidad", "residencia")
 
 
 #functions
-
 saveData <- function(data, ip, time) {
         # The data must be a dataframe rather than a named vector
         data <- data %>% as.list() %>% data.frame()
@@ -24,11 +29,29 @@ saveData <- function(data, ip, time) {
         sheet_append("1saXE8aAt0ymhsNooGFIJ7Qjd9x3lSv-rmhIQyAkg38Q", data)
 }
 
+# Render a bar chart with a label on the left
+bar_chart <- function(label, width = "100%", height = "14px", fill = "#00bfc4", background = NULL) {
+        bar <- div(style = list(background = fill, width = width, height = height))
+        chart <- div(style = list(flexGrow = 1, marginLeft = "6px", background = background), bar)
+        div(style = list(display = "flex", alignItems = "center"), label, chart)
+}
+
+
+gaugeSectors <- function(success = NULL, warning = NULL, danger = NULL,
+                         colors = c("success", "warning", "danger")) {
+        list(success = success,
+             warning = warning,
+             danger = danger,
+             colors = colors)
+}
+
+
 #upload data
 dep_prov_dist <- read.csv("dep_prov_dist.csv", encoding = "UTF-8")
 colnames(dep_prov_dist) <- c("DEPARTAMENTO", "PROVINCIA", "DISTRITO")
 
 raw_historical_claims <- read.csv('raw_historical_claims_dash.csv')
+corruption_claims_count_historical <- read.csv('corruption_claims_count_claims_historical.csv')
 
 
 #HEADER
@@ -744,8 +767,8 @@ shinyApp(
                                 percent_fud <-  paste( round(fud_claims/n_claims_historical,2)*100, "%")
                         }
                         
-                        valueBox(value = paste(format(fur_claims, big.mark = ","), "/", percent_fur  , sep = " "),
-                                 "Hechos FUR (respecto a hechos totales)",
+                        valueBox(value = paste(format(fud_claims, big.mark = ","), "/", percent_fud  , sep = " "),
+                                 "Hechos FUD (respecto a hechos totales)",
                                  icon = icon("fa-solid fa-folder-open"),            
                                  color = 'aqua')
                 })
