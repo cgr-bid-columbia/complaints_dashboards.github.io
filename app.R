@@ -1667,7 +1667,7 @@ shinyApp(
                 output$table_missings <- renderReactable({
                         
                         #dataframe with two columns: variable and number of missings
-                        df_missings_claims_21 <- read.csv('out/df_missings_claims_21.csv')
+                        df_missings_claims_21 <- read.csv('df_missings_claims_21.csv')
                         
                         reactable(
                                 df_missings_claims_21,
@@ -1713,7 +1713,7 @@ shinyApp(
                         
                         ### Create a plot with error rate per encoder (Andrea/Edwar) (x axis is for number of batch, y for the error rate)
                         
-                        data_plot <- read.csv('out/data_plot_claims_21.csv')
+                        data_plot <- read.csv('data_plot_claims_21.csv')
                         
                         #barplot: a plot with error rate per encoder (Andrea/Edwar)
                         plot_ly(data_plot, x = ~date_batch, y = ~error_rate_andrea, type = 'bar',  name = 'Andrea',
@@ -1731,7 +1731,7 @@ shinyApp(
                 
                 output$table_hechos_dep_2021 <- renderReactable({
                         
-                        hechos_dep_census <- read.csv('out/hechos_dep_census_claims_21.csv')
+                        hechos_dep_census <- read.csv('hechos_dep_census_claims_21.csv')
                         
                         reactable(
                                 hechos_dep_census[,c("departamento", "n", "percentage", "N_dpt_claims100Kpop")],
@@ -1806,7 +1806,7 @@ shinyApp(
                 
                 output$table_entidad_2021 <- renderReactable({
                         
-                        type_entity_count <- read.csv('out/type_entity_count_claims_21.csv')
+                        type_entity_count <- read.csv('type_entity_count_claims_21.csv')
                         
                         reactable(
                                 type_entity_count,
@@ -1877,7 +1877,7 @@ shinyApp(
                 
                 output$table_tipologia_2021 <- renderReactable({
                         
-                        primary_class_count <- read.csv("out/primary_class_count_claims_21.csv")
+                        primary_class_count <- read.csv("primary_class_count_claims_21.csv")
                         
                         reactable(
                                 primary_class_count,
@@ -1920,7 +1920,7 @@ shinyApp(
                 
                 output$table_uo_ara_2021 <- renderReactable({
                         
-                        uo_ara_count <- read.csv("out/uo_ara_count_claims_21.csv")
+                        uo_ara_count <- read.csv("uo_ara_count_claims_21.csv")
                         
                         reactable(
                                 uo_ara_count,
@@ -2008,7 +2008,7 @@ shinyApp(
                 
                 output$table_corruption_2021 <- renderReactable({
                         
-                        corruption_dep_census <- read.csv('out/corruption_dep_census_claims_21.csv')
+                        corruption_dep_census <- read.csv('corruption_dep_census_claims_21.csv')
                         
                         reactable(
                                 corruption_dep_census[,c("departamento", "n", "percentage", "N_dpt_claims100Kpop_corruption")],
