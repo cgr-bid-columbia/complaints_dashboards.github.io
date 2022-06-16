@@ -132,7 +132,8 @@ sidebar <- dashboardSidebar(width = 280,
                                         menuItem("Cuestionario Inicial", tabName = "info_survey"),   #CITIZEN
                                         menuItem("Estadísticas", tabName = "statistics"),            #CITIZEN
                                         menuItem("Cuestionario Percepción", tabName = "perception_survey"), #CITIZEN
-                                        menuItem("Denuncias 2021", tabName = "claims2021") #CGR
+                                        menuItem("Denuncias 2021", tabName = "claims2021"), #CGR
+                                        menuItem("Denuncias Históricas", tabName = "claims_hist") #CGR
                             ) 
 )
 
@@ -845,6 +846,9 @@ body <- dashboardBody(
                         
                         fluidRow(
                                 
+                                
+                                p("Denuncias 2021", style = "text-align:right;color:black;font-size: 20px;font-weight: bold;background-color:white;padding:11px;border-radius:10px"),
+
                                 tabBox(
                                         id = "claims2021_tabs", width = 12, height = "650px",
                                         
@@ -1047,12 +1051,150 @@ body <- dashboardBody(
                                         )
                                 )
                         )
+                ),
+                
+                #####################
+                # Denuncias históricas
+                ####################
+                tabItem(tabName = "claims_hist",
+                        
+                        fluidRow(
+                                
+                                p("Denuncias históricas", style = "text-align:right;color:black;font-size: 20px;font-weight: bold;background-color:white;padding:11px;border-radius:10px"),
+                                
+                                selectInput("year_selection_cgr", label = "Selecciona el año",
+                                            choices = c("Todos los años", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020")
+                                ),
+                                
+                                tabBox(
+                                        id = "claims_hist_tabs_cgr", width = 12, height = "650px",
+                                        
+                                        #Informacion General       
+                                        tabPanel("Panorama General", icon = icon("briefcase-medical"),
+                                                 
+                                                 
+                                                 fluidRow(
+                                                         valueBoxOutput("historical_total_cgr", width = 12)
+                                                 ),
+                                                 
+                                                 fluidRow(
+                                                         valueBoxOutput("fur_historical_cgr", width = 4),
+                                                         
+                                                         valueBoxOutput("pde_historical_cgr", width = 4),
+                                                         
+                                                         valueBoxOutput("cad_historical_cgr", width = 4)
+                                                         
+                                                 ),
+                                                 
+                                                 fluidRow(
+                                                         column(4,
+                                                         ),
+                                                         
+                                                         column(4,
+                                                                
+                                                                p("Estado PDE",
+                                                                  style = "text-align:center; color: black ; font-size: 16px; font-weight: bold"),
+                                                                
+                                                                plotlyOutput("pde_status_historical_cgr")
+                                                         )
+                                                 )
+                                                 
+                                        ),
+                                        
+                                        #Hechos Estadísticos 
+                                        tabPanel("Estadísticos Generales", icon = icon("briefcase-medical"),
+                                                 
+                                                 fluidRow(
+                                                         column(6,
+                                                                br(),
+                                                                p("Hechos por departamento - estadísticos",
+                                                                  style = "text-align:left; color: black ; font-size: 16px; font-weight: bold"), br(),
+                                                                
+                                                                reactableOutput("table_hechos_dep_historical_cgr")
+                                                         ),
+                                                         column(6,
+                                                                br(),
+                                                                p("Hechos por tipología primaria",
+                                                                  style = "text-align:left; color: black ; font-size: 16px; font-weight: bold"), br(),
+                                                                
+                                                                reactableOutput("table_tipologia_historical_cgr")
+                                                                
+                                                                #plotOutput("map_dep_historical_cgr")
+                                                         )
+                                                 ),
+                                                 fluidRow(
+                                                         column(6,
+                                                                br(),
+                                                                p("Hechos por entidad",
+                                                                  style = "text-align:left; color: black ; font-size: 16px; font-weight: bold"), br(),
+                                                                
+                                                                reactableOutput("table_entidad_historical_cgr")
+                                                                
+                                                         ),
+                                                         column(6,
+                                                                br(),
+                                                                p("Hechos por unidad orgánica del analista",
+                                                                  style = "text-align:left; color: black ; font-size: 16px; font-weight: bold"), br(),
+                                                                
+                                                                reactableOutput("table_uo_ara_historical_cgr")
+                                                         )
+                                                 )
+                                                 
+                                        ),
+                                        
+                                        # Estadísticos corrupción
+                                        tabPanel("Estadísticos Corrupción", icon = icon("briefcase-medical"),
+                                                 
+                                                 fluidRow(
+                                                         
+                                                         box(strong("Hechos de corrupción (Total)"), width = 6, status = "primary", solidHeader = TRUE, 
+                                                             style = "font-family: Georgia;text-align:center;color:#14505B ;font-size: 18px; padding-top: 20px",
+                                                             
+                                                             flexdashboard::gaugeOutput("corruption_count_historical_cgr", width = "90%", height = "100px")
+                                                         ),
+                                                         
+                                                         box(strong("Hechos de corrupción (%)"), width = 6, status = "primary", solidHeader = TRUE, 
+                                                             style = "font-family: Georgia;text-align:center;color:#14505B ;font-size: 18px; padding-top: 20px",
+                                                             
+                                                             flexdashboard::gaugeOutput("corruption_perc_historical_cgr", width = "90%", height = "100px")
+                                                         )
+                                                         
+                                                 ),
+                                                 
+                                                 fluidRow(
+                                                         column(6,
+                                                                br(),
+                                                                p("Hechos codificados: hechos de corrupción por departamento - estadísticos",
+                                                                  style = "text-align:left; color: black ; font-size: 16px; font-weight: bold"), br(),
+                                                                
+                                                                reactableOutput("table_corruption_historical_cgr")
+                                                                
+                                                         )
+                                                 )
+                                        )
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                )
+                                
+                                
+                                
+                                
+                        )
+                        
                 )
                 
         ),
         
-        #previous/next button for tab items
-        hidden(actionButton(inputId ="Next", label = icon("arrow-right")))
+        #next button for tab items (CITIZEN)
+        hidden(actionButton(inputId ="Next", label = icon("arrow-right"))),
+        
+        #previous/next button for tab items (CGR)
+        hidden(actionButton(inputId ="Previous_cgr", label = icon("arrow-left"))),
+        hidden(actionButton(inputId ="Next_cgr", label = icon("arrow-right")))
         
         
         
@@ -1108,16 +1250,17 @@ shinyApp(
                 #### CITIZEN
                 ###########################
                 
-                #previous/next button for tab items / https://stackoverflow.com/questions/44309328/generic-button-for-go-to-next-and-previous-tabitem-shiny
+                #next button for tab items / https://stackoverflow.com/questions/44309328/generic-button-for-go-to-next-and-previous-tabitem-shiny
                 
                 tab_id <- c("info_survey","statistics","perception_survey")
                 
                 observe({
                         lapply(c("Next"),
                                toggle,
-                               condition = input[["tabs"]] != "users" &  input[["tabs"]] != "perception_survey" ) #TODO_ CHECK THIS
+                               condition = input[["tabs"]] != "users" &  input[["tabs"]] != "perception_survey"  &  
+                                           input[["tabs"]] != "claims2021" &  input[["tabs"]] != "claims_hist" ) #TODO_ CHECK THIS
                 })
-                
+
                 Current <- reactiveValues(
                         Tab = "info_survey"
                 )
@@ -1607,6 +1750,49 @@ shinyApp(
                 #### CGR
                 ###########################
                 
+                #previous/next button for tab items
+                
+                tab_id_cgr <- c("claims2021", "claims_hist")
+                
+                observe({
+                        lapply(c("Next_cgr", "Previous_cgr"),
+                               toggle,
+                               condition = input[["tabs"]] != "users" &  input[["tabs"]] != "info_survey" &
+                                           input[["tabs"]] != "statistics" & input[["tabs"]] != "perception_survey" )
+                })
+                
+                Current_cgr <- reactiveValues(
+                        Tab = "claims2021"
+                )
+                
+                observeEvent(
+                        input[["tabs"]],
+                        {
+                                Current_cgr$Tab <- input[["tabs"]]
+                        }
+                )
+                
+                observeEvent(
+                        input[["Previous_cgr"]],
+                        {
+                                tab_id_position <- match(Current_cgr$Tab, tab_id_cgr) - 1
+                                if (tab_id_position == 0) tab_id_position <- length(tab_id_cgr)
+                                Current_cgr$Tab <- tab_id_cgr[tab_id_position]
+                                updateTabItems(session, "tabs", tab_id_cgr[tab_id_position]) 
+                        }
+                )
+                
+                observeEvent(
+                        input[["Next_cgr"]],
+                        {
+                                tab_id_position <- match(Current_cgr$Tab, tab_id_cgr) + 1
+                                if (tab_id_position > length(tab_id_cgr)) tab_id_position <- 1
+                                Current_cgr$Tab <- tab_id_cgr[tab_id_position]
+                                updateTabItems(session, "tabs", tab_id_cgr[tab_id_position]) 
+                        }
+                )
+                
+                
                 
                 ###################
                 # Denuncias 2021
@@ -2077,6 +2263,521 @@ shinyApp(
                                         plot.caption = element_text( size=10, color = "black", margin = margin(b = 0.3, r=-99, unit = "cm") ),
                                 ) +
                                 coord_map()
+                })
+                
+                
+                ###################
+                # Denuncias Históricas
+                ##################
+                
+                output$historical_total_cgr <- renderValueBox({
+                        
+                        
+                        #creating n_claims_historical variable
+                        if (input$year_selection_cgr == "Todos los años") {
+                                n_claims_historical <- nrow(raw_historical_claims)
+                                
+                        } else {
+                                n_claims_historical <- nrow(subset(raw_historical_claims, year== input$year_selection_cgr ))
+                                
+                        }
+                        
+                        valueBox(value = paste(format(n_claims_historical, big.mark = ","), "", sep = " "),
+                                 "Hechos totales",
+                                 icon = icon("fa-solid fa-database"),             #https://fontawesome.com/v4/icons/
+                                 color = "purple"
+                        )
+                })
+                
+                output$fur_historical_cgr <- renderValueBox({
+                        
+                        if (input$year_selection_cgr == "Todos los años") {
+                                fur_claims <- sum(raw_historical_claims$FUR_decision == "Yes")
+                                
+                                n_claims_historical <- nrow(raw_historical_claims)
+                                percent_fur <-  paste( round(fur_claims/n_claims_historical,2)*100, "%")
+                        } else {
+                                #dataframe with specific year
+                                raw_historical_year <- subset(raw_historical_claims, year== input$year_selection_cgr)
+                                
+                                fur_claims <- sum(raw_historical_year$FUR_decision == "Yes")
+                                
+                                n_claims_historical <- nrow(raw_historical_year)
+                                percent_fur <-  paste( round(fur_claims/n_claims_historical,2)*100, "%")
+                        }
+                        
+                        valueBox(value = paste(format(fur_claims, big.mark = ","), "/", percent_fur  , sep = " "),
+                                 "Hechos FUR (respecto a hechos totales)",
+                                 icon = icon("fa-solid fa-folder-open"),            
+                                 color = 'aqua')
+                })
+                
+                output$pde_historical_cgr <- renderValueBox({
+                        
+                        if (input$year_selection_cgr == "Todos los años") {
+                                pde_claims <- sum(raw_historical_claims$PDE_decision == "Yes")
+                                
+                                n_claims_historical <- nrow(raw_historical_claims)
+                                percent_pde <-  paste( round(pde_claims/n_claims_historical,2)*100, "%")
+                        } else {
+                                raw_historical_year <- subset(raw_historical_claims, year== input$year_selection_cgr)
+                                
+                                pde_claims <- sum(raw_historical_year$PDE_decision == "Yes")
+                                
+                                n_claims_historical <- nrow(raw_historical_year)
+                                percent_pde <-  paste( round(pde_claims/n_claims_historical,2)*100, "%")
+                        }
+                        valueBox(value = paste(format(pde_claims, big.mark = ","), "/", percent_pde  , sep = " "),
+                                 "Hechos PDE (respecto a hechos totales)",
+                                 icon = icon("fa-solid fa-folder-open"),            
+                                 color = 'aqua')
+                })
+                
+                output$cad_historical_cgr <- renderValueBox({
+                        
+                        if (input$year_selection_cgr == "Todos los años") {
+                                cad_claims <- sum(raw_historical_claims$CAD_decision == "Yes")
+                                
+                                n_claims_historical <- nrow(raw_historical_claims)
+                                percent_cad <-  paste( round(cad_claims/n_claims_historical,2)*100, "%")
+                        } else {
+                                raw_historical_year <- subset(raw_historical_claims, year== input$year_selection_cgr)
+                                
+                                cad_claims <- sum(raw_historical_year$CAD_decision == "Yes")
+                                
+                                n_claims_historical <- nrow(raw_historical_year)
+                                percent_cad <-  paste( round(cad_claims/n_claims_historical,2)*100, "%")
+                        }
+                        valueBox(value = paste(format(cad_claims, big.mark = ","), "/", percent_cad , sep = " "),
+                                 "Hechos CAD (respecto a hechos totales)",
+                                 icon = icon("fa-solid fa-folder-open"),            
+                                 color = 'aqua')
+                })
+                
+                output$pde_status_historical_cgr <- renderPlotly({ 
+                        #Donut chart: PDE status - categories
+                        PDE_categories_df <- read.csv("PDE_categories_df_historical.csv")
+                        
+                        if (input$year_selection_cgr == "Todos los años") {
+                                
+                                pde_status_df <- as.data.frame(table(PDE_categories_df$PDE_decision_categories))
+                                colnames(pde_status_df) <- c("pde_status", "n")
+                        } else {
+                                
+                                PDE_categories_df <- subset(PDE_categories_df, year== input$year_selection_cgr)
+                                pde_status_df <- as.data.frame(table(PDE_categories_df$PDE_decision_categories))
+                                colnames(pde_status_df) <- c("pde_status", "n")
+                        }
+                        
+                        pde_status_df %>% 
+                                plot_ly(labels = ~pde_status, values = ~n, marker = list(colors = c('#00aa7f', '#ccccc7', '#ff0000'))) %>%
+                                add_pie(hole = 0.55, textfont = list(size = 13)) %>% 
+                                layout(
+                                        #title = "Estado PDE",
+                                        showlegend = T,
+                                        xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+                                        yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
+                        
+                })
+                
+                
+                output$table_hechos_dep_historical_cgr <- renderReactable({
+                        
+                        hechos_dep_census <- read.csv('hechos_dep_census_claims_historical.csv')
+                        
+                        if (input$year_selection_cgr == "Todos los años") {
+                                
+                                hechos_dep_census <- hechos_dep_census %>% 
+                                        group_by(departamento) %>% 
+                                        mutate( n = sum(n_year),
+                                                pop17 = as.integer(min(pop17)) ) %>% 
+                                        filter(row_number()==1) %>% 
+                                        select(departamento, pop17, n) %>% 
+                                        mutate( N_dpt_claims100Kpop = round( n/(pop17/100000) ,1) ) %>% 
+                                        ungroup() %>% 
+                                        mutate(percentage = round( (n/sum(n) )*100, 1))  
+                                
+                        } else {
+                                
+                                hechos_dep_census <- hechos_dep_census %>%
+                                        filter(year== input$year_selection_cgr) %>%
+                                        select(departamento, n_year, pop17) %>% 
+                                        mutate( N_dpt_claims100Kpop = round( n_year/(pop17/100000) ,1),
+                                                percentage = round( (n_year/sum(n_year) )*100, 1))
+                                
+                                colnames(hechos_dep_census) <- c("departamento", "n", "pop17", "N_dpt_claims100Kpop", "percentage")
+                        }
+                        
+                        
+                        reactable(
+                                hechos_dep_census[,c("departamento","n","N_dpt_claims100Kpop", "percentage")],
+                                pagination = TRUE,
+                                defaultSorted = "n",
+                                defaultColDef = colDef(headerClass = "header", align = "left"),
+                                columns = list(
+                                        departamento = colDef(name = "departamento"
+                                                              
+                                        ),
+                                        n = colDef(
+                                                name = "N° de hechos",
+                                                defaultSortOrder = "desc",
+                                                # Render the bar charts using a custom cell render function
+                                                cell = function(value) {
+                                                        width <- paste0(value * 100 / max(hechos_dep_census$n), "%")
+                                                        # Add thousands separators
+                                                        value <- format(value, big.mark = ",")
+                                                        bar_chart(value, width = width, fill = "#3fc1c9")
+                                                },
+                                                # And left-align the columns
+                                                align = "left"
+                                        ),
+                                        percentage = colDef(
+                                                name = "Porcentaje",
+                                                defaultSortOrder = "desc",
+                                                # Render the bar charts using a custom cell render function
+                                                cell = function(value) {
+                                                        # Format as percentages with 1 decimal place
+                                                        value <- paste0(format(value , nsmall = 1), "%")
+                                                        bar_chart(value, width = value, fill = "#fc5185", background = "#e1e1e1")
+                                                },
+                                                # And left-align the columns
+                                                align = "left"
+                                        ),
+                                        N_dpt_claims100Kpop = colDef(
+                                                name = "N° de hechos por 100 mil habitantes",
+                                                defaultSortOrder = "desc",
+                                                # Render the bar charts using a custom cell render function
+                                                cell = function(value) {
+                                                        width <- paste0(value * 100 / max(hechos_dep_census$N_dpt_claims100Kpop), "%")
+                                                        # Add thousands separators
+                                                        value <- format(value, big.mark = ",")
+                                                        bar_chart(value, width = width, fill = "#00aa7f")
+                                                },
+                                                # And left-align the columns
+                                                align = "left"
+                                        )
+                                )
+                        )
+                        
+                })
+                
+                #output$map_dep_historical_cgr <- renderPlot({
+                
+                
+                #    if (input$year_selection_cgr == "Todos los años") {
+                
+                #departamentos_fortified_historical <- departamentos_fortified_historical %>% 
+                #      group_by(id,long,lat,order,hole,piece,group) %>% 
+                #     mutate( n_claims = sum(n_claims_year) ) %>% 
+                #    filter(row_number()==1)  %>% 
+                #   mutate( N_dpt_claims100Kpop = round( n_claims/(pop17/100000) ,1) ) 
+                
+                #   } else {
+                
+                
+                
+                #  }
+                
+                
+                #})
+                
+                output$table_tipologia_historical_cgr <- renderReactable({
+                        
+                        if (input$year_selection_cgr == "Todos los años") {
+                                
+                                primary_class_count <- read.csv('primary_class_count_historical.csv')
+                                
+                        } else {
+                                
+                                primary_class_count <- subset(raw_historical_claims, tipodedenuncia_primario!= ""  & year== input$year_selection_cgr ) %>% 
+                                        count(tipodedenuncia_primario, sort = TRUE) %>% 
+                                        mutate( percentage = round( (n/sum(n) )*100, 1))
+                        }
+                        
+                        reactable(
+                                primary_class_count,
+                                pagination = TRUE,
+                                defaultSorted = "n",
+                                defaultColDef = colDef(headerClass = "header", align = "left"),
+                                columns = list(
+                                        tipodedenuncia_primario = colDef(name = "Tipo de denuncia"
+                                                                         
+                                        ),
+                                        n = colDef(
+                                                name = "N° de hechos",
+                                                defaultSortOrder = "desc",
+                                                # Render the bar charts using a custom cell render function
+                                                cell = function(value) {
+                                                        width <- paste0(value * 100 / max(primary_class_count$n), "%")
+                                                        # Add thousands separators
+                                                        value <- format(value, big.mark = ",")
+                                                        bar_chart(value, width = width, fill = "#3fc1c9")
+                                                },
+                                                # And left-align the columns
+                                                align = "left"
+                                        ),
+                                        percentage = colDef(
+                                                name = "Porcentaje",
+                                                defaultSortOrder = "desc",
+                                                # Render the bar charts using a custom cell render function
+                                                cell = function(value) {
+                                                        # Format as percentages with 1 decimal place
+                                                        value <- paste0(format(value , nsmall = 1), "%")
+                                                        bar_chart(value, width = value, fill = "#fc5185", background = "#e1e1e1")
+                                                },
+                                                # And left-align the columns
+                                                align = "left"
+                                        )
+                                )
+                        )
+                        
+                })
+                
+                output$table_entidad_historical_cgr <- renderReactable({
+                        
+                        if (input$year_selection_cgr == "Todos los años") {
+                                
+                                type_entity_count_historical <- subset(raw_historical_claims, tipo_de_entidad!= "" ) %>%
+                                        group_by(tipo_de_entidad) %>% 
+                                        summarise( n= n() ) %>% 
+                                        mutate( percentage = round( (n/sum(n))*100, 1 ) )
+                                
+                                
+                        } else {
+                                
+                                type_entity_count_historical <- subset(raw_historical_claims, tipo_de_entidad!= "" & year== input$year_selection_cgr  ) %>%
+                                        group_by(tipo_de_entidad) %>% 
+                                        summarise( n= n() ) %>% 
+                                        mutate( percentage = round( (n/sum(n))*100, 1 ) )
+                                
+                        }
+                        
+                        reactable(
+                                type_entity_count_historical,
+                                pagination = TRUE,
+                                defaultSorted = "n",
+                                defaultColDef = colDef(headerClass = "header", align = "left"),
+                                columns = list(
+                                        tipo_de_entidad = colDef(name = "Tipo de entidad", width = 180),
+                                        n = colDef(
+                                                name = "N° de hechos",
+                                                defaultSortOrder = "desc",
+                                                # Render the bar charts using a custom cell render function
+                                                cell = function(value) {
+                                                        width <- paste0(value * 100 / max(type_entity_count_historical$n), "%")
+                                                        # Add thousands separators
+                                                        value <- format(value, big.mark = ",")
+                                                        bar_chart(value, width = width, fill = "#3fc1c9")
+                                                },
+                                                # And left-align the columns
+                                                align = "left"
+                                        ),
+                                        percentage = colDef(
+                                                name = "Porcentaje",
+                                                defaultSortOrder = "desc",
+                                                # Render the bar charts using a custom cell render function
+                                                cell = function(value) {
+                                                        # Format as percentages with 1 decimal place
+                                                        value <- paste0(format(value , nsmall = 1), "%")
+                                                        bar_chart(value, width = value, fill = "#fc5185", background = "#e1e1e1")
+                                                },
+                                                # And left-align the columns
+                                                align = "left"
+                                        )
+                                )
+                        )
+                        
+                }) 
+                
+                output$table_uo_ara_historical_cgr <- renderReactable({
+                        
+                        if (input$year_selection_cgr == "Todos los años") {
+                                
+                                uo_ara_count <- read.csv("uo_ara_count_historical.csv")
+                                
+                        } else {
+                                
+                                
+                                uo_ara_count <- raw_historical_claims %>% subset(uo_ara!= "" & year== input$year_selection_cgr) %>%
+                                        group_by(uo_ara) %>%
+                                        summarise(
+                                                n = n(),
+                                                percentage = NaN
+                                        )  %>%
+                                        mutate( percentage = round( (n/sum(n) )*100, 1)
+                                        )
+                                
+                        }
+                        
+                        reactable(
+                                uo_ara_count,
+                                pagination = TRUE,
+                                defaultSorted = "n",
+                                defaultColDef = colDef(headerClass = "header", align = "left"),
+                                columns = list(
+                                        uo_ara = colDef(name = "Unidad Orgánica", width = 180),
+                                        n = colDef(
+                                                name = "N° de hechos",
+                                                defaultSortOrder = "desc",
+                                                # Render the bar charts using a custom cell render function
+                                                cell = function(value) {
+                                                        width <- paste0(value * 100 / max(uo_ara_count$n), "%")
+                                                        # Add thousands separators
+                                                        value <- format(value, big.mark = ",")
+                                                        bar_chart(value, width = width, fill = "#3fc1c9")
+                                                },
+                                                # And left-align the columns
+                                                align = "left"
+                                        ),
+                                        percentage = colDef(
+                                                name = "Porcentaje",
+                                                defaultSortOrder = "desc",
+                                                # Render the bar charts using a custom cell render function
+                                                cell = function(value) {
+                                                        # Format as percentages with 1 decimal place
+                                                        value <- paste0(format(value , nsmall = 1), "%")
+                                                        bar_chart(value, width = value, fill = "#fc5185", background = "#e1e1e1")
+                                                },
+                                                # And left-align the columns
+                                                align = "left"
+                                        )
+                                )
+                        )
+                        
+                })
+                
+                output$corruption_count_historical_cgr <- flexdashboard::renderGauge({
+                        
+                        
+                        if (input$year_selection_cgr == "Todos los años") {
+                                
+                                corruption_claims_count <- corruption_claims_count_historical %>% 
+                                        group_by(corruption_denunc) %>% 
+                                        summarise( n = sum(n) )
+                                
+                                max = sum(corruption_claims_count$n)
+                                
+                        } else {
+                                
+                                corruption_claims_count <- corruption_claims_count_historical %>% 
+                                        filter(year== input$year_selection_cgr) 
+                                
+                                max = sum(corruption_claims_count$n)
+                                
+                        }
+                        
+                        
+                        flexdashboard::gauge(corruption_claims_count$n[corruption_claims_count$corruption_denunc == 1], min = 0, max = max , gaugeSectors(
+                                success = c(round((2/3)*max) + 1 , max ), warning = c(round(max/3) + 1, round((2/3)*max) ), danger = c(0, round(max/3) ))
+                                , abbreviate = FALSE, abbreviateDecimals = 1)
+                })
+                
+                output$corruption_perc_historical_cgr <- flexdashboard::renderGauge({
+                        
+                        if (input$year_selection_cgr == "Todos los años") {
+                                
+                                corruption_claims_count <- corruption_claims_count_historical %>% 
+                                        group_by(corruption_denunc) %>% 
+                                        summarise( n = sum(n) )
+                                
+                                corruption_claims_count$percentage <- round( (corruption_claims_count$n/sum(corruption_claims_count$n) )*100, 1)
+                                
+                        } else {
+                                
+                                corruption_claims_count <- corruption_claims_count_historical %>% 
+                                        filter(year== input$year_selection_cgr) 
+                                
+                                corruption_claims_count$percentage <- round( (corruption_claims_count$n/sum(corruption_claims_count$n) )*100, 1)
+                                
+                        }
+                        
+                        
+                        flexdashboard::gauge(corruption_claims_count$percentage[corruption_claims_count$corruption_denunc == 1], min = 0, max = 100, symbol = '%', gaugeSectors(
+                                success = c(80, 100), warning = c(40, 79), danger = c(0, 39)
+                        ))
+                }) 
+                
+                output$table_corruption_historical_cgr <- renderReactable({
+                        
+                        corruption_dep_census <- read.csv('corruption_dep_census_claims_historical.csv')
+                        
+                        
+                        if (input$year_selection == "Todos los años") {
+                                
+                                corruption_dep_census <- corruption_dep_census %>% 
+                                        group_by(departamento) %>% 
+                                        mutate( n = sum(n_year),
+                                                pop17 = as.integer(min(pop17)) ) %>% 
+                                        filter(row_number()==1) %>% 
+                                        select(departamento, pop17, n) %>% 
+                                        mutate( N_dpt_claims100Kpop_corruption = round( n/(pop17/100000) ,1) ) %>% 
+                                        ungroup() %>% 
+                                        mutate(percentage = round( (n/sum(n) )*100, 1))  
+                                
+                        } else {
+                                
+                                corruption_dep_census <- corruption_dep_census %>%
+                                        filter(year== input$year_selection_cgr) %>%
+                                        select(departamento, n_year, pop17) %>% 
+                                        mutate( N_dpt_claims100Kpop_corruption = round( n_year/(pop17/100000) ,1),
+                                                percentage = round( (n_year/sum(n_year) )*100, 1))
+                                
+                                colnames(corruption_dep_census) <- c("departamento", "n", "pop17", "N_dpt_claims100Kpop_corruption", "percentage")
+                        }
+                        
+                        
+                        
+                        
+                        reactable(
+                                corruption_dep_census[,c("departamento", "n", "percentage", "N_dpt_claims100Kpop_corruption")],
+                                pagination = TRUE,
+                                defaultSorted = "n",
+                                defaultColDef = colDef(headerClass = "header", align = "left"),
+                                columns = list(
+                                        departamento = colDef(name = "departamento"
+                                                              
+                                        ),
+                                        n = colDef(
+                                                name = "N° de hechos",
+                                                defaultSortOrder = "desc",
+                                                # Render the bar charts using a custom cell render function
+                                                cell = function(value) {
+                                                        width <- paste0(value * 100 / max(corruption_dep_census$n), "%")
+                                                        # Add thousands separators
+                                                        value <- format(value, big.mark = ",")
+                                                        bar_chart(value, width = width, fill = "#3fc1c9")
+                                                },
+                                                # And left-align the columns
+                                                align = "left"
+                                        ),
+                                        percentage = colDef(
+                                                name = "Porcentaje",
+                                                defaultSortOrder = "desc",
+                                                # Render the bar charts using a custom cell render function
+                                                cell = function(value) {
+                                                        # Format as percentages with 1 decimal place
+                                                        value <- paste0(format(value , nsmall = 1), "%")
+                                                        bar_chart(value, width = value, fill = "#fc5185", background = "#e1e1e1")
+                                                },
+                                                # And left-align the columns
+                                                align = "left"
+                                        ),
+                                        N_dpt_claims100Kpop_corruption = colDef(
+                                                name = "N° de hechos por 100 mil habitantes",
+                                                defaultSortOrder = "desc",
+                                                # Render the bar charts using a custom cell render function
+                                                cell = function(value) {
+                                                        width <- paste0(value * 100 / max(corruption_dep_census$N_dpt_claims100Kpop_corruption), "%")
+                                                        # Add thousands separators
+                                                        value <- format(value, big.mark = ",")
+                                                        bar_chart(value, width = width, fill = "#00aa7f")
+                                                },
+                                                # And left-align the columns
+                                                align = "left"
+                                        )
+                                )
+                        )
+                        
                 })
                 
                 
