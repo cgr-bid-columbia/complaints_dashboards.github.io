@@ -15,11 +15,17 @@ library(mapproj)
 
 
 # USERS AND PASSWORDS
-user1 <- Sys.getenv("USER_CGR")
-pw1 <- Sys.getenv("PASS_CGR")
+#user1 <- Sys.getenv("USER_CGR")
+#pw1 <- Sys.getenv("PASS_CGR")
 
-user2 <- Sys.getenv("USER_CITIZEN")
-pw2 <- Sys.getenv("PASS_CITIZEN")
+user1 <- "cgr"
+pw1 <- "pass_cgr"
+
+#user2 <- Sys.getenv("USER_CITIZEN")
+#pw2 <- Sys.getenv("PASS_CITIZEN")
+
+user2 <- "citizen"
+pw2 <- "pass_citizen"
 
 
 gs4_auth(cache = ".secrets", email = TRUE, use_oob = TRUE)
