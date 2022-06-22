@@ -856,13 +856,11 @@ body <- dashboardBody(
                                 p("Denuncias 2021", style = "text-align:right;color:black;font-size: 20px;font-weight: bold;background-color:white;padding:11px;border-radius:10px"),
 
                                 tabBox(
-                                        id = "claims2021_tabs", width = 12, height = "650px",
+                                        id = "claims2021_tabs", width = 12, height = "800px",
                                         
                                         
                                         #Informacion General       
                                         tabPanel("Panorama General", icon = icon("briefcase-medical"),
-                                                 
-                                                 
                                                  
                                                  fluidRow(
                                                          
@@ -934,6 +932,25 @@ body <- dashboardBody(
                                                                 
                                                                 plotlyOutput("pde_status_2021")
                                                          )
+                                                 ),
+                                                 
+                                                 
+                                                 fluidRow(
+                                                         br(),br(),br(),br(),br(),
+                                                         p(tags$ul("Descripción:", style = "text-align:left; color: black ; font-size: 17px; font-weight: bold"),
+                                                           
+                                                         ),
+                                                         
+                                                         p(tags$ul(
+                                                                 tags$li("Hechos FUR: Conformado por los hechos que, en el estado HEC, son Calificados o Concluidos"), 
+                                                                 tags$li("Hechos FUD: Conformado por los hechos que son FUR y que, además, poseen numeración FUD"), 
+                                                                 tags$li("Hechos PDE: Conformado por los hechos que poseen numeración HE y que, en producto aprobado, aparecen como CAD, Desestimados o En proceso"),
+                                                                 tags$li("Hechos CAD: Conformado por los hechos que poseen numeración HE y que, en producto aprobado, aparecen únicamente como CAD"),
+                                                                 style = "text-align:left; color: black ; font-size: 16px"
+                                                         )
+                                                         
+                                                         ),
+                                                         
                                                  )
                                                  
                                                  
@@ -1095,17 +1112,40 @@ body <- dashboardBody(
                                                  ),
                                                  
                                                  fluidRow(
-                                                         column(4,
+                                                         br(),br(),br(),br(),br(),
+                                                         p(tags$ul("Descripción:", style = "text-align:left; color: black ; font-size: 17px; font-weight: bold"),
+                                                           
                                                          ),
                                                          
-                                                         column(4,
-                                                                
-                                                                p("Estado PDE",
-                                                                  style = "text-align:center; color: black ; font-size: 16px; font-weight: bold"),
-                                                                
-                                                                plotlyOutput("pde_status_historical_cgr")
-                                                         )
+                                                         p(tags$ul(
+                                                                 tags$li("Hechos FUR: Conformado por los hechos que en Estado RAC son distintos de Anulado o Derivado"), 
+                                                                 tags$li("Hechos FUD: Conformado por los hechos que son FUR y que en NUMEROFCERO* tienen valor de Asociado"), 
+                                                                 tags$li("Hechos PDE: Conformado por los hechos que son FUD y que en producto propuesto son CAD, Control Simultáneo o Alerta Control"),
+                                                                 tags$li("Hechos CAD: Conformado por los hechos que son FUD y que en producto aprobado son CAD, Control Simultáneo o Alerta Control"),
+                                                                 style = "text-align:left; color: black ; font-size: 16px"
+                                                           )
+                                                           
+                                                         ),
+                                                         
+                                                         p(br(), br(),
+                                                           tags$ul("NUMEROFCERO: Documento que procede a la evaluación preparatoria", style = "text-align:left; color: black ; font-size: 14px")
+                                                           
+                                                         ),
+     
                                                  )
+                                                 
+                                                 #fluidRow(
+                                                 #        column(4,
+                                                 #        ),
+                                                         
+                                                  #       column(4,
+                                                  #              
+                                                  #              p("Estado PDE",
+                                                  #                style = "text-align:center; color: black ; font-size: 16px; font-weight: bold"),
+                                                  #              
+                                                  #              plotlyOutput("pde_status_historical_cgr")
+                                                  #       )
+                                                 #)
                                                  
                                         ),
                                         
