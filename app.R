@@ -1084,11 +1084,13 @@ body <- dashboardBody(
                                                  ),
                                                  
                                                  fluidRow(
-                                                         valueBoxOutput("fur_historical_cgr", width = 4),
+                                                         valueBoxOutput("fur_historical_cgr", width = 3),
                                                          
-                                                         valueBoxOutput("pde_historical_cgr", width = 4),
+                                                         valueBoxOutput("fud_historical_cgr", width = 3),
                                                          
-                                                         valueBoxOutput("cad_historical_cgr", width = 4)
+                                                         valueBoxOutput("pde_historical_cgr", width = 3),
+                                                         
+                                                         valueBoxOutput("cad_historical_cgr", width = 3)
                                                          
                                                  ),
                                                  
@@ -2276,6 +2278,7 @@ shinyApp(
                 # Denuncias Históricas
                 ##################
                 
+                # total claims
                 output$historical_total_cgr <- renderValueBox({
                         
                         
@@ -2295,6 +2298,7 @@ shinyApp(
                         )
                 })
                 
+                # fur claims
                 output$fur_historical_cgr <- renderValueBox({
                         
                         if (input$year_selection_cgr == "Todos los años") {
@@ -2318,6 +2322,31 @@ shinyApp(
                                  color = 'aqua')
                 })
                 
+                # fud claims
+                output$fud_historical_cgr <- renderValueBox({
+                        
+                        if (input$year_selection_cgr == "Todos los años") {
+                                fud_claims <- sum(raw_historical_claims$FUD_decision == "Yes")
+                                
+                                n_claims_historical <- nrow(raw_historical_claims)
+                                percent_fud <-  paste( round(fud_claims/n_claims_historical,2)*100, "%")
+                        } else {
+                                #dataframe with specific year
+                                raw_historical_year <- subset(raw_historical_claims, year== input$year_selection_cgr)
+                                
+                                fud_claims <- sum(raw_historical_year$FUD_decision == "Yes")
+                                
+                                n_claims_historical <- nrow(raw_historical_year)
+                                percent_fud <-  paste( round(fud_claims/n_claims_historical,2)*100, "%")
+                        }
+                        
+                        valueBox(value = paste(format(fud_claims, big.mark = ","), "/", percent_fud , sep = " "),
+                                 "Hechos FUD (respecto a hechos totales)",
+                                 icon = icon("fa-solid fa-folder-open"),            
+                                 color = 'aqua')
+                })
+                
+                # pde claims
                 output$pde_historical_cgr <- renderValueBox({
                         
                         if (input$year_selection_cgr == "Todos los años") {
@@ -2339,6 +2368,7 @@ shinyApp(
                                  color = 'aqua')
                 })
                 
+                #cad claims
                 output$cad_historical_cgr <- renderValueBox({
                         
                         if (input$year_selection_cgr == "Todos los años") {
@@ -2360,6 +2390,7 @@ shinyApp(
                                  color = 'aqua')
                 })
                 
+                # estado pde
                 output$pde_status_historical_cgr <- renderPlotly({ 
                         #Donut chart: PDE status - categories
                         PDE_categories_df <- read.csv("PDE_categories_df_historical.csv")
@@ -2386,7 +2417,7 @@ shinyApp(
                         
                 })
                 
-                
+                #Hechos por departamento - estadísticos
                 output$table_hechos_dep_historical_cgr <- renderReactable({
                         
                         hechos_dep_census <- read.csv('hechos_dep_census_claims_historical.csv')
@@ -2487,6 +2518,7 @@ shinyApp(
                 
                 #})
                 
+                #Hechos por tipología primaria
                 output$table_tipologia_historical_cgr <- renderReactable({
                         
                         if (input$year_selection_cgr == "Todos los años") {
@@ -2539,6 +2571,7 @@ shinyApp(
                         
                 })
                 
+                #Hechos por entidad
                 output$table_entidad_historical_cgr <- renderReactable({
                         
                         if (input$year_selection_cgr == "Todos los años") {
@@ -2595,6 +2628,7 @@ shinyApp(
                         
                 }) 
                 
+                #Hechos por unidad orgánica del analista
                 output$table_uo_ara_historical_cgr <- renderReactable({
                         
                         if (input$year_selection_cgr == "Todos los años") {
@@ -2652,6 +2686,7 @@ shinyApp(
                         
                 })
                 
+                #Hechos de corrupción (Total)
                 output$corruption_count_historical_cgr <- flexdashboard::renderGauge({
                         
                         
@@ -2678,6 +2713,7 @@ shinyApp(
                                 , abbreviate = FALSE, abbreviateDecimals = 1)
                 })
                 
+                #Hechos de corrupción (%)
                 output$corruption_perc_historical_cgr <- flexdashboard::renderGauge({
                         
                         if (input$year_selection_cgr == "Todos los años") {
@@ -2703,6 +2739,8 @@ shinyApp(
                         ))
                 }) 
                 
+                
+                #Hechos codificados: hechos de corrupción por departamento - estadísticos
                 output$table_corruption_historical_cgr <- renderReactable({
                         
                         corruption_dep_census <- read.csv('corruption_dep_census_claims_historical.csv')
