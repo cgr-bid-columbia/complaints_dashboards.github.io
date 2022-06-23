@@ -2025,10 +2025,10 @@ shinyApp(
                         ggplot() +
                                 geom_polygon(data = departamentos_fortified_, aes(fill = N_dpt_claims100Kpop, x = long, y = lat, group = group), colour= "gray", size=0.05, alpha=0.9) +
                                 theme_void() +
-                                scale_fill_viridis(option = 'D',  direction = -1, trans = "log2",  name="N° de hechos") +
+                                scale_fill_viridis(option = 'D',  direction = -1, trans = "log2",  name="N° de hechos (en 100 miles)") +
                                 #scale_fill_viridis(option = 'D', trans = "log2",  breaks = trans_breaks("log2", function(x) 2^x), name="N° de hechos") +
                                 theme(  
-                                        text = element_text(size= 12, color = "#22211d"),
+                                        text = element_text(size= 13, color = "#22211d"),
                                         
                                         plot.title = element_text(size= 14, hjust=0.01, color = "black", margin = margin(b = -0.1, t = 0.4, l = 2, unit = "cm")),
                                         plot.subtitle = element_text(size= 12, hjust=0.01, color = "#4e4d47", margin = margin(b = -0.1, t = 0.43, l = 2, unit = "cm")),
@@ -2301,10 +2301,10 @@ shinyApp(
                         ggplot() +
                                 geom_polygon(data = departamentos_fortified_, aes(fill = N_dpt_claims100Kpop_corruption, x = long, y = lat, group = group), colour= "gray", size=0.05, alpha=0.9) +
                                 theme_void() +
-                                scale_fill_viridis(option = 'D',  direction = -1, trans = "log2",  name="N° de hechos") +
+                                scale_fill_viridis(option = 'D',  direction = -1, trans = "log2",  name="N° de hechos (en 100 miles)") +
                                 #scale_fill_viridis(option = 'D', trans = "log2",  breaks = trans_breaks("log2", function(x) 2^x), name="N° de hechos") +
                                 theme(  
-                                        text = element_text(size= 7, color = "#22211d"),
+                                        text = element_text(size= 13, color = "#22211d"),
                                         
                                         plot.title = element_text(size= 14, hjust=0.01, color = "black", margin = margin(b = -0.1, t = 0.4, l = 2, unit = "cm")),
                                         plot.subtitle = element_text(size= 12, hjust=0.01, color = "#4e4d47", margin = margin(b = -0.1, t = 0.43, l = 2, unit = "cm")),
