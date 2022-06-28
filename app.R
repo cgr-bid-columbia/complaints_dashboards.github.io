@@ -349,8 +349,23 @@ body <- dashboardBody(
                                                         #5
                                                         br(),
                                                         radioGroupButtons(
+                                                                inputId = "ethnicity",
+                                                                label = "5. Por sus antepasados y de acuerdo a sus costumbres, ¿usted se considera: (*)",
+                                                                choices = c("", 
+                                                                            "quechua", "aymara", "nativo/indígena", "negro/afroperuano", "blanco", "mestizo", "otro"),
+                                                                individual = TRUE,
+                                                                checkIcon = list(
+                                                                        yes = tags$i(class = "fa fa-circle", 
+                                                                                     style = "color: steelblue"),
+                                                                        no = tags$i(class = "fa fa-circle-o", 
+                                                                                    style = "color: steelblue"))
+                                                        ),
+                                                        
+                                                        #6
+                                                        br(),
+                                                        radioGroupButtons(
                                                                 inputId = "work",
-                                                                label = "5. Dedicación principal (*)",
+                                                                label = "6. Dedicación principal (*)",
                                                                 choices = c("", 
                                                                             "trabajador", "estudiante", "cuidado del hogar", "jubilado/pensionista/incapacitado", "otro"),
                                                                 individual = TRUE,
@@ -367,7 +382,7 @@ body <- dashboardBody(
                                                                 br(),
                                                                 textInput(
                                                                         inputId = "work_2",
-                                                                        label = "5.1 Especifique a qué otra actividad se dedica principalmente",
+                                                                        label = "6.1 Especifique a qué otra actividad se dedica principalmente",
                                                                         value = "Opcional"
                                                                 )
                                                                 
@@ -381,11 +396,11 @@ body <- dashboardBody(
                                                #PREGUNTAS SOBRE UBICACIÓN
                                                tabPanel("Ubicación", 
                                                         
-                                                        #6
+                                                        #7
                                                         br(),
                                                         radioGroupButtons(
                                                                 inputId = "residence",
-                                                                label = "6. ¿Reside en el Perú? (*)",
+                                                                label = "7. ¿Reside en el Perú? (*)",
                                                                 choices = c("", 
                                                                             "sí", "no"),
                                                                 individual = TRUE,
@@ -452,19 +467,19 @@ body <- dashboardBody(
                                                                 br(),
                                                                 textInput(
                                                                         inputId = "residence_2",
-                                                                        label = "6.1 Especifique en qué país reside",
+                                                                        label = "7.1 Especifique en qué país reside",
                                                                         value = "Opcional"
                                                                 )
                                                                 
                                                         ),
                                                         
-                                                        #7 
+                                                        #8
                                                         br(),
                                                         radioGroupButtons(
                                                                 inputId = "urban_rural",
-                                                                label = "7. Usted vive en (*)",
+                                                                label = "8. Usted vive en (*)",
                                                                 choices = c("", 
-                                                                            "una ciudad", "la periferia de la ciudad/asentamiento humano", "un pueblo cercano a un área rural", "un área rural", "no sabe"),
+                                                                            "una ciudad", "la periferia de la ciudad/asentamiento humano", "un pueblo cercano a un área rural", "un área rural"),
                                                                 individual = TRUE,
                                                                 checkIcon = list(
                                                                         yes = tags$i(class = "fa fa-circle", 
@@ -478,11 +493,11 @@ body <- dashboardBody(
                                                #PREGUNTAS SOBRE CGR
                                                tabPanel("Sobre la CGR",
                                                         
-                                                        #8
+                                                        #9
                                                         br(),
                                                         radioGroupButtons(
                                                                 inputId = "cgr_1",
-                                                                label = "8. ¿Tiene conocimientos sobre la labor de la Contraloría General de la República del Perú (CGR)? (*)",
+                                                                label = "9. ¿Tiene conocimientos sobre la labor de la Contraloría General de la República del Perú (CGR)? (*)",
                                                                 choices = c("", 
                                                                             "sí", "no"),
                                                                 individual = TRUE,
@@ -499,7 +514,7 @@ body <- dashboardBody(
                                                                 br(),
                                                                 textAreaInput(
                                                                         inputId = "cgr_2",
-                                                                        label = "8.1 Describa brevemente qué conocimientos tiene sobre la labor de la CGR",
+                                                                        label = "9.1 Describa brevemente qué conocimientos tiene sobre la labor de la CGR",
                                                                         value = "Opcional",
                                                                         
                                                                 )
@@ -686,7 +701,7 @@ body <- dashboardBody(
                                                                 inputId = "corruption_1",
                                                                 label = "1. ¿Cree que en los últimos 5 años la corrupción en el Perú ha aumentado, sigue igual o ha disminuido? (*)",
                                                                 choices = c("", 
-                                                                            "Ha aumentado", "Sigue igual", "Ha disminuido", "No sabe"),
+                                                                            "Ha aumentado", "Sigue igual", "Ha disminuido"),
                                                                 individual = TRUE,
                                                                 checkIcon = list(
                                                                         yes = tags$i(class = "fa fa-circle", 
@@ -702,7 +717,7 @@ body <- dashboardBody(
                                                                 inputId = "corruption_2",
                                                                 label = "2. ¿Cree que en los próximos 5 años la corrupción en el Perú habra aumentado, seguirá igual o habra disminuido? (*)",
                                                                 choices = c("", 
-                                                                            "Habra aumentado", "Seguirá igual", "Habra disminuido", "No sabe"),
+                                                                            "Habra aumentado", "Seguirá igual", "Habra disminuido"),
                                                                 individual = TRUE,
                                                                 checkIcon = list(
                                                                         yes = tags$i(class = "fa fa-circle", 
@@ -717,7 +732,7 @@ body <- dashboardBody(
                                                                 inputId = "corruption_3",
                                                                 label = "3. Teniendo en cuenta su experiencia o lo que ha oído mencionar, ¿la corrupción de los funcionarios públicos en el país está: (*)",
                                                                 choices = c("", 
-                                                                            "Muy generalizada", "Algo generalizada", "Poco generalizada", "Nada generalizada", "No sabe"),
+                                                                            "Muy generalizada", "Algo generalizada", "Poco generalizada", "Nada generalizada"),
                                                                 individual = TRUE,
                                                                 checkIcon = list(
                                                                         yes = tags$i(class = "fa fa-circle", 
@@ -732,7 +747,7 @@ body <- dashboardBody(
                                                                 inputId = "corruption_4",
                                                                 label = "4. Pensando en los funcionarios de la CGR, ¿cuántos de ellos cree que están involucrados en corrupción? (*)",
                                                                 choices = c("", 
-                                                                            "Ninguno", "Menos de la mitad", "La mitada de ellos", "Más de la mitad", "Todos", "No sabe"),
+                                                                            "Ninguno", "Menos de la mitad", "La mitada de ellos", "Más de la mitad", "Todos"),
                                                                 individual = TRUE,
                                                                 checkIcon = list(
                                                                         yes = tags$i(class = "fa fa-circle", 
@@ -761,7 +776,7 @@ body <- dashboardBody(
                                                                 inputId = "transparency_1",
                                                                 label = "6. ¿Considera que las entidades gubernamentes son transparentes en cuanto a provisión de información? (*)",
                                                                 choices = c("", 
-                                                                            "sí", "no", "no sabe"),
+                                                                            "sí", "no"),
                                                                 individual = TRUE,
                                                                 checkIcon = list(
                                                                         yes = tags$i(class = "fa fa-circle", 
@@ -776,7 +791,7 @@ body <- dashboardBody(
                                                                 inputId = "transparency_2",
                                                                 label = "7. Actualmente, ¿tiene usted confianza en institucionales tales como la Contraloría General de la República?",
                                                                 choices = c("", 
-                                                                            "nada", "poca", "suficiente", "bastante", "no sabe"),
+                                                                            "nada", "poca", "suficiente", "bastante"),
                                                                 individual = TRUE,
                                                                 checkIcon = list(
                                                                         yes = tags$i(class = "fa fa-circle", 
