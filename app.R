@@ -560,7 +560,7 @@ body <- dashboardBody(
                         fluidRow(
                                 
                                 selectInput("year_selection", label = "Selecciona el año",
-                                            choices = c("Todos los años", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020")
+                                            choices = c("Todos: 2013-2021", "2021", "2020", "2019", "2018", "2017", "2016", "2015", "2014", "2013")
                                 ),
                                 
                                 tabBox(
@@ -583,7 +583,20 @@ body <- dashboardBody(
                                                          
                                                          valueBoxOutput("cad_historical", width = 3)
                                                          
-                                                 )
+                                                 ),
+                                                 
+                                                 conditionalPanel(
+                                                         condition = "input.year_selection== 'Todos: 2013-2021'",
+                                                         
+                                                         br(),
+                                                         selectInput(
+                                                                 inputId = "select_hechos", label = "Selecciona:",
+                                                                 choices = c("Hechos totales", "Hechos FUR", "Hechos FUD", "Hechos PDE", "Hechos CAD")
+                                                         ),
+                                                         
+                                                         plotlyOutput("hechos_evolucion")
+
+                                                 ),
                                                  
                                         ),
                                         
@@ -597,6 +610,14 @@ body <- dashboardBody(
                                                                   style = "text-align:left; color: black ; font-size: 16px; font-weight: bold"), br(),
                                                                 
                                                                 reactableOutput("table_hechos_dep_historical")
+                                                         ),
+                                                         
+                                                         column(6,
+                                                                br(),
+                                                                
+                                                                plotlyOutput("hechos_dep_hist")
+                                                                
+
                                                          )
                                                  ),
                                                  
@@ -1101,7 +1122,7 @@ body <- dashboardBody(
                                 p("Denuncias históricas", style = "text-align:right;color:black;font-size: 20px;font-weight: bold;background-color:white;padding:11px;border-radius:10px"),
                                 
                                 selectInput("year_selection_cgr", label = "Selecciona el año",
-                                            choices = c("Todos los años", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020")
+                                            choices = c("Todos: 2013-2020", "2020", "2019", "2018", "2017", "2016", "2015", "2014", "2013")
                                 ),
                                 
                                 tabBox(
@@ -1482,8 +1503,12 @@ shinyApp(
                         
                         
                         #creating n_claims_historical variable
-                        if (input$year_selection == "Todos los años") {
-                                n_claims_historical <- nrow(raw_historical_claims)
+                        if (input$year_selection == "Todos: 2013-2021") {
+                                n_claims_historical <- nrow(raw_historical_claims) + nrow(raw_claims_feb21)
+                                
+                        } else if (input$year_selection == "2021") {
+                                n_claims_historical <- nrow(raw_claims_feb21)
+                                
                                 
                         } else {
                                 n_claims_historical <- nrow(subset(raw_historical_claims, year== input$year_selection ))
@@ -1497,14 +1522,21 @@ shinyApp(
                         )
                 })
                 
+                
                 #FUR 
                 output$fur_historical <- renderValueBox({
                         
-                        if (input$year_selection == "Todos los años") {
+                        if (input$year_selection == "Todos: 2013-2021") {
                                 fur_claims <- sum(raw_historical_claims$FUR_decision == "Yes")
                                 
                                 n_claims_historical <- nrow(raw_historical_claims)
                                 percent_fur <-  paste( round(fur_claims/n_claims_historical,2)*100, "%")
+                                
+                        } else if (input$year_selection == "2021") {
+                                fur_claims <- sum(raw_claims_feb21$FUR_decision == "Yes")
+                                percent_fur <-  paste( round(fur_claims/nrow(raw_claims_feb21),2)*100, "%")
+                                
+                                
                         } else {
                                 #dataframe with specific year
                                 raw_historical_year <- subset(raw_historical_claims, year== input$year_selection)
@@ -1524,11 +1556,16 @@ shinyApp(
                 #FUD
                 output$fud_historical <- renderValueBox({
                         
-                        if (input$year_selection == "Todos los años") {
+                        if (input$year_selection == "Todos: 2013-2021") {
                                 fud_claims <- sum(raw_historical_claims$FUD_decision == "Yes")
                                 
                                 n_claims_historical <- nrow(raw_historical_claims)
                                 percent_fud <-  paste( round(fud_claims/n_claims_historical,2)*100, "%")
+                                
+                        } else if (input$year_selection == "2021") {
+                                fud_claims <- sum(raw_claims_feb21$FUD_decision == "Yes")
+                                percent_fud <-  paste( round(fud_claims/nrow(raw_claims_feb21),2)*100, "%")
+                                
                         } else {
                                 #dataframe with specific year
                                 raw_historical_year <- subset(raw_historical_claims, year== input$year_selection)
@@ -1548,11 +1585,16 @@ shinyApp(
                 #PDE
                 output$pde_historical <- renderValueBox({
                         
-                        if (input$year_selection == "Todos los años") {
+                        if (input$year_selection == "Todos: 2013-2021") {
                                 pde_claims <- sum(raw_historical_claims$PDE_decision == "Yes")
                                 
                                 n_claims_historical <- nrow(raw_historical_claims)
                                 percent_pde <-  paste( round(pde_claims/n_claims_historical,2)*100, "%")
+                                
+                        } else if (input$year_selection == "2021") {
+                                pde_claims <- sum(raw_claims_feb21$PDE_decision == "Yes")
+                                percent_pde <-  paste( round(pde_claims/nrow(raw_claims_feb21),2)*100, "%")
+                                
                         } else {
                                 raw_historical_year <- subset(raw_historical_claims, year== input$year_selection)
                                 
@@ -1570,11 +1612,16 @@ shinyApp(
                 #CAD
                 output$cad_historical <- renderValueBox({
                         
-                        if (input$year_selection == "Todos los años") {
+                        if (input$year_selection == "Todos: 2013-2021") {
                                 cad_claims <- sum(raw_historical_claims$CAD_decision == "Yes")
                                 
                                 n_claims_historical <- nrow(raw_historical_claims)
                                 percent_cad <-  paste( round(cad_claims/n_claims_historical,2)*100, "%")
+                                
+                        } else if (input$year_selection == "2021") {
+                                cad_claims <- sum(raw_claims_feb21$CAD_decision == "Yes")
+                                percent_cad <-  paste( round(cad_claims/nrow(raw_claims_feb21),2)*100, "%")
+                                
                         } else {
                                 raw_historical_year <- subset(raw_historical_claims, year== input$year_selection)
                                 
@@ -1589,12 +1636,76 @@ shinyApp(
                                  color = 'aqua')
                 })
                 
+                
+                #Evolución de los hechos 
+                output$hechos_evolucion <- renderPlotly({
+                        
+                        #número de hechos totales por año
+                        df_hechos <- as.data.frame(table(raw_historical_claims$year))
+                        colnames(df_hechos) <- c("year", "n")
+                        df_hechos$year <- as.character(df_hechos$year)
+                        
+                        df_hechos[nrow(df_hechos) + 1,] = c( "2021" ,nrow(raw_claims_feb21))
+                        
+                        #número de fur/fud/pde/cad
+                        df_hechos_etapa <- raw_historical_claims %>% 
+                                group_by(year) %>% 
+                                summarise(n_fur = sum(FUR_decision == "Yes"),
+                                          n_fud = sum(FUD_decision == "Yes"),
+                                          n_pde = sum(PDE_decision == "Yes"),
+                                          n_cad = sum(CAD_decision == "Yes")) %>% 
+                                ungroup()
+                        
+                        
+                        df_hechos_etapa[nrow(df_hechos_etapa) + 1,] = list(2021,
+                                                                        sum(raw_claims_feb21$FUR_decision == "Yes"),
+                                                                        sum(raw_claims_feb21$FUD_decision == "Yes"),
+                                                                        sum(raw_claims_feb21$PDE_decision == "Yes"),
+                                                                        sum(raw_claims_feb21$CAD_decision == "Yes"))
+                        
+                        df_hechos_etapa$year <- as.character(df_hechos_etapa$year)
+                        
+                        #merge
+                        df_hechos <- df_hechos %>% 
+                                left_join(df_hechos_etapa, by="year")
+                        
+                
+                        #barplot
+                        
+                        if ()
+                        
+                        plot_ly(df_hechos, x = ~year, y = ~n, type = 'bar',
+                                marker = list(color = '#c587ff') ) %>% 
+                                layout(title = "" ,
+                                       xaxis = list(title = "Año",
+                                                    zeroline = FALSE),
+                                       yaxis = list(title = "Cantidad de hechos",
+                                                    zeroline = FALSE))
+                        
+                })
+                
+                
                 #Hechos por departamento - estadísticos
                 output$table_hechos_dep_historical <- renderReactable({
                         
                         hechos_dep_census <- read.csv('hechos_dep_census_claims_historical.csv')
                         
-                        if (input$year_selection == "Todos los años") {
+                        hechos_dep_census_2021 <- read.csv('hechos_dep_census_claims_21.csv')
+                        
+                        #claims 2021
+                        hechos_dep_census_2021 <- hechos_dep_census_2021 %>% 
+                                select(departamento, n, pop17) %>% 
+                                mutate(year=2021)
+                        
+                        hechos_dep_census_2021 <- hechos_dep_census_2021[, c("departamento", "year", "n", "pop17")]
+                        colnames(hechos_dep_census_2021) <- c("departamento", "year", "n_year", "pop17")
+                        
+                        #append claims 2021 + historical
+                        
+                        hechos_dep_census <- rbind(hechos_dep_census_2021,  hechos_dep_census)
+                        
+                        
+                        if (input$year_selection == "Todos: 2013-2021") {
                                 
                                 hechos_dep_census <- hechos_dep_census %>% 
                                         group_by(departamento) %>% 
@@ -1619,7 +1730,7 @@ shinyApp(
                         
                         
                         reactable(
-                                hechos_dep_census[,c("departamento","n","N_dpt_claims100Kpop", "percentage")],
+                                hechos_dep_census[,c("departamento","n", "percentage","N_dpt_claims100Kpop")],
                                 pagination = TRUE,
                                 defaultSorted = "n",
                                 defaultColDef = colDef(headerClass = "header", align = "left"),
@@ -1670,11 +1781,46 @@ shinyApp(
                         
                 })
                 
+
+                
+                #Evolución de denuncias por departamento
+                output$hechos_dep_hist <- renderPlotly({ 
+                        
+                        hechos_dep_census <- read.csv('hechos_dep_census_claims_historical.csv')
+                        
+                        hechos_dep_census_2021 <- read.csv('hechos_dep_census_claims_21.csv')
+                        
+                        #claims 2021
+                        hechos_dep_census_2021 <- hechos_dep_census_2021 %>% 
+                                select(departamento, n, pop17) %>% 
+                                mutate(year=2021)
+                        
+                        hechos_dep_census_2021 <- hechos_dep_census_2021[, c("departamento", "year", "n", "pop17")]
+                        colnames(hechos_dep_census_2021) <- c("departamento", "year", "n_year", "pop17")
+                        
+                        #append claims 2021 + historical  (select just one department)
+                        
+                        hechos_dep_evolucion <- rbind(hechos_dep_census_2021,  hechos_dep_census) %>%  
+                                filter(departamento == input$dep) 
+                                
+                        
+                        #barplot
+                        plot_ly(hechos_dep_evolucion, x = ~year, y = ~n_year, type = 'bar',
+                                marker = list(color = '#c587ff') ) %>% 
+                                layout(title = paste("Departamento:", input$dep ) ,
+                                       xaxis = list(title = "Año",
+                                                    zeroline = FALSE),
+                                       yaxis = list(title = "Cantidad de hechos",
+                                                    zeroline = FALSE))
+                        
+                })
+                
+                
                 #Hechos de corrupción (Total)
                 output$corruption_count_historical <- flexdashboard::renderGauge({
                         
                         
-                        if (input$year_selection == "Todos los años") {
+                        if (input$year_selection == "Todos: 2013-2021") {
                                 
                                 corruption_claims_count <- corruption_claims_count_historical %>% 
                                         group_by(corruption_denunc) %>% 
@@ -1700,7 +1846,7 @@ shinyApp(
                 #Hechos de corrupción (%)
                 output$corruption_perc_historical <- flexdashboard::renderGauge({
                         
-                        if (input$year_selection == "Todos los años") {
+                        if (input$year_selection == "Todos: 2013-2021") {
                                 
                                 corruption_claims_count <- corruption_claims_count_historical %>% 
                                         group_by(corruption_denunc) %>% 
@@ -1729,7 +1875,7 @@ shinyApp(
                         corruption_dep_census <- read.csv('corruption_dep_census_claims_historical.csv')
                         
                         
-                        if (input$year_selection == "Todos los años") {
+                        if (input$year_selection == "Todos: 2013-2021") {
                                 
                                 corruption_dep_census <- corruption_dep_census %>% 
                                         group_by(departamento) %>% 
@@ -2338,7 +2484,7 @@ shinyApp(
                         
                         
                         #creating n_claims_historical variable
-                        if (input$year_selection_cgr == "Todos los años") {
+                        if (input$year_selection_cgr == "Todos: 2013-2020") {
                                 n_claims_historical <- nrow(raw_historical_claims)
                                 
                         } else {
@@ -2356,7 +2502,7 @@ shinyApp(
                 # fur claims
                 output$fur_historical_cgr <- renderValueBox({
                         
-                        if (input$year_selection_cgr == "Todos los años") {
+                        if (input$year_selection_cgr == "Todos: 2013-2020") {
                                 fur_claims <- sum(raw_historical_claims$FUR_decision == "Yes")
                                 
                                 n_claims_historical <- nrow(raw_historical_claims)
@@ -2380,7 +2526,7 @@ shinyApp(
                 # fud claims
                 output$fud_historical_cgr <- renderValueBox({
                         
-                        if (input$year_selection_cgr == "Todos los años") {
+                        if (input$year_selection_cgr == "Todos: 2013-2020") {
                                 fud_claims <- sum(raw_historical_claims$FUD_decision == "Yes")
                                 
                                 n_claims_historical <- nrow(raw_historical_claims)
@@ -2404,7 +2550,7 @@ shinyApp(
                 # pde claims
                 output$pde_historical_cgr <- renderValueBox({
                         
-                        if (input$year_selection_cgr == "Todos los años") {
+                        if (input$year_selection_cgr == "Todos: 2013-2020") {
                                 pde_claims <- sum(raw_historical_claims$PDE_decision == "Yes")
                                 
                                 n_claims_historical <- nrow(raw_historical_claims)
@@ -2426,7 +2572,7 @@ shinyApp(
                 #cad claims
                 output$cad_historical_cgr <- renderValueBox({
                         
-                        if (input$year_selection_cgr == "Todos los años") {
+                        if (input$year_selection_cgr == "Todos: 2013-2020") {
                                 cad_claims <- sum(raw_historical_claims$CAD_decision == "Yes")
                                 
                                 n_claims_historical <- nrow(raw_historical_claims)
@@ -2450,7 +2596,7 @@ shinyApp(
                         #Donut chart: PDE status - categories
                         PDE_categories_df <- read.csv("PDE_categories_df_historical.csv")
                         
-                        if (input$year_selection_cgr == "Todos los años") {
+                        if (input$year_selection_cgr == "Todos: 2013-2020") {
                                 
                                 pde_status_df <- as.data.frame(table(PDE_categories_df$PDE_decision_categories))
                                 colnames(pde_status_df) <- c("pde_status", "n")
@@ -2477,7 +2623,7 @@ shinyApp(
                         
                         hechos_dep_census <- read.csv('hechos_dep_census_claims_historical.csv')
                         
-                        if (input$year_selection_cgr == "Todos los años") {
+                        if (input$year_selection_cgr == "Todos: 2013-2020") {
                                 
                                 hechos_dep_census <- hechos_dep_census %>% 
                                         group_by(departamento) %>% 
@@ -2556,7 +2702,7 @@ shinyApp(
                 #output$map_dep_historical_cgr <- renderPlot({
                 
                 
-                #    if (input$year_selection_cgr == "Todos los años") {
+                #    if (input$year_selection_cgr == "Todos: 2013-2021") {
                 
                 #departamentos_fortified_historical <- departamentos_fortified_historical %>% 
                 #      group_by(id,long,lat,order,hole,piece,group) %>% 
@@ -2576,7 +2722,7 @@ shinyApp(
                 #Hechos por tipología primaria
                 output$table_tipologia_historical_cgr <- renderReactable({
                         
-                        if (input$year_selection_cgr == "Todos los años") {
+                        if (input$year_selection_cgr == "Todos: 2013-2020") {
                                 
                                 primary_class_count <- read.csv('primary_class_count_historical.csv')
                                 
@@ -2629,7 +2775,7 @@ shinyApp(
                 #Hechos por entidad
                 output$table_entidad_historical_cgr <- renderReactable({
                         
-                        if (input$year_selection_cgr == "Todos los años") {
+                        if (input$year_selection_cgr == "Todos: 2013-2020") {
                                 
                                 type_entity_count_historical <- subset(raw_historical_claims, tipo_de_entidad!= "" ) %>%
                                         group_by(tipo_de_entidad) %>% 
@@ -2686,7 +2832,7 @@ shinyApp(
                 #Hechos por unidad orgánica del analista
                 output$table_uo_ara_historical_cgr <- renderReactable({
                         
-                        if (input$year_selection_cgr == "Todos los años") {
+                        if (input$year_selection_cgr == "Todos: 2013-2020") {
                                 
                                 uo_ara_count <- read.csv("uo_ara_count_historical.csv")
                                 
@@ -2745,7 +2891,7 @@ shinyApp(
                 output$corruption_count_historical_cgr <- flexdashboard::renderGauge({
                         
                         
-                        if (input$year_selection_cgr == "Todos los años") {
+                        if (input$year_selection_cgr == "Todos: 2013-2020") {
                                 
                                 corruption_claims_count <- corruption_claims_count_historical %>% 
                                         group_by(corruption_denunc) %>% 
@@ -2771,7 +2917,7 @@ shinyApp(
                 #Hechos de corrupción (%)
                 output$corruption_perc_historical_cgr <- flexdashboard::renderGauge({
                         
-                        if (input$year_selection_cgr == "Todos los años") {
+                        if (input$year_selection_cgr == "Todos: 2013-2020") {
                                 
                                 corruption_claims_count <- corruption_claims_count_historical %>% 
                                         group_by(corruption_denunc) %>% 
@@ -2801,7 +2947,7 @@ shinyApp(
                         corruption_dep_census <- read.csv('corruption_dep_census_claims_historical.csv')
                         
                         
-                        if (input$year_selection == "Todos los años") {
+                        if (input$year_selection == "Todos: 2013-2020") {
                                 
                                 corruption_dep_census <- corruption_dep_census %>% 
                                         group_by(departamento) %>% 
