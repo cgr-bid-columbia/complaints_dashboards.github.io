@@ -1671,17 +1671,52 @@ shinyApp(
                         
                 
                         #barplot
-                        
-                        if ()
-                        
-                        plot_ly(df_hechos, x = ~year, y = ~n, type = 'bar',
-                                marker = list(color = '#c587ff') ) %>% 
-                                layout(title = "" ,
-                                       xaxis = list(title = "Año",
-                                                    zeroline = FALSE),
-                                       yaxis = list(title = "Cantidad de hechos",
-                                                    zeroline = FALSE))
-                        
+                        if (input$select_hechos == "Hechos totales"){
+                                plot_ly(df_hechos, x = ~year, y = ~as.integer(n), type = 'bar',
+                                        marker = list(color = '#c587ff') ) %>% 
+                                        layout(title = "<b>Evolución de los hechos totales</b>" ,
+                                               xaxis = list(title = "Año",
+                                                            zeroline = FALSE),
+                                               yaxis = list(title = "Cantidad de hechos",
+                                                            zeroline = FALSE))
+                                
+                        }else if (input$select_hechos == "Hechos FUR"){
+                                plot_ly(df_hechos, x = ~year, y = ~n_fur, type = 'bar',
+                                        marker = list(color = '#c587ff') ) %>% 
+                                        layout(title = "<b>Evolución de los hechos FUR</b>" ,
+                                               xaxis = list(title = "Año",
+                                                            zeroline = FALSE),
+                                               yaxis = list(title = "Cantidad de hechos FUR",
+                                                            zeroline = FALSE))
+                                
+                        }else if (input$select_hechos == "Hechos FUD"){
+                                plot_ly(df_hechos, x = ~year, y = ~n_fud, type = 'bar',
+                                        marker = list(color = '#c587ff') ) %>% 
+                                        layout(title = "<b>Evolución de los hechos FUD</b>" ,
+                                               xaxis = list(title = "Año",
+                                                            zeroline = FALSE),
+                                               yaxis = list(title = "Cantidad de hechos FUD",
+                                                            zeroline = FALSE))
+                                
+                        }else if (input$select_hechos == "Hechos PDE"){
+                                plot_ly(df_hechos, x = ~year, y = ~n_pde, type = 'bar',
+                                        marker = list(color = '#c587ff') ) %>% 
+                                        layout(title = "<b>Evolución de los hechos PDE</b>" ,
+                                               xaxis = list(title = "Año",
+                                                            zeroline = FALSE),
+                                               yaxis = list(title = "Cantidad de hechos PDE",
+                                                            zeroline = FALSE))
+                                
+                        }else if (input$select_hechos == "Hechos CAD"){
+                                plot_ly(df_hechos, x = ~year, y = ~n_cad, type = 'bar',
+                                        marker = list(color = '#c587ff') ) %>% 
+                                        layout(title = "<b>Evolución de los hechos CAD</b>" ,
+                                               xaxis = list(title = "Año",
+                                                            zeroline = FALSE),
+                                               yaxis = list(title = "Cantidad de hechos CAD",
+                                                            zeroline = FALSE))
+                        }
+                                
                 })
                 
                 
