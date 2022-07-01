@@ -624,21 +624,21 @@ body <- dashboardBody(
                                                  
                                         ),
                                         
-                                        #Hechos Estadísticos 
+                                        #Hechos Estadísticos : Tu region
                                         tabPanel("Tu región", icon = icon("briefcase-medical"),
                                                  
                                                  fluidRow(
                                                          column(6,
                                                                 br(),
                                                                 
-                                                                
+                                                                plotlyOutput("hechos_dep_hist")
                                                                 
                                                          ),
                                                          
                                                          column(6,
                                                                 br(),
                                                                 
-                                                                plotlyOutput("hechos_dep_hist")
+                                                                plotlyOutput("hechos_corrup_dep_hist")
                                                                 
 
                                                          )
@@ -646,52 +646,23 @@ body <- dashboardBody(
                                                  
                                         ),
                                         
-                                        # Estadísticos corrupción
-                                        tabPanel("Estadísticos Corrupción", icon = icon("briefcase-medical"),
-                                                 
-                                                 fluidRow(
-                                                         
-                                                         box(strong("Hechos de corrupción (Total)"), width = 6, status = "primary", solidHeader = TRUE, 
-                                                             style = "font-family: Georgia;text-align:center;color:#14505B ;font-size: 18px; padding-top: 20px",
-                                                             
-                                                             flexdashboard::gaugeOutput("corruption_count_historical", width = "90%", height = "100px")
-                                                         ),
-                                                         
-                                                         box(strong("Hechos de corrupción (%)"), width = 6, status = "primary", solidHeader = TRUE, 
-                                                             style = "font-family: Georgia;text-align:center;color:#14505B ;font-size: 18px; padding-top: 20px",
-                                                             
-                                                             flexdashboard::gaugeOutput("corruption_perc_historical", width = "90%", height = "100px")
-                                                         )
-                                                         
-                                                 ),
-                                                 
-                                                 fluidRow(
-                                                         column(6,
-                                                                br(),
-                                                                
-                                                                
-                                                         )
-                                                 )
-                                        ),
-                                        
                                         # Link denuncias online
                                         tabPanel("Envía tu denuncia",
                                                  
                                                  fluidRow(
                                                          
+                                                         p("La emisión de denuncias ciudadanas forma parte del ejercicio de la participación ciudadana en el control social. 
+                                                         A través del formulario virtual, la ciudadanía podrá denunciar los hechos presuntamente irregulares en las entidades
+                                                         del Estado y convertirse en aliada de la Contraloría."),
+                                                         
                                                          p("Formulario Virtual de Denuncias", strong(tags$a(href="https://denunciaweb.contraloria.gob.pe/SAD_WEB/#/AtencionDenuncias", "aquí"
-                                                                                                            , target="_blank", style="color:black; text-decoration: underline"))
-                                                           
-                                                         )
+                                                                                                            , target="_blank", style="color:black; text-decoration: underline")))
                                                          
                                                  )
                                                  
                                         )
                                         
-                                        
-                                        
-                                        
-                                        
+
                                         
                                 )
                                 
@@ -1862,7 +1833,7 @@ shinyApp(
                         #barplot
                         plot_ly(hechos_dep_evolucion, x = ~year, y = ~n_year, type = 'bar',
                                 marker = list(color = '#c587ff') ) %>% 
-                                layout(title = paste("Departamento:", input$dep ) ,
+                                layout(title = paste("<b>Evolución de los hechos totales en</b>", input$dep ) ,
                                        xaxis = list(title = "Año",
                                                     zeroline = FALSE),
                                        yaxis = list(title = "Cantidad de hechos",
@@ -1870,60 +1841,38 @@ shinyApp(
                         
                 })
                 
-                
-                #Hechos de corrupción (Total)
-                output$corruption_count_historical <- flexdashboard::renderGauge({
+                #Evolución de denuncias corruptas por departamento
+                output$hechos_corrup_dep_hist <- renderPlotly({ 
                         
+                        corruption_dep_census <- read.csv('corruption_dep_census_claims_historical.csv')
                         
-                        if (input$year_selection == "Todos: 2013-2021") {
-                                
-                                corruption_claims_count <- corruption_claims_count_historical %>% 
-                                        group_by(corruption_denunc) %>% 
-                                        summarise( n = sum(n) )
-                                
-                                max = sum(corruption_claims_count$n)
-                                
-                        } else {
-                                
-                                corruption_claims_count <- corruption_claims_count_historical %>% 
-                                        filter(year== input$year_selection) 
-                                
-                                max = sum(corruption_claims_count$n)
-                                
-                        }
+                        corruption_dep_census_2021 <- read.csv('corruption_dep_census_claims_21.csv')
                         
+                        #claims 2021
+                        corruption_dep_census_2021 <- corruption_dep_census_2021 %>% 
+                                select(departamento, n, pop17) %>% 
+                                mutate(year=2021)
                         
-                        flexdashboard::gauge(corruption_claims_count$n[corruption_claims_count$corruption_denunc == 1], min = 0, max = max , gaugeSectors(
-                                success = c(round((2/3)*max) + 1 , max ), warning = c(round(max/3) + 1, round((2/3)*max) ), danger = c(0, round(max/3) ))
-                                , abbreviate = FALSE, abbreviateDecimals = 1)
+                        corruption_dep_census_2021 <- corruption_dep_census_2021[, c("departamento", "year", "n", "pop17")]
+                        colnames(corruption_dep_census_2021) <- c("departamento", "year", "n_year", "pop17")
+                        
+                        #append claims 2021 + historical (select just one department)
+                        
+                        corruption_dep_census <- rbind(corruption_dep_census_2021,  corruption_dep_census)%>%  
+                                filter(departamento == input$dep) 
+  
+                        #barplot
+                        plot_ly(corruption_dep_census, x = ~year, y = ~n_year, type = 'bar',
+                                marker = list(color = '#3fc1c9') ) %>% 
+                                layout(title = paste("<b>Evolución de los hechos de corrupción en</b>", input$dep ) ,
+                                       xaxis = list(title = "Año",
+                                                    zeroline = FALSE),
+                                       yaxis = list(title = "Cantidad de hechos corruptos",
+                                                    zeroline = FALSE))
+                        
                 })
                 
-                #Hechos de corrupción (%)
-                output$corruption_perc_historical <- flexdashboard::renderGauge({
-                        
-                        if (input$year_selection == "Todos: 2013-2021") {
-                                
-                                corruption_claims_count <- corruption_claims_count_historical %>% 
-                                        group_by(corruption_denunc) %>% 
-                                        summarise( n = sum(n) )
-                                
-                                corruption_claims_count$percentage <- round( (corruption_claims_count$n/sum(corruption_claims_count$n) )*100, 1)
-                                
-                        } else {
-                                
-                                corruption_claims_count <- corruption_claims_count_historical %>% 
-                                        filter(year== input$year_selection) 
-                                
-                                corruption_claims_count$percentage <- round( (corruption_claims_count$n/sum(corruption_claims_count$n) )*100, 1)
-                                
-                        }
-                        
-                        
-                        flexdashboard::gauge(corruption_claims_count$percentage[corruption_claims_count$corruption_denunc == 1], min = 0, max = 100, symbol = '%', gaugeSectors(
-                                success = c(80, 100), warning = c(40, 79), danger = c(0, 39)
-                        ))
-                }) 
-                
+
                 #Hechos codificados: hechos de corrupción por departamento - estadísticos
                 output$table_corruption_historical <- renderReactable({
                         
