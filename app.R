@@ -598,18 +598,41 @@ body <- dashboardBody(
 
                                                  ),
                                                  
+                                                 conditionalPanel(
+                                                         condition = "input.year_selection!= 'Todos: 2013-2021'",
+                                                         
+                                                         fluidRow(
+                                                                 column(6,
+                                                                        br(),
+                                                                        p("Hechos por departamento",
+                                                                          style = "text-align:left; color: black ; font-size: 16px; font-weight: bold"), br(),
+                                                                        
+                                                                        reactableOutput("table_hechos_dep_historical")
+                                                                 ),
+                                                                 
+                                                                 column(6,
+                                                                        br(),
+                                                                        
+                                                                        p("Hechos de corrupción por departamento",
+                                                                          style = "text-align:left; color: black ; font-size: 16px; font-weight: bold"), br(),
+                                                                        
+                                                                        reactableOutput("table_corruption_historical")
+                                                                        
+                                                                 )
+                                                         )
+                                                 )
+                                                 
                                         ),
                                         
                                         #Hechos Estadísticos 
-                                        tabPanel("Estadísticos Generales", icon = icon("briefcase-medical"),
+                                        tabPanel("Tu región", icon = icon("briefcase-medical"),
                                                  
                                                  fluidRow(
                                                          column(6,
                                                                 br(),
-                                                                p("Hechos por departamento - estadísticos",
-                                                                  style = "text-align:left; color: black ; font-size: 16px; font-weight: bold"), br(),
                                                                 
-                                                                reactableOutput("table_hechos_dep_historical")
+                                                                
+                                                                
                                                          ),
                                                          
                                                          column(6,
@@ -645,10 +668,7 @@ body <- dashboardBody(
                                                  fluidRow(
                                                          column(6,
                                                                 br(),
-                                                                p("Hechos codificados: hechos de corrupción por departamento - estadísticos",
-                                                                  style = "text-align:left; color: black ; font-size: 16px; font-weight: bold"), br(),
                                                                 
-                                                                reactableOutput("table_corruption_historical")
                                                                 
                                                          )
                                                  )
@@ -1908,6 +1928,21 @@ shinyApp(
                 output$table_corruption_historical <- renderReactable({
                         
                         corruption_dep_census <- read.csv('corruption_dep_census_claims_historical.csv')
+                        
+                        corruption_dep_census_2021 <- read.csv('corruption_dep_census_claims_21.csv')
+                        
+                        #claims 2021
+                        corruption_dep_census_2021 <- corruption_dep_census_2021 %>% 
+                                select(departamento, n, pop17) %>% 
+                                mutate(year=2021)
+                        
+                        corruption_dep_census_2021 <- corruption_dep_census_2021[, c("departamento", "year", "n", "pop17")]
+                        colnames(corruption_dep_census_2021) <- c("departamento", "year", "n_year", "pop17")
+                        
+                        #append claims 2021 + historical
+                        
+                        corruption_dep_census <- rbind(corruption_dep_census_2021,  corruption_dep_census)
+                        
                         
                         
                         if (input$year_selection == "Todos: 2013-2021") {
