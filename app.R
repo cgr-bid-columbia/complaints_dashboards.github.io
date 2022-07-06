@@ -651,13 +651,24 @@ body <- dashboardBody(
                                                  
                                                  fluidRow(
                                                          
-                                                         p("La emisión de denuncias ciudadanas forma parte del ejercicio de la participación ciudadana en el control social. 
+                                                         column(12,
+                                                                 
+                                                                 p("La emisión de denuncias ciudadanas forma parte del ejercicio de la participación ciudadana en el control social. 
                                                          A través del formulario virtual, la ciudadanía podrá denunciar los hechos presuntamente irregulares en las entidades
                                                          del Estado y convertirse en aliada de la Contraloría."),
-                                                         
-                                                         p("Formulario Virtual de Denuncias", strong(tags$a(href="https://denunciaweb.contraloria.gob.pe/SAD_WEB/#/AtencionDenuncias", "aquí"
-                                                                                                            , target="_blank", style="color:black; text-decoration: underline")))
-                                                         
+                                                                 
+                                                                 p("Formulario Virtual de Denuncias", strong(tags$a(href="https://denunciaweb.contraloria.gob.pe/SAD_WEB/#/AtencionDenuncias", "aquí"
+                                                                                                                    , target="_blank", style="color:black; text-decoration: underline")))
+                                                                 
+                                                         )
+
+                                                 ),
+                                                 
+                                                 #
+                                                 fluidRow(
+                                                         column(12,
+                                                                htmlOutput("frame")
+                                                        )
                                                  )
                                                  
                                         )
@@ -3044,6 +3055,14 @@ shinyApp(
                         
                 })
                 
+                
+                
+                #link denuncias virtuales
+                output$frame <- renderUI({
+                        my_test <- tags$iframe(src="https://www.gob.pe/institucion/contraloria/campa%C3%B1as/6643-denuncias-ciudadanas-a-traves-del-formulario-virtual", height=500, width=1400)
+                        print(my_test)
+                        my_test
+                })
                 
                 
                 
