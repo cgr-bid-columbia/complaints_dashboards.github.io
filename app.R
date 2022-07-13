@@ -32,7 +32,9 @@ gs4_auth(cache = ".secrets", email = TRUE, use_oob = TRUE)
 
 
 # Define the fields we want to save from the form
-fields <- c("nacionalidad", "residencia")
+fields <- c("nacionality", "nacionality_2", "nacionality_3", "age", "gender", "education", "education_2",
+            "ethnicity", "work", "work_2", "residence", "dep", "prov", "dist","residence_2",
+            "urban_rural", "cgr_1", "cgr_2")
 
 
 #functions
@@ -1468,8 +1470,8 @@ shinyApp(
                 
                 observeEvent(input$submit, {
                         showModal(modalDialog(
-                                title = "Congrats, you completed your first shinysurvey!",
-                                "You can customize what actions happen when a user finishes a survey using input$submit."
+                                title = "Respuestas enviadas",
+                                "Puede pasar a la siguiente sección"
                         ))
                 })
                 
