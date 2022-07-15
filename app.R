@@ -524,16 +524,41 @@ body <- dashboardBody(
                                                                 )
                                                         ),
                                                         
-                                                        
-                                                        fluidRow(
-                                                                
-                                                                column(6),
-                                                                
-                                                                column(6,
-                                                                       actionButton("submit", "Enviar")
+                                                        #if all the mandatory questions are answered, the submit button appears
+                                                        conditionalPanel(
+                                                                condition = "(input.nacionality != '' && 
+                                                                             input.age != '' &&
+                                                                             input.gender != '' &&
+                                                                             input.education != '' &&
+                                                                             input.ethnicity != '' &&
+                                                                             input.work != '' &&
+                                                                             input.residence == 'no' &&
+                                                                             input.urban_rural != '' &&
+                                                                             input.cgr_1 != '')||
+                                                                             (input.nacionality != '' && 
+                                                                             input.age != '' &&
+                                                                             input.gender != '' &&
+                                                                             input.education != '' &&
+                                                                             input.ethnicity != '' &&
+                                                                             input.work != '' &&
+                                                                             input.residence == 'sí' &&
+                                                                             input.dep != '' &&
+                                                                             input.prov != '' &&
+                                                                             input.dist != '' &&
+                                                                             input.urban_rural != '' &&
+                                                                             input.cgr_1 != '')",
+
+                                                                fluidRow(
+                                                                        
+                                                                        column(6),
+                                                                        
+                                                                        column(6,
+                                                                               actionButton("submit", "Enviar")
+                                                                        )
                                                                 )
+                                                                
                                                         )
-                                                        
+ 
                                                ),
                                                
                                                tags$script("
@@ -790,9 +815,11 @@ body <- dashboardBody(
                                                         sliderTextInput(
                                                                 inputId = "corruption_5",
                                                                 label = "5. Usando una escala que va de 1, que significa “muy mala” al 6, que significa “muy buena”, ¿Cómo calificaría la gestión de la CGR en la lucha contra la corrupción? (*)",
-                                                                choices = c(1,2,3,4,5,6),
+                                                                choices = c(0,1,2,3,4,5,6),
                                                                 grid = TRUE
-                                                        )
+                                                        ),
+                                                        
+                                                        p("El 0 no es una respuesta válida")
                                                         
                                                ),
                                                
@@ -834,38 +861,60 @@ body <- dashboardBody(
                                                         sliderTextInput(
                                                                 inputId = "transparency_3",
                                                                 label = "8. Usando una escala que va de 1, que significa “muy sencillo” al 6, que significa “muy díficil”, ¿Que tan sencillo considera que es conseguir información pública sobre la CGR? (*)",
-                                                                choices = c(1,2,3,4,5,6),
+                                                                choices = c(0,1,2,3,4,5,6),
                                                                 grid = TRUE
                                                         ),
+                                                        
+                                                        p("El 0 no es una respuesta válida"),
                                                         
                                                         #9
                                                         br(),
                                                         sliderTextInput(
                                                                 inputId = "transparency_4",
                                                                 label = "9. Usando una escala que va de 1, que significa “muy sencillo” al 6, que significa “muy díficil”, ¿Que tan sencillo considera que es solicitar información a la CGR? (*)",
-                                                                choices = c(1,2,3,4,5,6),
+                                                                choices = c(0,1,2,3,4,5,6),
                                                                 grid = TRUE
                                                         ),
+                                                        
+                                                        p("El 0 no es una respuesta válida"),
                                                         
                                                         #10
                                                         br(),
                                                         sliderTextInput(
                                                                 inputId = "transparency_5",
                                                                 label = "10. Usando una escala que va de 1, que significa “nada transparente” al 6, que significa “muy transparente”, ¿Que tan transparente considera que son los procesos de elección de los funcionarios de la CGR? (*)",
-                                                                choices = c(1,2,3,4,5,6),
+                                                                choices = c(0,1,2,3,4,5,6),
                                                                 grid = TRUE
                                                         ),
                                                         
-                                                        
-                                                        fluidRow(
+                                                        p("El 0 no es una respuesta válida"),
                                                                 
-                                                                column(6),
+                                                        #if all the mandatory questions are answered, the submit button appears
+                                                        conditionalPanel(
+                                                                condition = "(input.corruption_1 != '0' && 
+                                                                             input.corruption_2 != '0' &&
+                                                                             input.corruption_3 != '0' &&
+                                                                             input.corruption_4 != '0' &&
+                                                                             input.corruption_5 != '0' &&
+                                                                             input.transparency_1 != '0' &&
+                                                                             input.transparency_2 != '0' &&
+                                                                             input.transparency_3 != '0' &&
+                                                                             input.transparency_4 != '0' &&
+                                                                             input.transparency_5 != '0'
+                                                                             )",
                                                                 
-                                                                column(6,
-                                                                       actionButton("submit_2", "Enviar")
+                                                                fluidRow(
+                                                                        
+                                                                        column(6),
+                                                                        
+                                                                        column(6,
+                                                                               actionButton("submit_2", "Enviar")
+                                                                        )
                                                                 )
+                                                                
                                                         )
                                                         
+     
                                                ),
                                                
                                                tags$script("
