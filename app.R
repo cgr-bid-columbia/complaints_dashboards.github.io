@@ -1330,15 +1330,18 @@ body <- dashboardBody(
                 
         ),
         
-        #next button for tab items (CITIZEN)
-        hidden(actionButton(inputId ="Next", label = icon("arrow-right"))),
+        fluidRow(
+
+                #next button for tab items (CITIZEN)
+                hidden(actionButton(inputId ="Next", label = icon("arrow-right"))),
+                
+                #previous/next button for tab items (CGR)
+                hidden(actionButton(inputId ="Previous_cgr", label = icon("arrow-left"))),
+                hidden(actionButton(inputId ="Next_cgr", label = icon("arrow-right")))
+                
+        )
         
-        #previous/next button for tab items (CGR)
-        hidden(actionButton(inputId ="Previous_cgr", label = icon("arrow-left"))),
-        hidden(actionButton(inputId ="Next_cgr", label = icon("arrow-right")))
-        
-        
-        
+   
 )
 
 shinyApp(
@@ -1526,7 +1529,7 @@ shinyApp(
                 observeEvent(input$submit, {
                         showModal(modalDialog(
                                 title = "Respuestas enviadas",
-                                "Puede pasar a la siguiente sección"
+                                "Puede pasar a la siguiente sección. Se ha activado el botón para ir a la siguiente sección en la parte inferior izquierda."
                         ))
                 })
                 
@@ -1537,6 +1540,12 @@ shinyApp(
                                 "Muchas gracias por participar de la encuesta"
                         ))
                 })
+                
+                #hide submit_2 button once its clicked
+                observeEvent(input$submit_2, { 
+                        hide('submit_2')
+                })
+                
                 
                 # When the Submit button is clicked, save the form data
                 observeEvent(input$submit_2, {
