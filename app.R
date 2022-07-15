@@ -34,7 +34,9 @@ gs4_auth(cache = ".secrets", email = TRUE, use_oob = TRUE)
 # Define the fields we want to save from the form
 fields <- c("nacionality", "nacionality_2", "nacionality_3", "age", "gender", "education", "education_2",
             "ethnicity", "work", "work_2", "residence", "dep", "prov", "dist","residence_2",
-            "urban_rural", "cgr_1", "cgr_2")
+            "urban_rural", "cgr_1", "cgr_2",
+            "corruption_1", "corruption_2", "corruption_3", "corruption_4", "corruption_5",
+            "transparency_1", "transparency_2", "transparency_3", "transparency_4", "transparency_5")
 
 
 #functions
@@ -522,6 +524,16 @@ body <- dashboardBody(
                                                                 )
                                                         ),
                                                         
+                                                        
+                                                        fluidRow(
+                                                                
+                                                                column(6),
+                                                                
+                                                                column(6,
+                                                                       actionButton("submit", "Enviar")
+                                                                )
+                                                        )
+                                                        
                                                ),
                                                
                                                tags$script("
@@ -543,15 +555,7 @@ body <- dashboardBody(
                                 
                         ),
                         
-                        fluidRow(
-                                
-                                column(8),
-                                
-                                column(4,
-                                       actionButton("submit", "Enviar")
-                                )
-                        )
-                        
+                       
                 ),
                 
                 ###################
@@ -1462,17 +1466,26 @@ shinyApp(
                         
                 })
                 
-                # When the Submit button is clicked, save the form data
-                observeEvent(input$submit, {
-                        saveData(formData(), ip_user() )
-                        
-                })
                 
                 observeEvent(input$submit, {
                         showModal(modalDialog(
                                 title = "Respuestas enviadas",
                                 "Puede pasar a la siguiente sección"
                         ))
+                })
+                
+                
+                observeEvent(input$submit_2, {
+                        showModal(modalDialog(
+                                title = "Respuestas enviadas",
+                                "Muchas gracias por participar de la encuesta"
+                        ))
+                })
+                
+                # When the Submit button is clicked, save the form data
+                observeEvent(input$submit_2, {
+                        saveData(formData(), ip_user() )
+                        
                 })
                 
                 
