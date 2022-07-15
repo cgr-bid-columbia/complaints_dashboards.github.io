@@ -818,7 +818,7 @@ body <- dashboardBody(
                                                         br(),
                                                         radioGroupButtons(
                                                                 inputId = "transparency_2",
-                                                                label = "7. Actualmente, ¿tiene usted confianza en institucionales tales como la Contraloría General de la República?",
+                                                                label = "7. Actualmente, ¿tiene usted confianza en institucionales tales como la Contraloría General de la República? (*)",
                                                                 choices = c("", 
                                                                             "nada", "poca", "suficiente", "bastante"),
                                                                 individual = TRUE,
@@ -854,6 +854,16 @@ body <- dashboardBody(
                                                                 label = "10. Usando una escala que va de 1, que significa “nada transparente” al 6, que significa “muy transparente”, ¿Que tan transparente considera que son los procesos de elección de los funcionarios de la CGR? (*)",
                                                                 choices = c(1,2,3,4,5,6),
                                                                 grid = TRUE
+                                                        ),
+                                                        
+                                                        
+                                                        fluidRow(
+                                                                
+                                                                column(6),
+                                                                
+                                                                column(6,
+                                                                       actionButton("submit_2", "Enviar")
+                                                                )
                                                         )
                                                         
                                                ),
@@ -875,17 +885,7 @@ body <- dashboardBody(
                                        
                                 )
                                 
-                        ),
-                        
-                        fluidRow(
-                                
-                                column(8),
-                                
-                                column(4,
-                                       actionButton("submit_2", "Enviar")
-                                )
                         )
-                        
                         
                 ),
                 
@@ -1346,13 +1346,20 @@ shinyApp(
                 
                 tab_id <- c("info_survey","statistics","perception_survey")
                 
-                observe({
-                        lapply(c("Next"),
-                               toggle,
-                               condition = input[["tabs"]] != "users" &  input[["tabs"]] != "perception_survey"  &  
-                                           input[["tabs"]] != "claims2021" &  input[["tabs"]] != "claims_hist" ) #TODO_ CHECK THIS
-                })
-
+                
+                #Once the user clicks on submit, the next button appears on info survey and statistics page
+                observeEvent(
+                        input$submit,
+                        {
+                                observe({
+                                        lapply(c("Next"),
+                                               toggle,
+                                               condition = input[["tabs"]] != "users" &  input[["tabs"]] != "perception_survey"  &  
+                                                       input[["tabs"]] != "claims2021" &  input[["tabs"]] != "claims_hist") 
+                                })
+                        }
+                )
+                
                 Current <- reactiveValues(
                         Tab = "info_survey"
                 )
