@@ -214,17 +214,16 @@ body <- dashboardBody(
                                        
                                        
                                        p(br(),"¡¡Bienvenidos!!", br(),br(),
-                                         "La idea de esta aplicación web es presentar de manera ordenada y fácil de entender el progreso en la codificación de denuncias, 
-                                              así como estadísticos que permitan comprender los tipos de casos que han sido identificados y el progreso de la Contraloría General de la República (CGR)
-                                              en la evaluación de las denuncias recibidas. Si bien el desarrollo inicial ha estado en manos del equipo académico, se espera que mediante una estrecha coordinación
-                                              con la CGR, parte de los estadísticos que incorporará el Dashboard sean recomendados por especialistas internos de la mencionada institución"
+                                         "La idea de esta aplicación web es poder recoger información sobre la opinión ciudadana en cuanto a su percepción de corrupción y transparencia ante la Contraloría General de la República.
+                                         El aplicativo consta de 3 partes. Primero, hay un cuestionario inicial, que busca recoger un poco sobre su información personal. Segundo, hay una sección con algunos estadísticos sobre el proceso
+                                         de denuncias de la CGR y sobre denuncias de corrupción. Finalmente, hay un cuestionario sobre percepción de corrupción y transparencia."
                                          , style = "text-align:justify;color:black;background-color:#fcebeb;padding:15px;border-radius:10px"),
                                        
                                        
                                        br(),
                                        
                                        p("Instrucciones:
-                                       Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum"
+                                       Para poder pasar a la siguiente sección del aplicativo, es necesario que responda todas las preguntas. No se preocupe que el cuestionario es anónimo"
                                          ,
                                          style="text-align:justify;color:black;background-color:#fcebeb;padding:15px;border-radius:10px")
                                        
@@ -644,13 +643,33 @@ body <- dashboardBody(
                                                                  column(6,
                                                                         br(),
                                                                         
-                                                                        p("Hechos de corrupción por departamento",
+                                                                        p("Denuncias de corrupción por departamento",
                                                                           style = "text-align:left; color: black ; font-size: 16px; font-weight: bold"), br(),
                                                                         
                                                                         reactableOutput("table_corruption_historical")
                                                                         
                                                                  )
                                                          )
+                                                 ),
+                                                 
+                                                 
+                                                 fluidRow(
+                                                         br(),br(),br(),br(),br(),
+                                                         p(tags$ul("Descripción:", style = "text-align:left; color: black ; font-size: 17px; font-weight: bold"),
+                                                           
+                                                         ),
+                                                         
+                                                         p(tags$ul(
+                                                                 tags$li("Hechos FUR: Primer filtro del proceso de denuncia (cuando su denuncia haya calificado para ser una Ficha única de Registro)"), 
+                                                                 tags$li("Hechos FUD: Segundo filtro del proceso de denuncia (cuando su denuncia haya calificado para ser una Ficha única de Denuncia)"), 
+                                                                 tags$li("Hechos PDE: Tercer filtro del proceso de denuncia (cuando su denuncia haya calificado para ser un Plan de Atención de Denuncia)"),
+                                                                 tags$li("Hechos CAD: Cuarto filtro del proceso de denuncia (cuando su denuncia haya calificado para ser una Carpeta de Atención de Denuncias)"),
+                                                                 tags$li("Su denuncia será atendida si es que pasa por los 4 filtros"),
+                                                                 style = "text-align:left; color: black ; font-size: 16px"
+                                                         )
+                                                         
+                                                         ),
+                                                         
                                                  )
                                                  
                                         ),
@@ -726,15 +745,15 @@ body <- dashboardBody(
                                 column(5, align="center",
                                        
                                        
-                                       p(br(),"¡¡Bienvenidos!!", br(),br(),
-                                         "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum"
-                                         , style = "text-align:justify;color:black;background-color:#fcebeb;padding:15px;border-radius:10px"),
+                                       #p(br(),"¡¡Bienvenidos!!", br(),br(),
+                                        # "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum"
+                                         #, style = "text-align:justify;color:black;background-color:#fcebeb;padding:15px;border-radius:10px"),
                                        
                                        
-                                       br(),
+                                      # br(),
                                        
                                        p("Instrucciones:
-                                       Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum"
+                                          Para poder enviar sus respuestas, debe responder todas las preguntas. No se preocupe que el cuestionario es anónimo. Muchas gracias por su participación."
                                          ,
                                          style="text-align:justify;color:black;background-color:#fcebeb;padding:15px;border-radius:10px")
                                        
@@ -1133,13 +1152,13 @@ body <- dashboardBody(
                                                  
                                                  fluidRow(
                                                          
-                                                         box(strong("Hechos de corrupción (Total)"), width = 6, status = "primary", solidHeader = TRUE, 
+                                                         box(strong("Denuncias de corrupción (Total)"), width = 6, status = "primary", solidHeader = TRUE, 
                                                              style = "font-family: Georgia;text-align:center;color:#14505B ;font-size: 18px; padding-top: 20px",
                                                              
                                                              flexdashboard::gaugeOutput("corruption_count", width = "90%", height = "100px")
                                                          ),
                                                          
-                                                         box(strong("Hechos de corrupción (%)"), width = 6, status = "primary", solidHeader = TRUE, 
+                                                         box(strong("Denuncias de corrupción (%)"), width = 6, status = "primary", solidHeader = TRUE, 
                                                              style = "font-family: Georgia;text-align:center;color:#14505B ;font-size: 18px; padding-top: 20px",
                                                              
                                                              flexdashboard::gaugeOutput("corruption_perc", width = "90%", height = "100px")
@@ -1150,7 +1169,7 @@ body <- dashboardBody(
                                                  fluidRow(
                                                          column(6,
                                                                 br(),
-                                                                p("Hechos codificados: hechos de corrupción por departamento - estadísticos",
+                                                                p("Hechos codificados: Denuncias de corrupción por departamento - estadísticos",
                                                                   style = "text-align:left; color: black ; font-size: 16px; font-weight: bold"), br(),
                                                                 
                                                                 reactableOutput("table_corruption_2021")
@@ -1158,7 +1177,7 @@ body <- dashboardBody(
                                                          ),
                                                          column(6,
                                                                 br(),
-                                                                p("Hechos codificados: hechos de corrupción por 100 mil habitantes por departamento - mapa",
+                                                                p("Hechos codificados: Denuncias de corrupción por 100 mil habitantes por departamento - mapa",
                                                                   style = "text-align:left; color: black ; font-size: 16px; font-weight: bold"), br(),
                                                                 
                                                                 plotOutput("map_corruption_2021")
@@ -1288,13 +1307,13 @@ body <- dashboardBody(
                                                  
                                                  fluidRow(
                                                          
-                                                         box(strong("Hechos de corrupción (Total)"), width = 6, status = "primary", solidHeader = TRUE, 
+                                                         box(strong("Denuncias de corrupción (Total)"), width = 6, status = "primary", solidHeader = TRUE, 
                                                              style = "font-family: Georgia;text-align:center;color:#14505B ;font-size: 18px; padding-top: 20px",
                                                              
                                                              flexdashboard::gaugeOutput("corruption_count_historical_cgr", width = "90%", height = "100px")
                                                          ),
                                                          
-                                                         box(strong("Hechos de corrupción (%)"), width = 6, status = "primary", solidHeader = TRUE, 
+                                                         box(strong("Denuncias de corrupción (%)"), width = 6, status = "primary", solidHeader = TRUE, 
                                                              style = "font-family: Georgia;text-align:center;color:#14505B ;font-size: 18px; padding-top: 20px",
                                                              
                                                              flexdashboard::gaugeOutput("corruption_perc_historical_cgr", width = "90%", height = "100px")
@@ -1305,7 +1324,7 @@ body <- dashboardBody(
                                                  fluidRow(
                                                          column(6,
                                                                 br(),
-                                                                p("Hechos codificados: hechos de corrupción por departamento - estadísticos",
+                                                                p("Hechos codificados: Denuncias de corrupción por departamento - estadísticos",
                                                                   style = "text-align:left; color: black ; font-size: 16px; font-weight: bold"), br(),
                                                                 
                                                                 reactableOutput("table_corruption_historical_cgr")
@@ -1955,7 +1974,7 @@ shinyApp(
                         #barplot
                         plot_ly(corruption_dep_census, x = ~year, y = ~n_year, type = 'bar',
                                 marker = list(color = '#3fc1c9') ) %>% 
-                                layout(title = paste("<b>Evolución de los hechos de corrupción en</b>", input$dep ) ,
+                                layout(title = paste("<b>Evolución de los Denuncias de corrupción en</b>", input$dep ) ,
                                        xaxis = list(title = "Año",
                                                     zeroline = FALSE),
                                        yaxis = list(title = "Cantidad de hechos corruptos",
@@ -1964,7 +1983,7 @@ shinyApp(
                 })
                 
 
-                #Hechos codificados: hechos de corrupción por departamento - estadísticos
+                #Hechos codificados: Denuncias de corrupción por departamento - estadísticos
                 output$table_corruption_historical <- renderReactable({
                         
                         corruption_dep_census <- read.csv('corruption_dep_census_claims_historical.csv')
@@ -2997,7 +3016,7 @@ shinyApp(
                         
                 })
                 
-                #Hechos de corrupción (Total)
+                #Denuncias de corrupción (Total)
                 output$corruption_count_historical_cgr <- flexdashboard::renderGauge({
                         
                         
@@ -3024,7 +3043,7 @@ shinyApp(
                                 , abbreviate = FALSE, abbreviateDecimals = 1)
                 })
                 
-                #Hechos de corrupción (%)
+                #Denuncias de corrupción (%)
                 output$corruption_perc_historical_cgr <- flexdashboard::renderGauge({
                         
                         if (input$year_selection_cgr == "Todos: 2013-2020") {
@@ -3051,7 +3070,7 @@ shinyApp(
                 }) 
                 
                 
-                #Hechos codificados: hechos de corrupción por departamento - estadísticos
+                #Hechos codificados: Denuncias de corrupción por departamento - estadísticos
                 output$table_corruption_historical_cgr <- renderReactable({
                         
                         corruption_dep_census <- read.csv('corruption_dep_census_claims_historical.csv')
