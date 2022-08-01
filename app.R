@@ -582,6 +582,7 @@ body <- dashboardBody(
                        
                 ),
                 
+                
                 ###################
                 #Estadísticos
                 ###################
@@ -595,6 +596,34 @@ body <- dashboardBody(
                                 
                                 tabBox(
                                         id = "claims_hist_tabs", width = 12, height = "650px",
+                                        
+                                        
+                                        # Link denuncias online
+                                        tabPanel("Envía tu denuncia",
+                                        
+                                                 fluidRow(
+                                        
+                                                     column(12,
+                                        
+                                                               p("La emisión de denuncias ciudadanas forma parte del ejercicio de la participación ciudadana en el control social. 
+                                                      A través del formulario virtual, la ciudadanía podrá denunciar los hechos presuntamente irregulares en las entidades
+                                                     del Estado y convertirse en aliada de la Contraloría."),
+                                        
+                                                            p("Formulario Virtual de Denuncias", strong(tags$a(href="https://denunciaweb.contraloria.gob.pe/SAD_WEB/#/AtencionDenuncias", "aquí"
+                                                                                                              , target="_blank", style="color:black; text-decoration: underline")))
+                                        
+                                                    )
+                                        
+                                                  ),
+                                        
+                                        
+                                                fluidRow(
+                                                       column(12,
+                                                             htmlOutput("frame")
+                                                    )
+                                                )
+                                        
+                                        ),
                                         
                                         #Informacion General       
                                         tabPanel("Panorama General", icon = icon("briefcase-medical"),
@@ -694,34 +723,20 @@ body <- dashboardBody(
                                                          )
                                                  ),
                                                  
-                                        ),
-                                        
-                                        # Link denuncias online
-                                        tabPanel("Envía tu denuncia",
-                                                 
                                                  fluidRow(
                                                          
-                                                         column(12,
-                                                                 
-                                                                 p("La emisión de denuncias ciudadanas forma parte del ejercicio de la participación ciudadana en el control social. 
-                                                         A través del formulario virtual, la ciudadanía podrá denunciar los hechos presuntamente irregulares en las entidades
-                                                         del Estado y convertirse en aliada de la Contraloría."),
-                                                                 
-                                                                 p("Formulario Virtual de Denuncias", strong(tags$a(href="https://denunciaweb.contraloria.gob.pe/SAD_WEB/#/AtencionDenuncias", "aquí"
-                                                                                                                    , target="_blank", style="color:black; text-decoration: underline")))
-                                                                 
+                                                         column(6,
+                                                                br(),br(),br(),
+                                                                actionButton("next_cgr2", label = icon("arrow-right"))
                                                          )
+                                                         
 
-                                                 ),
-                                                 
-                                                 #
-                                                 fluidRow(
-                                                         column(12,
-                                                                htmlOutput("frame")
-                                                        )
+                                                         
                                                  )
                                                  
-                                        )
+                                        ),
+                                        
+                                       
                                         
 
                                         
@@ -1415,7 +1430,7 @@ shinyApp(
                 
                 #next button for tab items / https://stackoverflow.com/questions/44309328/generic-button-for-go-to-next-and-previous-tabitem-shiny
                 
-                tab_id <- c("info_survey","statistics","perception_survey")
+                tab_id <- c("info_survey", "statistics", "perception_survey")
                 
                 
                 #Once the user clicks on submit, the next button appears on info survey and statistics page
@@ -1425,7 +1440,7 @@ shinyApp(
                                 observe({
                                         lapply(c("Next"),
                                                toggle,
-                                               condition = input[["tabs"]] != "users" &  input[["tabs"]] != "perception_survey"  &  
+                                               condition = input[["tabs"]] != "users" &  input[["tabs"]] != "perception_survey"  &  input[["tabs"]] != "statistics" &
                                                        input[["tabs"]] != "claims2021" &  input[["tabs"]] != "claims_hist") 
                                 })
                         }
@@ -1452,6 +1467,21 @@ shinyApp(
                                 updateTabItems(session, "tabs", tab_id[tab_id_position]) 
                         }
                 )
+                
+                
+                observeEvent(
+                        input[["next_cgr2"]],
+                        {
+                                updateTabItems(session, "tabs", "perception_survey" )
+                        }
+                        
+                )
+                
+                
+                
+                
+                
+                
                 
                 
                 
