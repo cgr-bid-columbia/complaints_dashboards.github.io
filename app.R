@@ -35,6 +35,7 @@ gs4_auth(cache = ".secrets", email = TRUE, use_oob = TRUE)
 fields <- c("nacionality", "nacionality_2", "nacionality_3", "age", "gender", "education", "education_2",
             "ethnicity", "work", "work_2", "residence", "dep", "prov", "dist","residence_2",
             "urban_rural", "cgr_1", "cgr_2",
+            "eficiencia_1", "eficiencia_2", "eficiencia_3", "eficiencia_31", "eficiencia_32",
             "corruption_1", "corruption_2", "corruption_3", "corruption_4", "corruption_5",
             "transparency_1", "transparency_2", "transparency_3", "transparency_4", "transparency_5")
 
@@ -780,6 +781,83 @@ body <- dashboardBody(
                                        tabBox(
                                                id = "questions_2", width = 12, title = "Cuestionario sobre Percepciones",
                                                
+                                               # PREGUNTAS SOBRE EFICIENCIA DE DENUNCIAS
+                                               tabPanel("Eficiencia en Denuncias",
+                                                        
+                                                        #
+                                                        br(),
+                                                        radioGroupButtons(
+                                                                inputId = "eficiencia_1",
+                                                                label = "1. ¿Qué tan sencillo considera que es enviar denuncias a la CGR? (*)?",
+                                                                choices = c("", "muy sencillo","sencillo","díficil","muy difícil"),
+                                                                individual = TRUE,
+                                                                checkIcon = list(
+                                                                        yes = tags$i(class = "fa fa-circle", 
+                                                                                     style = "color: steelblue"),
+                                                                        no = tags$i(class = "fa fa-circle-o", 
+                                                                                    style = "color: steelblue"))
+                                                        ),
+                                                        
+                                                        br(),
+                                                        radioGroupButtons(
+                                                                inputId = "eficiencia_2",
+                                                                label = "2. ¿Qué tan eficiente considera que es la CGR procesando denuncias? (*)?",
+                                                                choices = c("", "nada eficiente","poco eficiente","eficiente","muy eficiente"),
+                                                                individual = TRUE,
+                                                                checkIcon = list(
+                                                                        yes = tags$i(class = "fa fa-circle", 
+                                                                                     style = "color: steelblue"),
+                                                                        no = tags$i(class = "fa fa-circle-o", 
+                                                                                    style = "color: steelblue"))
+                                                        ),
+                                                        
+                                                        br(),
+                                                        radioGroupButtons(
+                                                                inputId = "eficiencia_3",
+                                                                label = "3. ¿Ha utilizado el Formulario Virtual de Denuncias de la CGR antes? (*)?",
+                                                                choices = c("", "sí","no"),
+                                                                individual = TRUE,
+                                                                checkIcon = list(
+                                                                        yes = tags$i(class = "fa fa-circle", 
+                                                                                     style = "color: steelblue"),
+                                                                        no = tags$i(class = "fa fa-circle-o", 
+                                                                                    style = "color: steelblue"))
+                                                        ),
+                                                        
+                                                        conditionalPanel( 
+                                                                condition = "input.eficiencia_3 == 'sí'",
+                                                                
+                                                                br(),
+                                                                radioGroupButtons(
+                                                                        inputId = "eficiencia_31",
+                                                                        label = "3.1 ¿Considera que el Formulario Virtual de Denuncias de la CGR es sencillo de completar?",
+                                                                        choices = c("", "sí","no"),
+                                                                        individual = TRUE,
+                                                                        checkIcon = list(
+                                                                                yes = tags$i(class = "fa fa-circle", 
+                                                                                             style = "color: steelblue"),
+                                                                                no = tags$i(class = "fa fa-circle-o", 
+                                                                                            style = "color: steelblue"))
+                                                                ),
+                                                                
+                                                                br(),
+                                                                radioGroupButtons(
+                                                                        inputId = "eficiencia_32",
+                                                                        label = "3.2 ¿Considera que su denuncia ha sido correctamente procesada tras ser enviada mediante el Formulario Virtual de Denuncias?",
+                                                                        choices = c("", "sí","no"),
+                                                                        individual = TRUE,
+                                                                        checkIcon = list(
+                                                                                yes = tags$i(class = "fa fa-circle", 
+                                                                                             style = "color: steelblue"),
+                                                                                no = tags$i(class = "fa fa-circle-o", 
+                                                                                            style = "color: steelblue"))
+                                                                )
+                                                                
+  
+                                                        )
+       
+                                               ),
+                                               
                                                # PREGUNTAS SOBRE CORRUPCIÓN
                                                tabPanel("Corrupción",
                                                         
@@ -787,7 +865,7 @@ body <- dashboardBody(
                                                         br(),
                                                         radioGroupButtons(
                                                                 inputId = "corruption_1",
-                                                                label = "1. ¿Cree que en los últimos 5 años la corrupción en el Perú ha aumentado, sigue igual o ha disminuido? (*)",
+                                                                label = "4. ¿Cree que en los últimos 5 años la corrupción en el Perú ha aumentado, sigue igual o ha disminuido? (*)",
                                                                 choices = c("", 
                                                                             "Ha aumentado", "Sigue igual", "Ha disminuido"),
                                                                 individual = TRUE,
@@ -803,7 +881,7 @@ body <- dashboardBody(
                                                         br(),
                                                         radioGroupButtons(
                                                                 inputId = "corruption_2",
-                                                                label = "2. ¿Cree que en los próximos 5 años la corrupción en el Perú habra aumentado, seguirá igual o habra disminuido? (*)",
+                                                                label = "5. ¿Cree que en los próximos 5 años la corrupción en el Perú habra aumentado, seguirá igual o habra disminuido? (*)",
                                                                 choices = c("", 
                                                                             "Habra aumentado", "Seguirá igual", "Habra disminuido"),
                                                                 individual = TRUE,
@@ -818,7 +896,7 @@ body <- dashboardBody(
                                                         br(),
                                                         radioGroupButtons(
                                                                 inputId = "corruption_3",
-                                                                label = "3. Teniendo en cuenta su experiencia o lo que ha oído mencionar, ¿la corrupción de los funcionarios públicos en el país está: (*)",
+                                                                label = "6. Teniendo en cuenta su experiencia o lo que ha oído mencionar, ¿la corrupción de los funcionarios públicos en el país está: (*)",
                                                                 choices = c("", 
                                                                             "Muy generalizada", "Algo generalizada", "Poco generalizada", "Nada generalizada"),
                                                                 individual = TRUE,
@@ -833,7 +911,7 @@ body <- dashboardBody(
                                                         br(),
                                                         radioGroupButtons(
                                                                 inputId = "corruption_4",
-                                                                label = "4. Pensando en los funcionarios de la CGR, ¿cuántos de ellos cree que están involucrados en corrupción? (*)",
+                                                                label = "7. Pensando en los funcionarios de la CGR, ¿cuántos de ellos cree que están involucrados en corrupción? (*)",
                                                                 choices = c("", 
                                                                             "Ninguno", "Menos de la mitad", "La mitada de ellos", "Más de la mitad", "Todos"),
                                                                 individual = TRUE,
@@ -848,7 +926,7 @@ body <- dashboardBody(
                                                         br(),
                                                         radioGroupButtons(
                                                                 inputId = "corruption_5",
-                                                                label = "5. ¿Cómo calificaría la gestión de la CGR en la lucha contra la corrupción? (*)",
+                                                                label = "8. ¿Cómo calificaría la gestión de la CGR en la lucha contra la corrupción? (*)",
                                                                 choices = c("", "muy mala","mala","buena","muy buena"),
                                                                 individual = TRUE,
                                                                 checkIcon = list(
@@ -868,7 +946,7 @@ body <- dashboardBody(
                                                         br(),
                                                         radioGroupButtons(
                                                                 inputId = "transparency_1",
-                                                                label = "6. ¿Considera que las entidades gubernamentes son transparentes en cuanto a provisión de información? (*)",
+                                                                label = "9. ¿Considera que las entidades gubernamentes son transparentes en cuanto a provisión de información? (*)",
                                                                 choices = c("", 
                                                                             "sí", "no"),
                                                                 individual = TRUE,
@@ -883,7 +961,7 @@ body <- dashboardBody(
                                                         br(),
                                                         radioGroupButtons(
                                                                 inputId = "transparency_2",
-                                                                label = "7. Actualmente, ¿tiene usted confianza en institucionales tales como la Contraloría General de la República? (*)",
+                                                                label = "10. Actualmente, ¿tiene usted confianza en institucionales tales como la Contraloría General de la República? (*)",
                                                                 choices = c("", 
                                                                             "nada", "poca", "suficiente", "bastante"),
                                                                 individual = TRUE,
@@ -898,7 +976,7 @@ body <- dashboardBody(
                                                         br(),
                                                         radioGroupButtons(
                                                                 inputId = "transparency_3",
-                                                                label = "8. ¿Qué tan sencillo considera que es conseguir información pública sobre la CGR? (*)",
+                                                                label = "11. ¿Qué tan sencillo considera que es conseguir información pública sobre la CGR? (*)",
                                                                 choices = c("", "muy sencillo","sencillo","díficil","muy difícil"),
                                                                 individual = TRUE,
                                                                 checkIcon = list(
@@ -913,7 +991,7 @@ body <- dashboardBody(
                                                         br(),
                                                         radioGroupButtons(
                                                                 inputId = "transparency_4",
-                                                                label = "9. ¿Qué tan sencillo considera que es solicitar información a la CGR? (*)",
+                                                                label = "12. ¿Qué tan sencillo considera que es solicitar información a la CGR? (*)",
                                                                 choices = c("", "muy sencillo","sencillo","díficil","muy difícil"),
                                                                 individual = TRUE,
                                                                 checkIcon = list(
@@ -927,7 +1005,7 @@ body <- dashboardBody(
                                                         br(),
                                                         radioGroupButtons(
                                                                 inputId = "transparency_5",
-                                                                label = "10. ¿Qué tan transparente considera que son los procesos de elección de los funcionarios de la CGR? (*)",
+                                                                label = "13. ¿Qué tan transparente considera que son los procesos de elección de los funcionarios de la CGR? (*)",
                                                                 choices = c("", "nada transparente","poco transparente","transparente","muy transparente"),
                                                                 individual = TRUE,
                                                                 checkIcon = list(
@@ -940,7 +1018,10 @@ body <- dashboardBody(
 
                                                         #if all the mandatory questions are answered, the submit button appears
                                                         conditionalPanel(
-                                                                condition = "(input.corruption_1 != '' && 
+                                                                condition = "(input.eficiencia_1 != '' &&
+                                                                             input.eficiencia_2 != '' &&
+                                                                             input.eficiencia_3 != '' &&
+                                                                             input.corruption_1 != '' && 
                                                                              input.corruption_2 != '' &&
                                                                              input.corruption_3 != '' &&
                                                                              input.corruption_4 != '' &&
@@ -1493,13 +1574,7 @@ shinyApp(
                 )
                 
                 
-                
-                
-                
-                
-                
-                
-                
+
                 #PREVIOUS/NEXT BUTTON for Cuestionario Inicial
                 Previous_Button=tags$div(actionButton("Prev_Tab",HTML('<div class="col-sm-4"><i class="fa fa-angle-double-left fa-2x"></i></div>
                                                                   ')))
@@ -1564,6 +1639,39 @@ shinyApp(
                                      tab_list_2=input$List_of_tab_2
                                      current_tab_2=which(tab_list_2==input$questions_2)
                                      updateTabsetPanel(session,"questions_2",selected=tab_list_2[current_tab_2+1])
+                             }
+                )
+                
+                #PREVIOUS/NEXT BUTTON for Cuestionario Inicial
+                Previous_Button=tags$div(actionButton("Prev_Tab",HTML('<div class="col-sm-4"><i class="fa fa-angle-double-left fa-2x"></i></div>
+                                                                  ')))
+                
+                Next_Button=div(actionButton("Next_Tab",HTML('<div class="col-sm-4"><i class="fa fa-angle-double-right fa-2x"></i></div>')))
+                
+                
+                output$Next_Previous=renderUI({
+                        tab_list=input$List_of_tab[-length(input$List_of_tab)]
+                        nb_tab=length(tab_list)
+                        if (which(tab_list==input$questions_1)==nb_tab)
+                                column(1,offset=1,Previous_Button)
+                        else if (which(tab_list==input$questions_1)==1)
+                                column(1,offset = 10,Next_Button)
+                        else
+                                div(column(1,offset=1,Previous_Button),column(1,offset=8,Next_Button))
+                        
+                })
+                observeEvent(input$Prev_Tab,
+                             {
+                                     tab_list=input$List_of_tab
+                                     current_tab=which(tab_list==input$questions_1)
+                                     updateTabsetPanel(session,"questions_1",selected=tab_list[current_tab-1])
+                             }
+                )
+                observeEvent(input$Next_Tab,
+                             {
+                                     tab_list=input$List_of_tab
+                                     current_tab=which(tab_list==input$questions_1)
+                                     updateTabsetPanel(session,"questions_1",selected=tab_list[current_tab+1])
                              }
                 )
                 
