@@ -846,15 +846,19 @@ body <- dashboardBody(
                                                         
                                                         #5
                                                         br(),
-                                                        sliderTextInput(
+                                                        radioGroupButtons(
                                                                 inputId = "corruption_5",
-                                                                label = "5. Usando una escala que va de 1, que significa “muy mala” al 6, que significa “muy buena”, ¿Cómo calificaría la gestión de la CGR en la lucha contra la corrupción? (*)",
-                                                                choices = c(0,1,2,3,4,5,6),
-                                                                grid = TRUE
-                                                        ),
+                                                                label = "5. ¿Cómo calificaría la gestión de la CGR en la lucha contra la corrupción? (*)",
+                                                                choices = c("", "muy mala","mala","buena","muy buena"),
+                                                                individual = TRUE,
+                                                                checkIcon = list(
+                                                                        yes = tags$i(class = "fa fa-circle", 
+                                                                                     style = "color: steelblue"),
+                                                                        no = tags$i(class = "fa fa-circle-o", 
+                                                                                    style = "color: steelblue"))
+                                                        )
                                                         
-                                                        p("El 0 no es una respuesta válida")
-                                                        
+
                                                ),
                                                
                                                #PREGUNTAS SOBRE TRANSPARENCIA
@@ -892,49 +896,60 @@ body <- dashboardBody(
                                                         
                                                         #8
                                                         br(),
-                                                        sliderTextInput(
+                                                        radioGroupButtons(
                                                                 inputId = "transparency_3",
-                                                                label = "8. Usando una escala que va de 1, que significa “muy sencillo” al 6, que significa “muy díficil”, ¿Que tan sencillo considera que es conseguir información pública sobre la CGR? (*)",
-                                                                choices = c(0,1,2,3,4,5,6),
-                                                                grid = TRUE
+                                                                label = "8. ¿Qué tan sencillo considera que es conseguir información pública sobre la CGR? (*)",
+                                                                choices = c("", "muy sencillo","sencillo","díficil","muy difícil"),
+                                                                individual = TRUE,
+                                                                checkIcon = list(
+                                                                        yes = tags$i(class = "fa fa-circle", 
+                                                                                     style = "color: steelblue"),
+                                                                        no = tags$i(class = "fa fa-circle-o", 
+                                                                                    style = "color: steelblue"))
                                                         ),
                                                         
-                                                        p("El 0 no es una respuesta válida"),
-                                                        
+
                                                         #9
                                                         br(),
-                                                        sliderTextInput(
+                                                        radioGroupButtons(
                                                                 inputId = "transparency_4",
-                                                                label = "9. Usando una escala que va de 1, que significa “muy sencillo” al 6, que significa “muy díficil”, ¿Que tan sencillo considera que es solicitar información a la CGR? (*)",
-                                                                choices = c(0,1,2,3,4,5,6),
-                                                                grid = TRUE
+                                                                label = "9. ¿Qué tan sencillo considera que es solicitar información a la CGR? (*)",
+                                                                choices = c("", "muy sencillo","sencillo","díficil","muy difícil"),
+                                                                individual = TRUE,
+                                                                checkIcon = list(
+                                                                        yes = tags$i(class = "fa fa-circle", 
+                                                                                     style = "color: steelblue"),
+                                                                        no = tags$i(class = "fa fa-circle-o", 
+                                                                                    style = "color: steelblue"))
                                                         ),
-                                                        
-                                                        p("El 0 no es una respuesta válida"),
                                                         
                                                         #10
                                                         br(),
-                                                        sliderTextInput(
+                                                        radioGroupButtons(
                                                                 inputId = "transparency_5",
-                                                                label = "10. Usando una escala que va de 1, que significa “nada transparente” al 6, que significa “muy transparente”, ¿Que tan transparente considera que son los procesos de elección de los funcionarios de la CGR? (*)",
-                                                                choices = c(0,1,2,3,4,5,6),
-                                                                grid = TRUE
+                                                                label = "10. ¿Qué tan transparente considera que son los procesos de elección de los funcionarios de la CGR? (*)",
+                                                                choices = c("", "nada transparente","poco transparente","transparente","muy transparente"),
+                                                                individual = TRUE,
+                                                                checkIcon = list(
+                                                                        yes = tags$i(class = "fa fa-circle", 
+                                                                                     style = "color: steelblue"),
+                                                                        no = tags$i(class = "fa fa-circle-o", 
+                                                                                    style = "color: steelblue"))
                                                         ),
                                                         
-                                                        p("El 0 no es una respuesta válida"),
-                                                                
+
                                                         #if all the mandatory questions are answered, the submit button appears
                                                         conditionalPanel(
-                                                                condition = "(input.corruption_1 != '0' && 
-                                                                             input.corruption_2 != '0' &&
-                                                                             input.corruption_3 != '0' &&
-                                                                             input.corruption_4 != '0' &&
-                                                                             input.corruption_5 != '0' &&
-                                                                             input.transparency_1 != '0' &&
-                                                                             input.transparency_2 != '0' &&
-                                                                             input.transparency_3 != '0' &&
-                                                                             input.transparency_4 != '0' &&
-                                                                             input.transparency_5 != '0'
+                                                                condition = "(input.corruption_1 != '' && 
+                                                                             input.corruption_2 != '' &&
+                                                                             input.corruption_3 != '' &&
+                                                                             input.corruption_4 != '' &&
+                                                                             input.corruption_5 != '' &&
+                                                                             input.transparency_1 != '' &&
+                                                                             input.transparency_2 != '' &&
+                                                                             input.transparency_3 != '' &&
+                                                                             input.transparency_4 != '' &&
+                                                                             input.transparency_5 != ''
                                                                              )",
                                                                 
                                                                 fluidRow(
