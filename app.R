@@ -324,7 +324,7 @@ body <- dashboardBody(
                                                         br(),
                                                         radioGroupButtons(
                                                                 inputId = "education",
-                                                                label = "4. Nivel educativo (*)",
+                                                                label = "4. Máximo nivel educativo alcanzado (*)",
                                                                 choices = c("", 
                                                                             "ninguna", "primaria", "secundaria", "superior técnica", "universitaria"),
                                                                 individual = TRUE,
@@ -356,7 +356,7 @@ body <- dashboardBody(
                                                                 inputId = "ethnicity",
                                                                 label = "5. Por sus antepasados y de acuerdo a sus costumbres, ¿usted se considera: (*)",
                                                                 choices = c("", 
-                                                                            "quechua", "aymara", "nativo/indígena", "negro/afroperuano", "blanco", "mestizo", "otro"),
+                                                                            "quechua", "aymara", "nativo/indígena", "negro/afroperuano", "blanco", "mestizo", "no deseo contestar"),
                                                                 individual = TRUE,
                                                                 checkIcon = list(
                                                                         yes = tags$i(class = "fa fa-circle", 
@@ -369,9 +369,9 @@ body <- dashboardBody(
                                                         br(),
                                                         radioGroupButtons(
                                                                 inputId = "work",
-                                                                label = "6. Dedicación principal (*)",
+                                                                label = "6. Dedicación principal actual (*)",
                                                                 choices = c("", 
-                                                                            "trabajador", "estudiante", "cuidado del hogar", "jubilado/pensionista/incapacitado", "otro"),
+                                                                            "trabajador", "no trabaja ahora, pero tiene trabajo", "está buscando trabajo activamente", "estudiante", "cuidado del hogar", "jubilado/pensionista/incapacitado", "no trabaja y no está buscando trabajo"),
                                                                 individual = TRUE,
                                                                 checkIcon = list(
                                                                         yes = tags$i(class = "fa fa-circle", 
